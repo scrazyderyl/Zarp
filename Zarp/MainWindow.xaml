@@ -4,9 +4,66 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Zarp"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Zarp" Height="450" Width="800"
+        Closing="MinimizeToTray" MinWidth="800" MinHeight="450">
     <Grid>
-
+        <tb:TaskbarIcon ToolTip="Zarp">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Exit"></MenuItem>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
+        <StackPanel>
+            <DockPanel LastChildFill="False">
+                <Menu DockPanel.Dock="Top">
+                    <MenuItem Header="_File">
+                        <MenuItem Header="_Open"></MenuItem>
+                        <MenuItem Header="_Export"></MenuItem>
+                        <Separator></Separator>
+                        <MenuItem Header="_Settings"></MenuItem>
+                        <Separator></Separator>
+                        <MenuItem Header="_Exit"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="_Session">
+                        <MenuItem Header="_Start"></MenuItem>
+                        <MenuItem Header="_End"></MenuItem>
+                        <MenuItem Header="_Pause"></MenuItem>
+                        <MenuItem Header="_Extend"></MenuItem>
+                    </MenuItem>
+                    <MenuItem Header="_Help">
+                        <MenuItem Header="_About"></MenuItem>
+                    </MenuItem>
+                </Menu>
+            </DockPanel>
+            <Grid>
+                <Grid.Background>
+                    <SolidColorBrush Color="#FF7DA8D6"/>
+                </Grid.Background>
+                <TextBlock FontSize="14" HorizontalAlignment="Right" Margin="0,0,20,0">
+                    <Run Text="Status"></Run>
+                    <Run Text="Inactive" FontWeight="Bold"></Run>
+                </TextBlock>
+            </Grid>
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Width="160">
+                    <RadioButton Content="Home" IsChecked="True" Style="{StaticResource MenuButton}"></RadioButton>
+                    <RadioButton Content="Focus Session" Style="{StaticResource MenuButton}"></RadioButton>
+                    <RadioButton Content="Global Rules" Style="{StaticResource MenuButton}"></RadioButton>
+                    <RadioButton Content="Presets" Style="{StaticResource MenuButton}"></RadioButton>
+                    <RadioButton Content="Settings" Style="{StaticResource MenuButton}"></RadioButton>
+                </StackPanel>
+                <Grid Margin="20,20,20,20" VerticalAlignment="Top">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock TextWrapping="Wrap" Text="Select a program" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <ComboBox Width="120" Margin="0,0,10,0"/>
+                        <DatePicker Margin="0,0,10,0"/>
+                        <Button Content="Add"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>

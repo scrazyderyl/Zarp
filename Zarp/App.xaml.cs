@@ -1,17 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Zarp
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
+        Core.Zarp app;
+
+        public App()
+        {
+            app = new Core.Zarp();
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            app.Save();
+            base.OnExit(e);
+        }
     }
 }
