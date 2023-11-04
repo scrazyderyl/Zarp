@@ -10,13 +10,12 @@ namespace Zarp
 
         public App()
         {
-            app = new Core.Zarp();
+
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-            app.Save();
-            base.OnExit(e);
+
         }
     }
 }

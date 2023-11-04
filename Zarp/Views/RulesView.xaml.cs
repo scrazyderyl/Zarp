@@ -10,16 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Zarp
+namespace Zarp.Views
 {
     /// <summary>
-    /// Interaction logic for BlockedOverlay.xaml
+    /// Interaction logic for RulesView.xaml
     /// </summary>
-    public partial class BlockedOverlay : Window
+    public partial class RulesView : UserControl
     {
-        public BlockedOverlay()
+        public RulesView()
         {
             InitializeComponent();
         }

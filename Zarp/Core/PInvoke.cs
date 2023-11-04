@@ -13,18 +13,37 @@ namespace Zarp.Core
 {
     public class PInvoke
     {
-        public delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
+        public const uint WINEVENT_INCONTEXT = 0x0004;
+        public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
+
+        public const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
+        public const uint EVENT_SYSTEM_MINIMIZESTART = 0x0016;
+        public const uint EVENT_SYSTEM_MINIMIZEEND = 0x0017;
+        public const uint EVENT_SYSTEM_MOVESIZEEND = 0x000B;
+        public const uint EVENT_SYSTEM_MOVESIZESTART = 0x000A;
+        public const uint EVENT_OBJECT_DESTROY = 0x8001;
 
         [DllImport("user32.dll")]
         public static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
-        public const uint WINEVENT_OUTOFCONTEXT = 0;
-        public const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
-        public const uint EVENT_SYSTEM_MOVESIZEEND = 0x000B;
-        public const uint EVENT_SYSTEM_MOVESIZESTART = 0x000A;
+        [DllImport("user32.dll")]
+        public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr GetForegroundWindow();
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        public const int WS_EX_TOOLWINDOW = 0x00000080;
+
+        public const int GWL_EXSTYLE = -20;
+
+        [DllImport("user32.dll")]
+        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong", SetLastError = true)]
+        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, long dwNewLong);
+
+        [DllImport("user32.dll")]
+        public static extern bool AnimateWindow(IntPtr hWnd, int dwTime, int dwFlags);
 
         [DllImport("user32.dll")]
         public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
@@ -37,12 +56,18 @@ namespace Zarp.Core
             return ShowWindowAsync(hWnd, MINIMIZE);
         }
 
-        public static bool ShowWindow(IntPtr hWnd)
+        public static bool RestoreWindow(IntPtr hWnd)
         {
             return ShowWindowAsync(hWnd, SW_RESTORE);
         }
 
+        [DllImport("user32.dll")]
+        public static extern bool DestroyWindow(IntPtr hWnd);
+
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetForegroundWindow();
 
         [DllImport("user32.dll")]
         public static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
@@ -92,20 +117,6 @@ namespace Zarp.Core
             int top = windowRect.Bottom - height - 8;
 
             Rectangle rect = new Rectangle(left, top, width, height);
-
-            return rect;
-        }
-
-        public static Rectangle? GetClientRect(IntPtr hWnd)
-        {
-            RECT clientRect;
-
-            if (!GetClientRect(hWnd, out clientRect))
-            {
-                return null;
-            }
-
-            Rectangle rect = new Rectangle(clientRect.Left, clientRect.Top, clientRect.Right - clientRect.Left, clientRect.Bottom - clientRect.Top);
 
             return rect;
         }
@@ -171,6 +182,8 @@ namespace Zarp.Core
         [DllImport("shell32.dll")]
         public static extern bool DestroyIcon(IntPtr hIcon);
     }
+
+    public delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime);
 
     public struct RECT
     {

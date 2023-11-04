@@ -70,7 +70,7 @@ namespace Zarp.Core
                             }
                         }
 
-                        list.Add(new ApplicationInfo(displayName, iconLocation, iconIndex, null));
+                        list.Add(new ApplicationInfo("", displayName, iconLocation, iconIndex));
                     }
                 }
             }
