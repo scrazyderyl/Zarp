@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="Zarp.View.MainWindow.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Zarp.View.MainWindow"
+             mc:Ignorable="d">
+    <Grid>
+        <ScrollViewer>
+            <Grid Style="{StaticResource Page}">
+                <StackPanel>
+                    <StackPanel Style="{StaticResource Section}">
+                        <TextBlock Text="Focus Session" Style="{StaticResource SectionHeader}"/>
+                        <CheckBox Content="Warn before switch" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
+                        <CheckBox Content="Locked mode" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource Section}">
+                        <TextBlock Text="Analytics" Style="{StaticResource SectionHeader}"/>
+                        <CheckBox Content="Enable analytics" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
+                    </StackPanel>
+                    <StackPanel Style="{StaticResource Section}">
+                        <TextBlock Text="Windows Settings" Style="{StaticResource SectionHeader}"/>
+                        <CheckBox Content="Start with Windows" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
+                        <CheckBox Content="Start minimized" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
+                        <CheckBox Content="Close to tray" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -1,28 +1,21 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using static Zarp.Core.PInvoke;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Zarp.View;
 
 namespace Zarp.Core
 {
-    class Zarp
+    public class Zarp
     {
-        EventManager eventManager;
+        static RuleManager ruleManager;
+        static WindowWatcher windowWatcher;
 
-        private static string[] AlwaysIgnored = new string[] { "", "Zarp", "Settings", "Program Manager", "Microsoft Text Input Application" };
-        private HashSet<string> IgnoredApps = new HashSet<string>(AlwaysIgnored);
-
-        public Zarp()
+        internal Zarp()
         {
-            eventManager = new EventManager();
-
-            SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, new WinEventDelegate(OnForegroundWindowChanged), 0, 0, WINEVENT_OUTOFCONTEXT);
-        }
-
-        public void OnForegroundWindowChanged(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
-        {
-
+            ruleManager = new RuleManager();
+            windowWatcher = new WindowWatcher();
         }
     }
 }

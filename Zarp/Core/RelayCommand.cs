@@ -7,9 +7,9 @@ using System.Windows.Input;
 
 namespace Zarp.Core
 {
-    class RelayCommand : ICommand
+    internal class RelayCommand : ICommand
     {
-        public Action<object?> _Execute;
+        private Action<object?> _Execute;
         private Func<object?, bool>? _CanExecute;
 
         public event EventHandler? CanExecuteChanged
@@ -18,8 +18,7 @@ namespace Zarp.Core
             remove {  CommandManager.RequerySuggested -= value; }
         }
 
-        public RelayCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)
-        {
+        public RelayCommand(Action<object?> execute, Func<object?, bool>? canExecute = null) {
             _Execute = execute;
             _CanExecute = canExecute;
         }

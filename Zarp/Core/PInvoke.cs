@@ -7,13 +7,15 @@ using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Markup;
+using System.Xml.Linq;
 
 namespace Zarp.Core
 {
     public class PInvoke
     {
-        public const uint WINEVENT_INCONTEXT = 0x0004;
         public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
 
         public const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
@@ -25,6 +27,11 @@ namespace Zarp.Core
 
         [DllImport("user32.dll")]
         public static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
+
+        public static IntPtr SubscribeWinEvent(uint eventConstant, WinEventDelegate dele, uint processId = 0)
+        {
+            return SetWinEventHook(eventConstant, eventConstant, IntPtr.Zero, dele, processId, 0, WINEVENT_OUTOFCONTEXT);
+        }
 
         [DllImport("user32.dll")]
         public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
@@ -77,23 +84,6 @@ namespace Zarp.Core
 
         [DllImport("user32.dll")]
         public static extern bool IsIconic(IntPtr hWnd);
-
-        public static List<IntPtr> GetVisibleWindows()
-        {
-            List<IntPtr> processes = new List<IntPtr>();
-
-            EnumWindows((hWnd, lParam) =>
-            {
-                if (IsWindowVisible(hWnd) && !IsIconic(hWnd) && !string.IsNullOrEmpty(GetWindowTitle(hWnd)))
-                {
-                    processes.Add(hWnd);
-                }
-
-                return true;
-            }, IntPtr.Zero);
-
-            return processes;
-        }
 
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);

@@ -2,12 +2,9 @@
 
 namespace Zarp.Core
 {
-    class Scheduler
+    internal class Scheduler
     {
-        public void Save()
-        {
 
-        }
     }
 
     interface Frequency

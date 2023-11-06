@@ -2,31 +2,61 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Zarp"
-             xmlns:viewModel="clr-namespace:Zarp.ViewModels"
-             xmlns:view="clr-namespace:Zarp.Views"
-             StartupUri="Windows/MainWindow.xaml"
+             xmlns:viewModel="clr-namespace:Zarp.ViewModel"
+             xmlns:view="clr-namespace:Zarp.View"
+             xmlns:mainWindowViewModel="clr-namespace:Zarp.ViewModel.MainWindow"
+             xmlns:mainWindowView="clr-namespace:Zarp.View.MainWindow"
+             xmlns:rulesEditorViewModel="clr-namespace:Zarp.ViewModel.MainWindow.RulesEditor"
+             xmlns:rulesEditorView="clr-namespace:Zarp.View.MainWindow.RulesEditor"
+             StartupUri="View/MainWindowView.xaml"
              ShutdownMode="OnMainWindowClose">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Theme/MenuButton.xaml"></ResourceDictionary>
-                <ResourceDictionary Source="Theme/BlockedOverlayButton.xaml"></ResourceDictionary>
+                <ResourceDictionary Source="Theme/Global.xaml"/>
+                <ResourceDictionary Source="Theme/ListEditor.xaml"/>
+                <ResourceDictionary Source="Theme/MainWindow/MenuButton.xaml"/>
+                <ResourceDictionary Source="Theme/MainWindow/Page.xaml"/>
+                <ResourceDictionary Source="Theme/MainWindow/FocusSessionEditor.xaml"/>
+                <ResourceDictionary Source="Theme/MainWindow/RulesEditor/Tab.xaml"/>
+                <ResourceDictionary Source="Theme/MainWindow/RulesEditor/TabSelector.xaml"/>
+                <ResourceDictionary Source="Theme/MainWindow/Settings/Settings.xaml"/>
+                <ResourceDictionary Source="Theme/BlockedOverlay/BlockedOverlayButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            <DataTemplate DataType="{x:Type viewModel:ApplicationSelectorViewModel}">
+                <view:ApplicationSelectorView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type viewModel:TextInputViewModel}">
+                <view:TextInputView/>
+            </DataTemplate>
             
-            <DataTemplate DataType="{x:Type viewModel:HomeViewModel}">
-                <view:HomeView/>
+            <DataTemplate DataType="{x:Type mainWindowViewModel:HomeViewModel}">
+                <mainWindowView:HomeView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type viewModel:FocusSessionViewModel}">
-                <view:FocusSessionView/>
+            <DataTemplate DataType="{x:Type mainWindowViewModel:FocusSessionViewModel}">
+                <mainWindowView:FocusSessionView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type viewModel:ScheduleViewModel}">
-                <view:ScheduleView></view:ScheduleView>
+            <DataTemplate DataType="{x:Type mainWindowViewModel:ScheduleViewModel}">
+                <mainWindowView:ScheduleView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type viewModel:RulesViewModel}">
-                <view:RulesView/>
+            <DataTemplate DataType="{x:Type mainWindowViewModel:RulesViewModel}">
+                <mainWindowView:RulesView/>
             </DataTemplate>
-            <DataTemplate DataType="{x:Type viewModel:SettingsViewModel}">
-                <view:SettingsView/>
+            <DataTemplate DataType="{x:Type mainWindowViewModel:HistoryViewModel}">
+                <mainWindowView:HistoryView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type mainWindowViewModel:SettingsViewModel}">
+                <mainWindowView:SettingsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type rulesEditorViewModel:RulePresetsViewModel}">
+                <rulesEditorView:RulePresetsView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type rulesEditorViewModel:GlobalRulesViewModel}">
+                <rulesEditorView:GlobalRulesView/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type rulesEditorViewModel:RewardsViewModel}">
+                <rulesEditorView:RewardsView/>
             </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>

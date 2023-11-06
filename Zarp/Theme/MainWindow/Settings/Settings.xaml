@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="CheckBox" x:Key="ToggleSetting">
+        <Style.Setters>
+            <Setter Property="Margin" Value="4,2,0,2"/>
+        </Style.Setters>
+    </Style>
+</ResourceDictionary>
