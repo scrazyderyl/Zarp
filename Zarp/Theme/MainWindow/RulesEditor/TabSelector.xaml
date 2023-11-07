@@ -15,7 +15,7 @@
                 <Setter.Value>
                     <ControlTemplate>
                         <Grid Background="{TemplateBinding Background}" Cursor="Hand">
-                            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" Padding="8,2,8,2" FontSize="14" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" Padding="8,2,8,2" FontWeight="Bold"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>

@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.DirectoryServices;
 using System.Drawing;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Markup;
-using System.Xml.Linq;
 
 namespace Zarp.Core
 {
@@ -140,7 +131,7 @@ namespace Zarp.Core
         public static int PROCESS_VM_READ = 0x0010;
         public static int MAX_PATH = 260;
 
-        public static string? GetWindowExecutableName(IntPtr hWnd)
+        public static string? GetWindowExecutablePath(IntPtr hWnd)
         {
             int processId;
 

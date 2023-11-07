@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Zarp.View;
+﻿using System.Collections.ObjectModel;
 
 namespace Zarp.Core
 {
     public class Zarp
     {
-        static RuleManager ruleManager;
-        static WindowWatcher windowWatcher;
+        public static PresetManager PresetManager = new PresetManager();
+        public static Blocker Blocker = new Blocker();
 
-        internal Zarp()
-        {
-            ruleManager = new RuleManager();
-            windowWatcher = new WindowWatcher();
-        }
+        public static object DialogReturnValue;
+        public static ObservableCollection<ApplicationInfo>? CurrentRuleset;
     }
 }

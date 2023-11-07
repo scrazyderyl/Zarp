@@ -17,10 +17,10 @@
                 <ResourceDictionary Source="Theme/ListEditor.xaml"/>
                 <ResourceDictionary Source="Theme/MainWindow/MenuButton.xaml"/>
                 <ResourceDictionary Source="Theme/MainWindow/Page.xaml"/>
-                <ResourceDictionary Source="Theme/MainWindow/FocusSessionEditor.xaml"/>
+                <ResourceDictionary Source="Theme/MainWindow/FocusSession.xaml"/>
+                <ResourceDictionary Source="Theme/MainWindow/Settings.xaml"/>
                 <ResourceDictionary Source="Theme/MainWindow/RulesEditor/Tab.xaml"/>
                 <ResourceDictionary Source="Theme/MainWindow/RulesEditor/TabSelector.xaml"/>
-                <ResourceDictionary Source="Theme/MainWindow/Settings/Settings.xaml"/>
                 <ResourceDictionary Source="Theme/BlockedOverlay/BlockedOverlayButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
             <DataTemplate DataType="{x:Type viewModel:ApplicationSelectorViewModel}">

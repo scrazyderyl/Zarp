@@ -3,15 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Windows.Input;
 using static Zarp.Core.PInvoke;
-using System.Text;
-using System.Diagnostics;
 
 namespace Zarp.Core
 {
@@ -38,14 +31,14 @@ namespace Zarp.Core
                 }
 
                 string? title = GetWindowTitle(hWnd);
-                string? executablePath = GetWindowExecutableName(hWnd);
+                string? executablePath = GetWindowExecutablePath(hWnd);
 
-                if (String.IsNullOrEmpty(title) || IgnoredApps.Contains(title))
+                if (String.IsNullOrEmpty(title) || IgnoredApps.Contains(title) || executablePath == null)
                 {
                     return true;
                 }
 
-                ApplicationInfo app = new ApplicationInfo(title, executablePath);
+                ApplicationInfo app = new ApplicationInfo(executablePath, title);
                 windows.Add(app);
 
                 return true;
@@ -110,7 +103,7 @@ namespace Zarp.Core
                     }
 
                     seen.Add(applicationName);
-                    list.Add(new ApplicationInfo(applicationName, fileInfo.Name));
+                    list.Add(new ApplicationInfo(fileInfo.FullName, applicationName));
                 }
             }
 
@@ -130,9 +123,9 @@ namespace Zarp.Core
                 }
 
                 string name = fileInfo.Name.Substring(0, fileInfo.Name.Length - 4);
-                string executableName = string.Empty; // Dereference shortcut
+                string executablePath = string.Empty; // Dereference shortcut
 
-                list.Add(new ApplicationInfo(name, executableName));
+                list.Add(new ApplicationInfo(executablePath, name));
             }
 
             return list;

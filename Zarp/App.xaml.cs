@@ -16,7 +16,7 @@ namespace Zarp
     {
         public App()
         {
-            new Zarp.Core.Zarp();
+
         }
     }
 }

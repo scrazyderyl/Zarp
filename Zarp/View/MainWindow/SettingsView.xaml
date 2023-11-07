@@ -11,18 +11,15 @@
                 <StackPanel>
                     <StackPanel Style="{StaticResource Section}">
                         <TextBlock Text="Focus Session" Style="{StaticResource SectionHeader}"/>
-                        <CheckBox Content="Warn before switch" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
+                        <CheckBox Content="Warn before switch" IsChecked="True" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
+                        <CheckBox Content="Launch apps automatically" IsChecked="True" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
                         <CheckBox Content="Locked mode" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
                     </StackPanel>
                     <StackPanel Style="{StaticResource Section}">
-                        <TextBlock Text="Analytics" Style="{StaticResource SectionHeader}"/>
-                        <CheckBox Content="Enable analytics" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
-                    </StackPanel>
-                    <StackPanel Style="{StaticResource Section}">
                         <TextBlock Text="Windows Settings" Style="{StaticResource SectionHeader}"/>
-                        <CheckBox Content="Start with Windows" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
-                        <CheckBox Content="Start minimized" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
-                        <CheckBox Content="Close to tray" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
+                        <CheckBox Content="Start with Windows" IsChecked="True" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
+                        <CheckBox Content="Start minimized" IsChecked="True" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
+                        <CheckBox Content="Close to tray" IsChecked="True" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>

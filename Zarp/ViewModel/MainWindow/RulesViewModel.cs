@@ -13,9 +13,9 @@ namespace Zarp.ViewModel.MainWindow
 {
     internal class RulesViewModel : ObservableObject
     {
-        public RulePresetsViewModel PresetsVM { get; set; }
-        public GlobalRulesViewModel GlobalRulesVM { get; set; }
-        public RewardsViewModel RewardsVM { get; set; }
+        public RulePresetsViewModel PresetsVM { get; }
+        public GlobalRulesViewModel GlobalRulesVM { get; }
+        public RewardsViewModel RewardsVM { get; }
 
         public RelayCommand ChangeViewCommand { get; set; }
 

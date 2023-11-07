@@ -45,7 +45,7 @@ namespace Zarp.ViewModel
             ChangeViewCommand = new RelayCommand(ChangeView);
         }
 
-        public void ChangeView(object? parameter)
+        public void ChangeView(object parameter)
         {
             CurrentView = parameter;
         }

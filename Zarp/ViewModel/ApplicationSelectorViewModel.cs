@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Runtime.InteropServices.ObjectiveC;
 using System.Windows.Controls;
+using System.IO;
+using Zarp.View;
 
 namespace Zarp.ViewModel
 {
@@ -20,28 +22,24 @@ namespace Zarp.ViewModel
         public RelayCommand CancelCommand { get; set; }
         public RelayCommand DoneCommand { get; set; }
 
-        public ObservableCollection<string> OpenApplications { get; set; }
-        public ObservableCollection<string> InstalledApplications { get; set; }
-        public ObservableCollection<string> UserSpecifiedApplications { get; set; }
-
-        public List<string> SelectedApplications;
+        public ObservableCollection<ApplicationInfo> OpenApplications { get; set; }
+        public ObservableCollection<ApplicationInfo> InstalledApplications { get; set; }
+        public ObservableCollection<ApplicationInfo> UserSpecifiedApplications { get; set; }
 
         public ApplicationSelectorViewModel()
         {
-            OpenApplications = new ObservableCollection<string>();
-            InstalledApplications = new ObservableCollection<string>();
-            UserSpecifiedApplications = new ObservableCollection<string>();
-
-            SelectedApplications = new List<string>();
+            OpenApplications = new ObservableCollection<ApplicationInfo>();
+            InstalledApplications = new ObservableCollection<ApplicationInfo>();
+            UserSpecifiedApplications = new ObservableCollection<ApplicationInfo>();
 
             foreach (ApplicationInfo app in GetOpenWindows())
             {
-                OpenApplications.Add(app.Name);
+                OpenApplications.Add(app);
             }
 
             foreach (ApplicationInfo app in GetStartMenuApplications())
             {
-                InstalledApplications.Add(app.Name);
+                InstalledApplications.Add(app);
             }
 
             SelectExecutableCommand = new RelayCommand(SelectExecutable);
@@ -58,25 +56,27 @@ namespace Zarp.ViewModel
             fileDialog.Multiselect = true;
             fileDialog.ShowDialog();
 
-            foreach (string item in fileDialog.FileNames)
+            foreach (string fileName in fileDialog.FileNames)
             {
-                if (UserSpecifiedApplications.Contains(item))
-                {
-                    continue;
-                }
+                FileInfo fileInfo = new FileInfo(fileName);
+                string name = fileInfo.Name.Substring(0, fileInfo.Name.Length - 4);
+                ApplicationInfo info = new ApplicationInfo(fileInfo.FullName, name);
 
-                UserSpecifiedApplications.Add(item);
+                if (!UserSpecifiedApplications.Contains(info))
+                {
+                    UserSpecifiedApplications.Add(info);
+                }
             }
         }
 
         private void Cancel(object? obj)
         {
-
+            ((ApplicationSelectorView)obj).Close();
         }
 
         private void Done(object? obj)
         {
-            
+            ((ApplicationSelectorView)obj).Close();
         }
     }
 }

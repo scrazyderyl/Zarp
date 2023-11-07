@@ -13,7 +13,7 @@
                 </ComboBox>
                 <DatePicker Margin="12,0,0,0" Width="120"/>
                 <TextBox Margin="12,0,0,0" Width="24" FontSize="16" MaxLength="2"/>
-                <TextBlock Margin="2,0,2,0" VerticalAlignment="Center" Text=":" FontSize="16" FontWeight="Bold"/>
+                <TextBlock Margin="2,0,2,0" VerticalAlignment="Center" Text=":" FontWeight="Bold"/>
                 <TextBox Width="24" FontSize="16" MaxLength="2"/>
                 <Button Margin="12,0,0,0" Content="Add to schedule"></Button>
             </StackPanel>

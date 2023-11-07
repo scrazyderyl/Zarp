@@ -17,7 +17,7 @@
                     <RadioButton Content="Global Rules" Style="{StaticResource TabSelector}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding GlobalRulesVM}"/>
                     <RadioButton Content="Rewards" Style="{StaticResource TabSelector}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding RewardsVM}"/>
                 </StackPanel>
-                <Border Width="600" Height="560" BorderThickness="2,2,2,2" BorderBrush="#FFBBBBBB">
+                <Border Width="600" Height="580" BorderThickness="2,2,2,2" BorderBrush="#FFBBBBBB">
                     <ContentControl Content="{Binding CurrentView}"/>
                 </Border>
             </StackPanel>

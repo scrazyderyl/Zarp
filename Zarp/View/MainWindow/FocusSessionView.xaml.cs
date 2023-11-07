@@ -24,5 +24,21 @@ namespace Zarp.View.MainWindow
         {
             InitializeComponent();
         }
+
+        private void PresetChanged(object sender, RoutedEventArgs e)
+        {
+            if (PresetSelector.SelectedItem == null)
+            {
+                RemoveButton.IsEnabled = false;
+                DuplicateButton.IsEnabled = false;
+                ExportButton.IsEnabled = false;
+            }
+            else
+            {
+                RemoveButton.IsEnabled = true;
+                DuplicateButton.IsEnabled = true;
+                ExportButton.IsEnabled = true;
+            }
+        }
     }
 }

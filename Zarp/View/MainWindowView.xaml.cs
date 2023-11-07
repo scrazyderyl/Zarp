@@ -24,6 +24,8 @@ namespace Zarp.View
         public MainWindowView()
         {
             InitializeComponent();
+            IntPtr handle = new WindowInteropHelper(this).Handle;
+            new BlockedOverlayView(handle);
         }
     }
 }

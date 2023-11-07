@@ -122,6 +122,7 @@ namespace Zarp.View
             UnhookWinEvent(MoveSizeStartEvent);
             UnhookWinEvent(MoveSizeEndEvent);
             UnhookWinEvent(CloseEvent);
+            Zarp.Core.Zarp.Blocker.WindowClosed(AttachedWindowHandle);
             Close();
         }
     }

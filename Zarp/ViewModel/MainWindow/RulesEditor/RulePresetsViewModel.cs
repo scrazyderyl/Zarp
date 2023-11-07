@@ -17,18 +17,19 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
     {
         public RelayCommand CreatePresetCommand { get; set; }
         public RelayCommand RemovePresetCommand {  get; set; }
+        public RelayCommand DuplicatePresetCommand { get; set; }
         public RelayCommand ImportPresetCommand {  get; set; }
         public RelayCommand ExportPresetCommand { get; set; }
         public RelayCommand OpenApplicationSelectorCommand { get; set; }
 
-        public ObservableCollection<string> Rules { get; set; }
+        public static ObservableCollection<RulePreset> RulePresets { get; } = new ObservableCollection<RulePreset>();
+        public static ObservableCollection<ApplicationInfo> Rules { get; } = new ObservableCollection<ApplicationInfo>();
 
         public RulePresetsViewModel()
         {
-            Rules = new ObservableCollection<string>();
-
             CreatePresetCommand = new RelayCommand(CreatePreset);
             RemovePresetCommand = new RelayCommand(RemovePreset);
+            DuplicatePresetCommand = new RelayCommand(DuplicatePreset);
             ImportPresetCommand = new RelayCommand(ImportPreset);
             ExportPresetCommand = new RelayCommand(ExportPreset);
             OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationSelector);
@@ -53,6 +54,11 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
             fileDialog.ShowDialog();
         }
 
+        public void DuplicatePreset(object? parameter)
+        {
+            new TextInputView().ShowDialog();
+        }
+
         public void ExportPreset(object? parameter)
         {
             SaveFileDialog fileDialog = new SaveFileDialog();
@@ -63,6 +69,7 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
 
         public void OpenApplicationSelector(object? parameter)
         {
+            Zarp.Core.Zarp.CurrentRuleset = (ObservableCollection<ApplicationInfo>)parameter;
             new ApplicationSelectorView().ShowDialog();
         }
     }

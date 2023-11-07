@@ -14,19 +14,17 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
     {
         public RelayCommand OpenApplicationSelectorCommand { get; set; }
 
-        public ObservableCollection<string> AllowedApplications { get; set; }
-        public ObservableCollection<string> BlockedApplications { get; set; }
+        public static ObservableCollection<ApplicationInfo> AllowedApplications { get; } = new ObservableCollection<ApplicationInfo>();
+        public static ObservableCollection<ApplicationInfo> BlockedApplications { get; } = new ObservableCollection<ApplicationInfo>();
 
         public GlobalRulesViewModel()
         {
-            AllowedApplications = new ObservableCollection<string>();
-            BlockedApplications = new ObservableCollection<string>();
-
             OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationsSelector);
         }
 
         void OpenApplicationsSelector(object? parameter)
         {
+            Zarp.Core.Zarp.CurrentRuleset = (ObservableCollection<ApplicationInfo>)parameter;
             new ApplicationSelectorView().ShowDialog();
         }
     }

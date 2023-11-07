@@ -24,5 +24,23 @@ namespace Zarp.View.MainWindow.RulesEditor
         {
             InitializeComponent();
         }
+
+        private void PresetChanged(object Sender, RoutedEventArgs e)
+        {
+            if (PresetSelector.SelectedItem == null)
+            {
+                RemoveButton.IsEnabled = false;
+                DuplicateButton.IsEnabled = false;
+                ExportButton.IsEnabled = false;
+                AddAppsButton.IsEnabled = false;
+            }
+            else
+            {
+                RemoveButton.IsEnabled = true;
+                DuplicateButton.IsEnabled = true;
+                ExportButton.IsEnabled = true;
+                AddAppsButton.IsEnabled = true;
+            }
+        }
     }
 }

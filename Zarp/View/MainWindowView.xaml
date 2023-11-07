@@ -7,10 +7,10 @@
         xmlns:viewModel="clr-namespace:Zarp.ViewModel"
         xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
-        Title="Zarp" Height="700" Width="1200"
+        Title="Zarp" Height="720" Width="1200"
         MinWidth="800" MinHeight="450">
     <Window.DataContext>
-        <viewModel:MainWindowViewModel></viewModel:MainWindowViewModel>
+        <viewModel:MainWindowViewModel/>
     </Window.DataContext>
     <Grid>
         <tb:TaskbarIcon ToolTip="Zarp">
@@ -33,11 +33,13 @@
                     </MenuItem>
                     <MenuItem Header="_Session">
                         <MenuItem Header="_Start"/>
-                        <MenuItem Header="_End"/>
-                        <MenuItem Header="_Pause"/>
-                        <MenuItem Header="_Extend"/>
+                        <MenuItem Header="_End" IsEnabled="False"/>
+                        <MenuItem Header="_Pause" IsEnabled="False"/>
+                        <MenuItem Header="_Extend" IsEnabled="False"/>
                     </MenuItem>
                     <MenuItem Header="_Help">
+                        <MenuItem Header="_Help"/>
+                        <Separator/>
                         <MenuItem Header="_About"/>
                     </MenuItem>
                 </Menu>
