@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Zarp.Core.Util;
-using Zarp.Core;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.Runtime.InteropServices.ObjectiveC;
-using System.Windows.Controls;
 using System.IO;
+using Zarp.Core;
+using static Zarp.Core.Util;
 using Zarp.View;
 
 namespace Zarp.ViewModel

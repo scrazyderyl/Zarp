@@ -19,17 +19,7 @@ namespace Zarp.ViewModel.MainWindow
 
         public RelayCommand ChangeViewCommand { get; set; }
 
-        private object _currentView;
-
-        public object CurrentView
-        {
-            get { return _currentView; }
-            set
-            {
-                _currentView = value;
-                OnPropertyChanged();
-            }
-        }
+        public object CurrentView { get; set; }
 
         public RulesViewModel()
         {
@@ -45,6 +35,7 @@ namespace Zarp.ViewModel.MainWindow
         public void ChangeView(object? parameter)
         {
             CurrentView = parameter;
+            OnPropertyChanged("CurrentView");
         }
     }
 }

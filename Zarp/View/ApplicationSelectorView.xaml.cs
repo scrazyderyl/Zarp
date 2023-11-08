@@ -29,31 +29,24 @@ namespace Zarp.View
 
         private void Add(object sender, RoutedEventArgs e)
         {
+            List<ApplicationInfo> list = new List<ApplicationInfo>();
+
             foreach (ApplicationInfo item in OpenApplicationsListBox.SelectedItems)
             {
-                if (!Zarp.Core.Zarp.CurrentRuleset.Contains(item))
-                {
-                    Zarp.Core.Zarp.CurrentRuleset.Add(item);
-                }
+                list.Add(item);
             }
 
             foreach (ApplicationInfo item in InstalledApplicationsListBox.SelectedItems)
             {
-                if (!Zarp.Core.Zarp.CurrentRuleset.Contains(item))
-                {
-                    Zarp.Core.Zarp.CurrentRuleset.Add(item);
-                }
+                list.Add(item);
             }
 
             foreach (ApplicationInfo item in UserSpecifiedApplicationsListBox.Items)
             {
-                if (!Zarp.Core.Zarp.CurrentRuleset.Contains(item))
-                {
-                    Zarp.Core.Zarp.CurrentRuleset.Add(item);
-                }
+                list.Add(item);
             }
 
-            Close();
+            Zarp.Core.Zarp.DialogReturnValue = list;
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
         public RelayCommand ExportPresetCommand { get; set; }
 
 
-        public static ObservableCollection<RulePreset> RulePresets { get; } = new ObservableCollection<RulePreset>();
+        public ObservableCollection<RulePreset> RulePresets { get; set; }
 
         public RewardsViewModel()
         {
@@ -32,7 +32,7 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
 
         public void CreatePreset(object? parameter)
         {
-            new TextInputView().ShowDialog();
+
         }
 
         public void RemovePreset(object? parameter)
@@ -42,24 +42,17 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
 
         public void ImportPreset(object? parameter)
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.DefaultExt = ".json";
-            fileDialog.Filter = "JSON files (*.json)|*.json";
-            fileDialog.Multiselect = true;
-            fileDialog.ShowDialog();
+
         }
 
         public void DuplicatePreset(object? parameter)
         {
-            new TextInputView().ShowDialog();
+
         }
 
         public void ExportPreset(object? parameter)
         {
-            SaveFileDialog fileDialog = new SaveFileDialog();
-            fileDialog.DefaultExt = ".json";
-            fileDialog.Filter = "JSON files (*.json)|*.json";
-            fileDialog.ShowDialog();
+
         }
     }
 }

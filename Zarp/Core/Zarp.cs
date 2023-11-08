@@ -4,10 +4,10 @@ namespace Zarp.Core
 {
     public class Zarp
     {
-        public static PresetManager PresetManager = new PresetManager();
+        public static PresetManager<FocusSessionPreset> FocusSessionPresetManager = new PresetManager<FocusSessionPreset>();
+        public static PresetManager<RulePreset> RulePresetManager = new PresetManager<RulePreset>();
         public static Blocker Blocker = new Blocker();
 
-        public static object DialogReturnValue;
-        public static ObservableCollection<ApplicationInfo>? CurrentRuleset;
+        public static object? DialogReturnValue;
     }
 }

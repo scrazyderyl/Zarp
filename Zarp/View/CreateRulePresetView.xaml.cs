@@ -8,23 +8,21 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static Zarp.Core.PInvoke;
 
 namespace Zarp.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for TextInputWindow.xaml
     /// </summary>
-    public partial class MainWindowView : Window
+    public partial class CreateRulePresetView : Window
     {
-        public MainWindowView()
+        public CreateRulePresetView()
         {
             InitializeComponent();
+            NameField.Focus();
         }
     }
 }

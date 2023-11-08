@@ -16,10 +16,10 @@
                 <Button x:Name="ExportButton" Content="Export" IsEnabled="False" Margin="12,0,0,0" Command="{Binding ExportPresetCommand}"></Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                <TextBlock Text="Rule Preset" VerticalAlignment="Center"/>
+                <TextBlock Text="Rule Preset" VerticalAlignment="Center" Style="{StaticResource ControlLabel}"/>
                 <ComboBox Width="200" Margin="12,0,0,0"></ComboBox>
             </StackPanel>
-            <TextBlock Text="Criteria" Margin="0,12,0,4"/>
+            <TextBlock Text="Criteria" Margin="0,12,0,4" Style="{StaticResource ControlLabel}"/>
             <RadioButton Content="Focus Session Completion" Margin="4,0,0,0"></RadioButton>
             <RadioButton IsChecked="True" Margin="4,4,0,0">
                 <StackPanel Orientation="Horizontal">
@@ -28,7 +28,7 @@
                 </StackPanel>
             </RadioButton>
             <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                <TextBlock Text="Time earned" VerticalAlignment="Center"/>
+                <TextBlock Text="Time earned" VerticalAlignment="Center" Style="{StaticResource ControlLabel}"/>
                 <TextBox Width="36" Margin="12,0,0,0" FontSize="16" MaxLength="3"/>
                 <ComboBox Margin="4,0,0,0">
                     <ComboBoxItem Content="Minutes" IsSelected="True"/>

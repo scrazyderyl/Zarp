@@ -8,14 +8,12 @@ namespace Zarp.Core
 {
     public class Event
     {
-        public string Title;
         public int Duration;
         public EventType Type;
         public RulePreset Rules;
 
-        public Event(string title, int duration, EventType type, RulePreset rules)
+        public Event(int duration, EventType type, RulePreset rules)
         {
-            Title = title;
             Duration = duration;
             Type = type;
             Rules = rules;
@@ -39,6 +37,11 @@ namespace Zarp.Core
             }
 
             return Rules.IsWebsiteBlocked(domain);
+        }
+
+        public override string ToString()
+        {
+            return Rules.Name;
         }
     }
 }

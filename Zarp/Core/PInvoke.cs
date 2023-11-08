@@ -37,7 +37,7 @@ namespace Zarp.Core
         [DllImport("user32.dll")]
         public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
-        [DllImport("user32.dll", EntryPoint = "SetWindowLong", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern int SetWindowLong(IntPtr hWnd, int nIndex, long dwNewLong);
 
         [DllImport("user32.dll")]
@@ -97,9 +97,7 @@ namespace Zarp.Core
             int left = windowRect.Left + 8;
             int top = windowRect.Bottom - height - 8;
 
-            Rectangle rect = new Rectangle(left, top, width, height);
-
-            return rect;
+            return new Rectangle(left, top, width, height);
         }
 
         [DllImport("user32.dll", SetLastError = true)]

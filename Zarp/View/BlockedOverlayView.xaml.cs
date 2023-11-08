@@ -54,6 +54,8 @@ namespace Zarp.View
             MoveSizeStartEvent = SubscribeWinEvent(EVENT_SYSTEM_MOVESIZESTART, new WinEventDelegate(OnAttachedMoveSizeStart), processId);
             MoveSizeEndEvent = SubscribeWinEvent(EVENT_SYSTEM_MOVESIZEEND, new WinEventDelegate(OnAttachedMoveSizeEnd), processId);
             CloseEvent = SubscribeWinEvent(EVENT_OBJECT_DESTROY, new WinEventDelegate(OnAttachedClose), processId);
+
+            Activate();
         }
 
         void MinimizeAttachedWindow(object sender, RoutedEventArgs e)

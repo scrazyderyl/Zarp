@@ -3,17 +3,16 @@ using System.Linq;
 
 namespace Zarp.Core
 {
-    public class FocusSessionPreset
+    public class FocusSessionPreset : Preset
     {
-        public string Title { get; set; }
         public int LoopCount { get; set; }
 
         private List<Event> Events;
         private int Duration;
 
-        public FocusSessionPreset(string title, int loopCount)
+        public FocusSessionPreset(string name, int loopCount)
         {
-            Title = title;
+            Name = name;
             LoopCount = loopCount;
 
             Events = new List<Event>();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Zarp.Core;
 using Zarp.ViewModel.MainWindow;
 
@@ -17,19 +18,10 @@ namespace Zarp.ViewModel
         public HistoryViewModel HistoryVM { get; set; }
         public SettingsViewModel SettingsVM { get; set; }
 
+        public RelayCommand RestoreWindowCommand { get; set; }
         public RelayCommand ChangeViewCommand { get; set; }
 
-        private object _currentView;
-
-        public object CurrentView
-        {
-            get { return _currentView; }
-            set
-            {
-                _currentView = value;
-                OnPropertyChanged();
-            }
-        }
+        public object? CurrentView {  get; set; }
 
         public MainWindowViewModel()
         {
@@ -40,14 +32,22 @@ namespace Zarp.ViewModel
             HistoryVM = new HistoryViewModel();
             SettingsVM = new SettingsViewModel();
 
-            CurrentView = RulesVM;
+            CurrentView = FocusSessionVM;
 
             ChangeViewCommand = new RelayCommand(ChangeView);
+            RestoreWindowCommand = new RelayCommand(RestoreWindow);
         }
 
-        public void ChangeView(object parameter)
+        public void RestoreWindow(object? parameter)
+        {
+            Application.Current.MainWindow.Show();
+            Application.Current.MainWindow.WindowState = WindowState.Normal;
+        }
+
+        public void ChangeView(object? parameter)
         {
             CurrentView = parameter;
+            OnPropertyChanged("CurrentView");
         }
     }
 }

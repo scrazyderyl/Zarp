@@ -12,9 +12,7 @@
     <Grid Style="{StaticResource Page}">
         <StackPanel>
             <StackPanel Orientation="Horizontal">
-                <ComboBox x:Name="PresetSelector" HorizontalAlignment="Left" Width="200" SelectionChanged="PresetChanged">
-                    <ComboBoxItem Content="Project 3 and Stats Homework"/>
-                </ComboBox>
+                <ComboBox x:Name="PresetSelector" HorizontalAlignment="Left" Width="200" ItemsSource="{Binding FocusSessionPresets}" SelectedIndex="{Binding SelectedFocusSessionIndex, Mode=TwoWay}" SelectionChanged="PresetChanged"/>
                 <Button Content="Start now" Margin="12,0,0,0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
@@ -26,22 +24,22 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
             <StackPanel Width="200" HorizontalAlignment="Left">
-                    <ListView MinHeight="30" ItemTemplate="{StaticResource ListEntryWrap}"/>
+                    <ListView MinHeight="30" ItemsSource="{Binding Events}" ItemTemplate="{StaticResource ListEntryWrap}" SelectedIndex="{Binding SelectedEventIndex, Mode=TwoWay}"/>
                     <UniformGrid Rows="1">
-                        <Button Content="+"/>
-                        <Button Content="−"/>
-                        <Button Content="▲"/>
-                        <Button Content="▼"/>
+                        <Button x:Name="AddEventButton" Content="+" IsEnabled="{Binding IsAddEventButtonEnabled}" Command="{Binding AddEventCommand}"/>
+                        <Button x:Name="RemoveEventButton" Content="−" IsEnabled="{Binding IsRemoveEventButtonEnabled}" Command="{Binding RemoveEventCommand}"/>
+                        <Button x:Name="MoveUpButton" Content="▲" IsEnabled="{Binding IsMoveUpButtonEnabled}" Command="{Binding MoveUpCommand}"/>
+                        <Button x:Name="MoveDownButton" Content="▼" IsEnabled="{Binding IsMoveDownButtonEnabled}" Command="{Binding MoveDownCommand}"/>
                     </UniformGrid>
                 </StackPanel>
-                <Border Width="299.47" Margin="100,0,0,0" BorderThickness="2,2,2,2" BorderBrush="#FFDDDDDD">
+                <Border Width="299.47" Margin="100,0,0,0" BorderThickness="2,2,2,2" BorderBrush="#FFDDDDDD" Visibility="{Binding EventEditorVisibility}">
                     <StackPanel Margin="20,20,20,20">
                         <StackPanel Orientation="Horizontal">
                             <RadioButton Content="Activity" IsChecked="True" Style="{StaticResource EventType}" Command="{Binding ChangeEventTypeCommand}" CommandParameter="Activity"/>
                             <RadioButton Content="Break" Style="{StaticResource EventType}" Command="{Binding ChangeEventTypeCommand}" CommandParameter="Break"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                            <TextBlock Text="Duration" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="Duration" VerticalAlignment="Center" Style="{StaticResource ControlLabel}"/>
                             <TextBox Width="36" Margin="12,0,0,0" FontSize="16" MaxLength="3"/>
                             <ComboBox Margin="4,0,0,0">
                                 <ComboBoxItem Content="Minutes" IsSelected="True"/>
@@ -49,8 +47,8 @@
                             </ComboBox>
                         </StackPanel>
                         <StackPanel x:Name="ActivityParameters" Orientation="Horizontal" Margin="0,12,0,0" Visibility="{Binding ActivityParametersVisibility}">
-                            <TextBlock Text="Preset" VerticalAlignment="Center"/>
-                            <ComboBox Width="200" Margin="12,0,0,0"/>
+                            <TextBlock Text="Preset" VerticalAlignment="Center" Style="{StaticResource ControlLabel}"/>
+                            <ComboBox Width="200" Margin="12,0,0,0" ItemsSource="{Binding RulePresets}" SelectedValue="{Binding SelectedRulePreset}"/>
                         </StackPanel>
                         <CheckBox x:Name="BreakParameters" Content="Offline break" Margin="0,12,0,0" Visibility="{Binding BreakParametersVisibility}"/>
                     </StackPanel>

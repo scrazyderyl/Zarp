@@ -8,9 +8,7 @@
     <Grid Style="{StaticResource Page}">
         <StackPanel>
             <StackPanel Orientation="Horizontal">
-                <ComboBox HorizontalAlignment="Left" Width="200">
-                    <ComboBoxItem Content="Project 3 and Stats Homework"/>
-                </ComboBox>
+                <ComboBox HorizontalAlignment="Left" Width="200"/>
                 <DatePicker Margin="12,0,0,0" Width="120"/>
                 <TextBox Margin="12,0,0,0" Width="24" FontSize="16" MaxLength="2"/>
                 <TextBlock Margin="2,0,2,0" VerticalAlignment="Center" Text=":" FontWeight="Bold"/>

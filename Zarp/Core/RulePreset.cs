@@ -1,19 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Zarp.Core
 {
-    public class RulePreset
+    public class RulePreset : Preset
     {
-        public string Title;
+        public bool IsApplicationWhitelist;
+        public bool IsWebsiteWhitelist;
 
-        private bool IsApplicationWhitelist;
-        private bool IsWebsiteWhitelist;
         private Dictionary<string, ApplicationInfo> ApplicationRules;
         private Dictionary<string, WebsiteInfo> WebsiteRules;
 
-        public RulePreset(string title, bool isApplicationWhistlist, bool isWebsiteWhitelist)
+        public RulePreset(string name, bool isApplicationWhistlist, bool isWebsiteWhitelist)
         {
-            Title = title;
+            Name = name;
             IsApplicationWhitelist = isApplicationWhistlist;
             IsWebsiteWhitelist = isWebsiteWhitelist;
 
@@ -21,14 +21,15 @@ namespace Zarp.Core
             WebsiteRules = new Dictionary<string, WebsiteInfo>();
         }
 
-        public void AddApplicationRule(ApplicationInfo rule)
+        public void AddApplicationRules(List<ApplicationInfo> rules)
         {
-            try
+            foreach (ApplicationInfo rule in rules)
             {
-                ApplicationRules.Add(rule.ExecutablePath, rule);
-            } catch
-            {
-
+                try
+                {
+                    ApplicationRules.Add(rule.ExecutablePath, rule);
+                }
+                catch { }
             }
         }
 
@@ -37,20 +38,31 @@ namespace Zarp.Core
             ApplicationRules.Remove(rule.ExecutablePath);
         }
 
-        public void AddWebsiteRule(WebsiteInfo rule)
+        public IEnumerable<ApplicationInfo> GetApplicationRules()
         {
-            try
-            {
-                WebsiteRules.Add(rule.Domain, rule);
-            } catch
-            {
+            return ApplicationRules.Values;
+        }
 
+        public void AddWebsiteRule(List<WebsiteInfo> rules)
+        {
+            foreach (WebsiteInfo rule in rules)
+            {
+                try
+                {
+                    WebsiteRules.Add(rule.Domain, rule);
+                }
+                catch { }
             }
         }
 
         public void RemoveWebsiteRule(WebsiteInfo rule)
         {
             WebsiteRules.Remove(rule.Domain);
+        }
+
+        public IEnumerable<WebsiteInfo> GetWebsiteRules()
+        {
+            return WebsiteRules.Values;
         }
 
         public bool IsApplicationBlocked(string executablePath)
@@ -73,11 +85,6 @@ namespace Zarp.Core
             {
                 return WebsiteRules.ContainsKey(domain);
             }
-        }
-
-        public override string ToString()
-        {
-            return Title;
         }
     }
 }

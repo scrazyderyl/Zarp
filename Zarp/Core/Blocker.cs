@@ -10,44 +10,36 @@ namespace Zarp.Core
     {
         private Dictionary<IntPtr, BlockedOverlayView> BlockedApplicationOverlays;
 
-        private HashSet<string> AlwaysAllowedApplications;
-        private HashSet<string> AlwaysBlockedApplications;
+        private Dictionary<string, ApplicationInfo> AlwaysAllowedApplications;
+        private Dictionary<string, ApplicationInfo> AlwaysBlockedApplications;
 
+        private bool Enabled;
         private Event? ActiveEvent;
-
-        IntPtr foregroundChangedEvent;
 
         public Blocker()
         {
             BlockedApplicationOverlays = new Dictionary<IntPtr, BlockedOverlayView>();
-            AlwaysAllowedApplications = new HashSet<string>();
-            AlwaysBlockedApplications = new HashSet<string>();
+            AlwaysAllowedApplications = new Dictionary<string, ApplicationInfo>();
+            AlwaysBlockedApplications = new Dictionary<string, ApplicationInfo>();
+            Enabled = false;
             ActiveEvent = null;
-
-            Enable();
         }
 
         public void Enable()
         {
+            Enabled = true;
             UpdateAll();
-            //foregroundChangedEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, new WinEventDelegate(OnForegroundWindowChanged), 0, 0, WINEVENT_OUTOFCONTEXT);
         }
 
         public void Disable()
         {
-            UnhookWinEvent(foregroundChangedEvent);
-
             foreach (BlockedOverlayView window in BlockedApplicationOverlays.Values)
             {
                 window.Close();
             }
 
             BlockedApplicationOverlays.Clear();
-        }
-
-        public void OnForegroundWindowChanged(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
-        {
-            UpdateApplication(GetForegroundWindow());
+            Enabled = false;
         }
 
         public void WindowClosed(IntPtr handle)
@@ -67,85 +59,122 @@ namespace Zarp.Core
             UpdateAll();
         }
 
-        public void AddGloballyAllowedApplication(ApplicationInfo application)
+        public void AddAlwaysAllowedApplications(List<ApplicationInfo> applications)
         {
-            AlwaysBlockedApplications.Remove(application.ExecutablePath);
-            AlwaysAllowedApplications.Add(application.ExecutablePath);
-
-            foreach (IntPtr handle in GetVisibleWindows())
+            foreach (ApplicationInfo application in applications)
             {
-                string? executablePath = GetWindowExecutablePath(handle);
+                AlwaysBlockedApplications.Remove(application.ExecutablePath);
 
-                if (executablePath == null)
+                try
                 {
-                    return;
-                }
+                    AlwaysAllowedApplications.Add(application.ExecutablePath, application);
+                } catch { }
+            }
 
-                if (application.ExecutablePath.Equals(executablePath))
+            if (Enabled)
+            {
+                foreach (IntPtr handle in GetVisibleWindows())
                 {
-                    TryUnblockApplication(handle);
+                    string? executablePath = GetWindowExecutablePath(handle);
+
+                    if (executablePath == null)
+                    {
+                        return;
+                    }
+
+                    if (AlwaysBlockedApplications.ContainsKey(executablePath))
+                    {
+                        TryUnblockApplication(handle);
+                    }
                 }
             }
         }
 
-        public void RemoveGloballyAllowedApplication(ApplicationInfo application)
+        public void RemoveAlwaysAllowedApplication(ApplicationInfo application)
         {
             AlwaysBlockedApplications.Remove(application.ExecutablePath);
 
-            foreach (IntPtr handle in GetVisibleWindows())
+            if (Enabled)
             {
-                string? executablePath = GetWindowExecutablePath(handle);
-
-                if (executablePath == null || ActiveEvent == null)
+                foreach (IntPtr handle in GetVisibleWindows())
                 {
-                    return;
-                }
+                    string? executablePath = GetWindowExecutablePath(handle);
 
-                if (ActiveEvent.IsApplicationBlocked(executablePath))
-                {
-                    TryBlockApplication(handle);
+                    if (executablePath == null || ActiveEvent == null)
+                    {
+                        return;
+                    }
+
+                    if (ActiveEvent.IsApplicationBlocked(executablePath))
+                    {
+                        TryBlockApplication(handle);
+                    }
                 }
             }
         }
 
-        public void AddGloballyBlockedApplication(ApplicationInfo application)
+        public void AddAlwaysBlockedApplications(List<ApplicationInfo> applications)
         {
-            AlwaysAllowedApplications.Remove(application.ExecutablePath);
-            AlwaysBlockedApplications.Add(application.ExecutablePath);
-
-            foreach (IntPtr handle in GetVisibleWindows())
+            foreach (ApplicationInfo application in applications)
             {
-                string? executablePath = GetWindowExecutablePath(handle);
+                AlwaysAllowedApplications.Remove(application.ExecutablePath);
 
-                if (executablePath == null)
+                try
                 {
-                    return;
-                }
+                    AlwaysBlockedApplications.Add(application.ExecutablePath, application);
+                } catch { }
+            }
 
-                if (application.ExecutablePath.Equals(executablePath))
+            if (Enabled)
+            {
+                foreach (IntPtr handle in GetVisibleWindows())
                 {
-                    TryBlockApplication(handle);
+                    string? executablePath = GetWindowExecutablePath(handle);
+
+                    if (executablePath == null)
+                    {
+                        return;
+                    }
+
+                    if (AlwaysBlockedApplications.ContainsKey(executablePath))
+                    {
+                        TryBlockApplication(handle);
+                    }
                 }
             }
         }
 
-        public void RemoveGloballyBlockedApplication(ApplicationInfo application) {
+        public void RemoveAlwaysBlockedApplication(ApplicationInfo application)
+        {
             AlwaysBlockedApplications.Remove(application.ExecutablePath);
 
-            foreach (IntPtr handle in GetVisibleWindows())
+            if (Enabled)
             {
-                string? executablePath = GetWindowExecutablePath(handle);
-
-                if (executablePath == null || ActiveEvent == null)
+                foreach (IntPtr handle in GetVisibleWindows())
                 {
-                    return;
-                }
+                    string? executablePath = GetWindowExecutablePath(handle);
 
-                if (!ActiveEvent.IsApplicationBlocked(executablePath))
-                {
-                    TryUnblockApplication(handle);
+                    if (executablePath == null || ActiveEvent == null)
+                    {
+                        return;
+                    }
+
+                    if (!ActiveEvent.IsApplicationBlocked(executablePath))
+                    {
+                        TryUnblockApplication(handle);
+                    }
                 }
             }
+        }
+
+        public IEnumerable<ApplicationInfo> GetAlwaysAllowedApplications()
+        {
+            return AlwaysAllowedApplications.Values;
+        }
+
+        public IEnumerable<ApplicationInfo> GetAlwaysBlockedApplications()
+        {
+            return AlwaysBlockedApplications.Values;
         }
 
         public void UpdateAll()
@@ -165,13 +194,13 @@ namespace Zarp.Core
                 return;
             }
 
-            if (AlwaysAllowedApplications.Contains(executablePath))
+            if (AlwaysAllowedApplications.ContainsKey(executablePath))
             {
                 TryUnblockApplication(handle);
                 return;
             }
 
-            if (AlwaysBlockedApplications.Contains(executablePath))
+            if (AlwaysBlockedApplications.ContainsKey(executablePath))
             {
                 TryBlockApplication(handle);
                 return;

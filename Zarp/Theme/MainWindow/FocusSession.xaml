@@ -5,8 +5,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate>
-                        <Border Background="{TemplateBinding Background}" Cursor="Hand" BorderBrush="Black" Margin="0,0,-1,0">
-                            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" Margin="10,4,10,4" FontWeight="Bold"/>
+                        <Border Background="{TemplateBinding Background}" Cursor="Hand">
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" Margin="10,4,10,4" FontSize="14" FontWeight="Bold"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>

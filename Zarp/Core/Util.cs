@@ -64,7 +64,6 @@ namespace Zarp.Core
             return processes;
         }
 
-        // Reqiures administrator privileges
         public static List<ApplicationInfo> GetRecentApplications()
         {
             List<ApplicationInfo> list = new List<ApplicationInfo>();
@@ -110,6 +109,7 @@ namespace Zarp.Core
             return list;
         }
 
+        // Unfinished
         public static List<ApplicationInfo> GetStartMenuApplications()
         {
             List<ApplicationInfo> list = new List<ApplicationInfo>();
@@ -123,7 +123,7 @@ namespace Zarp.Core
                 }
 
                 string name = fileInfo.Name.Substring(0, fileInfo.Name.Length - 4);
-                string executablePath = string.Empty; // Dereference shortcut
+                string executablePath = fileInfo.FullName;
 
                 list.Add(new ApplicationInfo(executablePath, name));
             }

@@ -15,14 +15,13 @@ using System.Windows.Shapes;
 namespace Zarp.View
 {
     /// <summary>
-    /// Interaction logic for TextInputWindow.xaml
+    /// Interaction logic for CreateFocusSessionView.xaml
     /// </summary>
-    public partial class TextInputView : Window
+    public partial class CreateFocusSessionView : Window
     {
-        public TextInputView()
+        public CreateFocusSessionView()
         {
             InitializeComponent();
-            TextField.Focus();
         }
     }
 }

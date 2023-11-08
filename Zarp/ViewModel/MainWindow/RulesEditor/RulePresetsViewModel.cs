@@ -9,11 +9,13 @@ using Zarp;
 using System.Windows.Forms;
 using System.Collections.ObjectModel;
 using System.Windows;
+using Shell32;
+using System.Diagnostics;
 
 namespace Zarp.ViewModel.MainWindow.RulesEditor
 {
 
-    internal class RulePresetsViewModel
+    internal class RulePresetsViewModel : ObservableObject
     {
         public RelayCommand CreatePresetCommand { get; set; }
         public RelayCommand RemovePresetCommand {  get; set; }
@@ -22,8 +24,19 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
         public RelayCommand ExportPresetCommand { get; set; }
         public RelayCommand OpenApplicationSelectorCommand { get; set; }
 
-        public static ObservableCollection<RulePreset> RulePresets { get; } = new ObservableCollection<RulePreset>();
-        public static ObservableCollection<ApplicationInfo> Rules { get; } = new ObservableCollection<ApplicationInfo>();
+        public ObservableCollection<RulePreset> RulePresets { get; set; }
+        private int _selectedPresetIndex;
+        public int SelectedPresetIndex {
+            get {  return _selectedPresetIndex; }
+            set
+            {
+                _selectedPresetIndex = value;
+                OnPresetSelectionChanged();
+            }
+        }
+        RulePreset SelectedPreset;
+        public string RulesetPolicy {  get; set; }
+        public ObservableCollection<ApplicationInfo> Rules { get; set; }
 
         public RulePresetsViewModel()
         {
@@ -33,11 +46,45 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
             ImportPresetCommand = new RelayCommand(ImportPreset);
             ExportPresetCommand = new RelayCommand(ExportPreset);
             OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationSelector);
+
+            RulePresets = new ObservableCollection<RulePreset>(Core.Zarp.RulePresetManager.GetPresets());
+            SelectedPresetIndex = -1;
+            Rules = new ObservableCollection<ApplicationInfo>();
+            RulesetPolicy = string.Empty;
+        }
+
+        private void OnPresetSelectionChanged()
+        {
+            if (SelectedPresetIndex == -1)
+            {
+                Rules = new ObservableCollection<ApplicationInfo>();
+                RulesetPolicy = String.Empty;
+            } else
+            {
+                SelectedPreset = RulePresets[SelectedPresetIndex];
+                Rules = new ObservableCollection<ApplicationInfo>(SelectedPreset.GetApplicationRules());
+                RulesetPolicy = SelectedPreset.IsApplicationWhitelist ? "Block all except" : "Allow all except";
+            }
+
+            OnPropertyChanged("Rules");
+            OnPropertyChanged("RulesetPolicy");
         }
 
         public void CreatePreset(object? parameter)
         {
-            new TextInputView().ShowDialog();
+            Core.Zarp.DialogReturnValue = null;
+            new CreateRulePresetView().ShowDialog();
+            RulePreset? newPreset = (RulePreset)Core.Zarp.DialogReturnValue;
+
+            if (newPreset == null)
+            {
+                return;
+            }
+
+            RulePresets = new ObservableCollection<RulePreset>(Core.Zarp.RulePresetManager.GetPresets());
+            SelectedPresetIndex = RulePresets.Count - 1;
+            OnPropertyChanged("SelectedPresetIndex");
+            OnPropertyChanged("RulePresets");
         }
 
         public void RemovePreset(object? parameter)
@@ -47,30 +94,34 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
 
         public void ImportPreset(object? parameter)
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.DefaultExt = ".json";
-            fileDialog.Filter = "JSON files (*.json)|*.json";
-            fileDialog.Multiselect = true;
-            fileDialog.ShowDialog();
+
         }
 
         public void DuplicatePreset(object? parameter)
         {
-            new TextInputView().ShowDialog();
+
         }
 
         public void ExportPreset(object? parameter)
         {
-            SaveFileDialog fileDialog = new SaveFileDialog();
-            fileDialog.DefaultExt = ".json";
-            fileDialog.Filter = "JSON files (*.json)|*.json";
-            fileDialog.ShowDialog();
+
         }
 
         public void OpenApplicationSelector(object? parameter)
         {
-            Zarp.Core.Zarp.CurrentRuleset = (ObservableCollection<ApplicationInfo>)parameter;
+            Core.Zarp.DialogReturnValue = null;
             new ApplicationSelectorView().ShowDialog();
+            List<ApplicationInfo> newRules = (List<ApplicationInfo>?)Core.Zarp.DialogReturnValue;
+
+            if (newRules == null)
+            {
+                return;
+            }
+
+            SelectedPreset.AddApplicationRules(newRules);
+            Rules = new ObservableCollection<ApplicationInfo>(SelectedPreset.GetApplicationRules());
+
+            OnPropertyChanged("Rules");
         }
     }
 }
