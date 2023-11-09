@@ -54,9 +54,9 @@
             <DockPanel>
                 <StackPanel DockPanel.Dock="Left" Width="160">
                     <RadioButton Content="Home" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding HomeVM}"/>
-                    <RadioButton Content="Focus Session" IsChecked="True" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding FocusSessionVM}"/>
+                    <RadioButton Content="Focus Session" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding FocusSessionVM}"/>
                     <RadioButton Content="Schedule" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding ScheduleVM}"/>
-                    <RadioButton Content="Rules" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding RulesVM}"/>
+                    <RadioButton Content="Rules" IsChecked="True" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding RulesVM}"/>
                     <RadioButton Content="History" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding HistoryVM}"/>
                     <RadioButton Content="Settings" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding SettingsVM}"/>
                 </StackPanel>

@@ -11,7 +11,7 @@
     </UserControl.DataContext>
     <Grid Style="{StaticResource Tab}">
         <StackPanel>
-            <ComboBox x:Name="PresetSelector" HorizontalAlignment="Left" Width="200" ItemsSource="{Binding RulePresets}" SelectedIndex="{Binding SelectedPresetIndex, Mode=TwoWay}" SelectionChanged="PresetChanged"/>
+            <ComboBox x:Name="PresetSelector" HorizontalAlignment="Left" Width="200" ItemsSource="{Binding RulePresets}" SelectedIndex="{Binding SelectedPresetIndex}" SelectionChanged="PresetChanged"/>
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                 <Button Content="Create" Command="{Binding CreatePresetCommand}"></Button>
                 <Button x:Name="RemoveButton" Content="Remove" IsEnabled="False" Margin="12,0,0,0" Command="{Binding RemovePresetCommand}"></Button>
@@ -24,7 +24,7 @@
                 <Run Text="Policy: "></Run>
                 <Run Text="{Binding RulesetPolicy}"></Run>
             </TextBlock>
-            <ListBox Width="240" Height="400" HorizontalAlignment="Left" Margin="0,10,0,0" ItemsSource="{Binding Rules}" ItemTemplate="{StaticResource ListEntryWrap}"></ListBox>
+            <ListBox Width="240" Height="400" HorizontalAlignment="Left" Margin="0,10,0,0" ItemsSource="{Binding Rules}" ItemTemplate="{StaticResource RemovableListItem}" SelectedIndex="{Binding RulesSelectedIndex}"></ListBox>
             <Button x:Name="AddAppsButton" Content="Add apps" IsEnabled="False" Margin="0,10,0,0" HorizontalAlignment="Left" Command="{Binding OpenApplicationSelectorCommand}" CommandParameter="{Binding Rules}"></Button>
         </StackPanel>
     </Grid>

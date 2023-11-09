@@ -36,6 +36,16 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
         }
         public string RulesetPolicy {  get; set; }
         public ObservableCollection<ApplicationInfo> Rules { get; set; }
+        private int _RulesSelectedIndex;
+        public int RulesSelectedIndex
+        {
+            get { return _RulesSelectedIndex; }
+            set
+            {
+                RulePresets[_SelectedPresetIndex].RemoveApplicationRule(Rules[value]);
+                Rules.RemoveAt(value);
+            }
+        }
 
         public RulePresetsViewModel()
         {
@@ -50,6 +60,7 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
             RulePresets = new ObservableCollection<RulePreset>(Core.Zarp.RulePresetManager.GetPresets());
             _SelectedPresetIndex = -1;
             Rules = new ObservableCollection<ApplicationInfo>();
+            _RulesSelectedIndex = -1;
             RulesetPolicy = string.Empty;
         }
 

@@ -45,7 +45,7 @@
     </Style>
 
     <DataTemplate x:Key="ListEntryWrap">
-        <Grid x:Name="Entry">
+        <Grid>
             <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" TextWrapping="Wrap"></TextBlock>
         </Grid>
     </DataTemplate>

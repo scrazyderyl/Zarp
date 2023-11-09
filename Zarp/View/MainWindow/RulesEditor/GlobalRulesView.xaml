@@ -13,12 +13,12 @@
         <StackPanel Orientation="Horizontal">
             <StackPanel>
                 <TextBlock Text="Always Allowed" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
-                <ListBox Width="240" Height="400" ItemsSource="{Binding AllowedApplications}" ItemTemplate="{StaticResource ListEntryWrap}"/>
+                <ListBox Width="240" Height="400" ItemsSource="{Binding AllowedApplications}" ItemTemplate="{StaticResource RemovableListItem}" SelectedIndex="{Binding AllowedApplicationsSelectedIndex}"/>
                 <Button Content="Add apps" Margin="0,10,0,0" HorizontalAlignment="Left" Command="{Binding OpenApplicationSelectorCommand}" CommandParameter="{Binding AllowedApplications}"></Button>
             </StackPanel>
             <StackPanel Margin="40,0,0,0">
                 <TextBlock Text="Always Blocked" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
-                <ListBox Width="240" Height="400" ItemsSource="{Binding BlockedApplications}" ItemTemplate="{StaticResource ListEntryWrap}"/>
+                <ListBox Width="240" Height="400" ItemsSource="{Binding BlockedApplications}" ItemTemplate="{StaticResource RemovableListItem}" SelectedIndex="{Binding BlockedApplicationsSelectedIndex}"/>
                 <Button Content="Add apps" Margin="0,10,0,0" HorizontalAlignment="Left" Command="{Binding OpenApplicationSelectorCommand}" CommandParameter="{Binding BlockedApplications}"></Button>
             </StackPanel>
         </StackPanel>

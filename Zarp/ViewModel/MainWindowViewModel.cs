@@ -32,7 +32,7 @@ namespace Zarp.ViewModel
             HistoryVM = new HistoryViewModel();
             SettingsVM = new SettingsViewModel();
 
-            CurrentView = FocusSessionVM;
+            CurrentView = RulesVM;
 
             ChangeViewCommand = new RelayCommand(ChangeView);
             RestoreWindowCommand = new RelayCommand(RestoreWindow);
