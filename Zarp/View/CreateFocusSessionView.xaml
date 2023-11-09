@@ -18,8 +18,9 @@
                 <TextBox x:Name="NameField" Margin="12,0,0,0" Text="{Binding Name}" Width="200"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <TextBlock Text="Loops" VerticalAlignment="Center" Style="{StaticResource ControlLabel}"/>
-                <TextBox x:Name="LoopCountField" Margin="12,0,0,0" Width="24" Text="{Binding Loops}" MaxLength="2"/>
+                <CheckBox x:Name="LoopEnabledField"  HorizontalAlignment="Center" VerticalAlignment="Center" IsChecked="{Binding LoopEnabled, Mode=TwoWay}"/>
+                <TextBlock Text="Loop" VerticalAlignment="Center" Style="{StaticResource ControlLabel}" Margin="4,0,0,0"/>
+                <TextBox x:Name="LoopCountField" Margin="12,0,0,0" Width="24" Text="{Binding Loops}" MaxLength="2" Visibility="{Binding LoopCountFieldVisibility}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Center">
                 <Button Content="Confirm" Command="{Binding ConfirmCommand}" CommandParameter="{Binding ElementName=Window}"/>

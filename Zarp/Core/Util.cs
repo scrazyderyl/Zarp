@@ -128,6 +128,7 @@ namespace Zarp.Core
                 list.Add(new ApplicationInfo(executablePath, name));
             }
 
+            list.Sort();
             return list;
         }
 

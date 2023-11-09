@@ -25,20 +25,20 @@ namespace Zarp.Core
             Duration += _event.Duration;
         }
 
-        private void AddEventAtIndex(int index, Event _event)
+        public void AddEventAtIndex(int index, Event _event)
         {
             Events.Insert(index, _event);
             Duration += _event.Duration;
         }
 
-        private void SwapEvents(int index1, int index2)
+        public void SwapEvents(int index1, int index2)
         {
             Event temp = Events[index1];
             Events[index1] = Events[index2];
             Events[index2] = temp;
         }
 
-        private void RemoveEvent(int index)
+        public void RemoveEvent(int index)
         {
             Events.RemoveAt(index);
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Zarp.Core
 {
-    public struct ApplicationInfo
+    public struct ApplicationInfo : IComparable<ApplicationInfo>
     {
         public string ExecutablePath;
         public string? Name;
@@ -21,13 +21,18 @@ namespace Zarp.Core
             IconIndex = iconIndex;
         }
 
+        public int CompareTo(ApplicationInfo other)
+        {
+            return string.Compare(Name, other.Name);
+        }
+
         public override string ToString()
         {
             return Name ?? ExecutablePath;
         }
     }
 
-    public struct WebsiteInfo
+    public struct WebsiteInfo : IComparable<WebsiteInfo>
     {
         public string Name;
         public string Domain;
@@ -37,15 +42,14 @@ namespace Zarp.Core
             Name = name;
             Domain = domain;
         }
+        public int CompareTo(WebsiteInfo other)
+        {
+            return string.Compare(Name, other.Name);
+        }
 
         public override string ToString()
         {
             return Domain;
         }
-    }
-
-    public enum EventType
-    {
-        Regular, OfflineBreak
     }
 }

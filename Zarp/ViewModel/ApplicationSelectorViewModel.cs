@@ -5,6 +5,7 @@ using System.IO;
 using Zarp.Core;
 using static Zarp.Core.Util;
 using Zarp.View;
+using System.Collections.Generic;
 
 namespace Zarp.ViewModel
 {
@@ -17,13 +18,13 @@ namespace Zarp.ViewModel
 
         public ObservableCollection<ApplicationInfo> OpenApplications { get; set; }
         public ObservableCollection<ApplicationInfo> InstalledApplications { get; set; }
-        public ObservableCollection<ApplicationInfo> UserSpecifiedApplications { get; set; }
+        public ObservableCollection<ApplicationInfo> OtherApplications { get; set; }
 
         public ApplicationSelectorViewModel()
         {
             OpenApplications = new ObservableCollection<ApplicationInfo>();
             InstalledApplications = new ObservableCollection<ApplicationInfo>();
-            UserSpecifiedApplications = new ObservableCollection<ApplicationInfo>();
+            OtherApplications = new ObservableCollection<ApplicationInfo>();
 
             foreach (ApplicationInfo app in GetOpenWindows())
             {
@@ -55,9 +56,9 @@ namespace Zarp.ViewModel
                 string name = fileInfo.Name.Substring(0, fileInfo.Name.Length - 4);
                 ApplicationInfo info = new ApplicationInfo(fileInfo.FullName, name);
 
-                if (!UserSpecifiedApplications.Contains(info))
+                if (!OtherApplications.Contains(info))
                 {
-                    UserSpecifiedApplications.Add(info);
+                    OtherApplications.Add(info);
                 }
             }
         }

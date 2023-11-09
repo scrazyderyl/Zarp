@@ -26,9 +26,9 @@
                 <ListBox x:Name="InstalledApplicationsListBox" Width="240" Height="400" SelectionMode="Multiple" ItemsSource="{Binding InstalledApplications}" ItemTemplate="{StaticResource ListEntryWrap}"/>
             </StackPanel>
             <StackPanel VerticalAlignment="Top" Margin="40,0,0,0">
-                <TextBlock Text="User Specified" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"></TextBlock>
-                <ListBox x:Name="UserSpecifiedApplicationsListBox" Width="240" Height="200" ItemsSource="{Binding UserSpecifiedApplications}" ItemTemplate="{StaticResource ListEntryWrap}"/>
-                <Button Content="Select program" HorizontalAlignment="Left" Margin="0,10,0,0" Command="{Binding SelectExecutableCommand}"/>
+                <TextBlock Text="Other Applications" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"></TextBlock>
+                <ListBox x:Name="UserSpecifiedApplicationsListBox" Width="240" Height="200" ItemsSource="{Binding OtherApplications}" ItemTemplate="{StaticResource ListEntryWrap}"/>
+                <Button Content="Browse for application" HorizontalAlignment="Left" Margin="0,10,0,0" Command="{Binding SelectExecutableCommand}"/>
             </StackPanel>
         </StackPanel>
     </Grid>

@@ -12,15 +12,43 @@ namespace Zarp.ViewModel
     class CreateFocusSessionViewModel : ObservableObject
     {
         public string? Name { get; set; }
-        public string? Loops {  get; set; }
+        public string? Loops { get; set; }
+        private bool _LoopEnabled;
+        public bool LoopEnabled
+        {
+            get { return _LoopEnabled; }
+            set
+            {
+                _LoopEnabled = value;
+                OnLoopToggled();
+            }
+        }
+        public Visibility LoopCountFieldVisibility { get; set; }
 
         public RelayCommand ConfirmCommand { get; set; }
         public RelayCommand CancelCommand { get; set; }
 
         public CreateFocusSessionViewModel()
         {
+            LoopEnabled = false;
+            LoopCountFieldVisibility = Visibility.Hidden;
+
             ConfirmCommand = new RelayCommand(Confirm);
             CancelCommand = new RelayCommand(Cancel);
+        }
+
+        void OnLoopToggled()
+        {
+            if (LoopEnabled)
+            {
+                LoopCountFieldVisibility = Visibility.Visible;
+            }
+            else
+            {
+                LoopCountFieldVisibility = Visibility.Hidden;
+            }
+
+            OnPropertyChanged("LoopCountFieldVisibility");
         }
 
         void Confirm(object? parameter)
@@ -32,24 +60,32 @@ namespace Zarp.ViewModel
                 return;
             }
 
-            if (String.IsNullOrWhiteSpace(Loops))
-            {
-                return;
-            }
-
             int loops;
 
-            try
+            if (LoopEnabled)
             {
-                loops = int.Parse(Loops);
-                
-                if (loops < 1)
+                if (String.IsNullOrWhiteSpace(Loops))
                 {
                     return;
                 }
-            } catch
+
+                try
+                {
+                    loops = int.Parse(Loops);
+
+                    if (loops < 1)
+                    {
+                        return;
+                    }
+                }
+                catch
+                {
+                    return;
+                }
+            }
+            else
             {
-                return;
+                loops = 1;
             }
 
             string name = Name.Trim();
@@ -68,7 +104,7 @@ namespace Zarp.ViewModel
 
         void Cancel(object? parameter)
         {
-            CreateRulePresetView window = (CreateRulePresetView?)parameter;
+            CreateFocusSessionView window = (CreateFocusSessionView?)parameter;
             window.Close();
         }
     }

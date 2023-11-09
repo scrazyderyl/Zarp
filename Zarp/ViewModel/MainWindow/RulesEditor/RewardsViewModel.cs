@@ -14,6 +14,7 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
     {
         public RelayCommand CreatePresetCommand { get; set; }
         public RelayCommand RemovePresetCommand { get; set; }
+        public RelayCommand RenamePresetCommand {  get; set; }
         public RelayCommand DuplicatePresetCommand { get; set; }
         public RelayCommand ImportPresetCommand { get; set; }
         public RelayCommand ExportPresetCommand { get; set; }
@@ -25,12 +26,18 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
         {
             CreatePresetCommand = new RelayCommand(CreatePreset);
             RemovePresetCommand = new RelayCommand(RemovePreset);
+            RenamePresetCommand = new RelayCommand(RenamePreset);
             DuplicatePresetCommand = new RelayCommand(DuplicatePreset);
             ImportPresetCommand = new RelayCommand(ImportPreset);
             ExportPresetCommand = new RelayCommand(ExportPreset);
         }
 
         public void CreatePreset(object? parameter)
+        {
+
+        }
+
+        public void RenamePreset(object? parameter)
         {
 
         }

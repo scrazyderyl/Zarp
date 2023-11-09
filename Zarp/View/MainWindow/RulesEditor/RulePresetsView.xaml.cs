@@ -30,6 +30,7 @@ namespace Zarp.View.MainWindow.RulesEditor
             if (PresetSelector.SelectedItem == null)
             {
                 RemoveButton.IsEnabled = false;
+                RenameButton.IsEnabled = false;
                 DuplicateButton.IsEnabled = false;
                 ExportButton.IsEnabled = false;
                 AddAppsButton.IsEnabled = false;
@@ -37,6 +38,7 @@ namespace Zarp.View.MainWindow.RulesEditor
             else
             {
                 RemoveButton.IsEnabled = true;
+                RenameButton.IsEnabled = true;
                 DuplicateButton.IsEnabled = true;
                 ExportButton.IsEnabled = true;
                 AddAppsButton.IsEnabled = true;

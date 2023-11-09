@@ -6,15 +6,29 @@ using System.Threading.Tasks;
 
 namespace Zarp.Core
 {
+
     public class Event
     {
+        public string Name;
         public int Duration;
+        public DurationUnit Unit;
         public EventType Type;
-        public RulePreset Rules;
+        public RulePreset? Rules;
 
-        public Event(int duration, EventType type, RulePreset rules)
+        public Event()
         {
+            Name = String.Empty;
+            Duration = 30;
+            Unit = DurationUnit.Minutes;
+            Type = EventType.Regular;
+            Rules = null;
+        }
+
+        public Event(string name, int duration, DurationUnit unit, EventType type, RulePreset rules)
+        {
+            Name = name;
             Duration = duration;
+            Unit = unit;
             Type = type;
             Rules = rules;
         }
@@ -41,7 +55,17 @@ namespace Zarp.Core
 
         public override string ToString()
         {
-            return Rules.Name;
+            return Name;
         }
+    }
+
+    public enum EventType
+    {
+        Regular, OfflineBreak
+    }
+
+    public enum DurationUnit
+    {
+        Minutes, Hours
     }
 }
