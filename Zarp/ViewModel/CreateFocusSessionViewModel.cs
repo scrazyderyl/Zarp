@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using Zarp.Core;
 using Zarp.View;
 
@@ -12,7 +13,6 @@ namespace Zarp.ViewModel
     class CreateFocusSessionViewModel : ObservableObject
     {
         public string? Name { get; set; }
-        public string? Loops { get; set; }
         private bool _LoopEnabled;
         public bool LoopEnabled
         {
@@ -21,6 +21,34 @@ namespace Zarp.ViewModel
             {
                 _LoopEnabled = value;
                 OnLoopToggled();
+            }
+        }
+        private string? _LoopCount;
+        public string? LoopCount
+        {
+            get { return _LoopCount; }
+            set
+            {
+                if (String.IsNullOrEmpty(value))
+                {
+                    _LoopCount = value;
+                    return;
+                }
+
+                try
+                {
+                    value = value.TrimStart('0');
+                    int loops = int.Parse(value);
+
+                    if (loops > 0)
+                    {
+                        _LoopCount = value;
+                    }
+                }
+                catch
+                {
+
+                }
             }
         }
         public Visibility LoopCountFieldVisibility { get; set; }
@@ -64,24 +92,12 @@ namespace Zarp.ViewModel
 
             if (LoopEnabled)
             {
-                if (String.IsNullOrWhiteSpace(Loops))
+                if (String.IsNullOrWhiteSpace(LoopCount))
                 {
                     return;
                 }
 
-                try
-                {
-                    loops = int.Parse(Loops);
-
-                    if (loops < 1)
-                    {
-                        return;
-                    }
-                }
-                catch
-                {
-                    return;
-                }
+                loops = int.Parse(LoopCount);
             }
             else
             {

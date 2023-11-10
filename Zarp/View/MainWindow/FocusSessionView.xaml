@@ -12,7 +12,7 @@
     <Grid Style="{StaticResource Page}">
         <StackPanel>
             <StackPanel Orientation="Horizontal">
-                <ComboBox x:Name="PresetSelector" HorizontalAlignment="Left" Width="200" ItemsSource="{Binding FocusSessionPresets}" SelectedItem="{Binding SelectedFocusSession}" SelectedIndex="{Binding SelectedFocusSessionIndex}" SelectionChanged="PresetChanged"/>
+                <ComboBox x:Name="PresetSelector" HorizontalAlignment="Left" Width="200" ItemsSource="{Binding FocusSessionPresets}" SelectedIndex="{Binding SelectedFocusSessionIndex}" SelectionChanged="PresetChanged"/>
                 <Button Content="Start now" Margin="12,0,0,0"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
@@ -23,7 +23,7 @@
                 <Button Content="Import" Margin="12,0,0,0" Command="{Binding ImportPresetCommand}"></Button>
                 <Button x:Name="ExportButton" Content="Export" IsEnabled="False" Margin="12,0,0,0" Command="{Binding ExportPresetCommand}"></Button>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
+            <StackPanel Orientation="Horizontal" Margin="0,30,0,0" Visibility="{Binding MainEditorVisibility}">
                 <StackPanel Width="200" HorizontalAlignment="Left">
                     <TextBlock Style="{StaticResource ControlLabel}">
                         <Run Text="Loops: "></Run>

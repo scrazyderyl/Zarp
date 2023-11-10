@@ -6,6 +6,7 @@ namespace Zarp.Core
     {
         public static PresetManager<FocusSessionPreset> FocusSessionPresetManager = new PresetManager<FocusSessionPreset>();
         public static PresetManager<RulePreset> RulePresetManager = new PresetManager<RulePreset>();
+        public static PresetManager<RewardPreset> RewardPresetManager = new PresetManager<RewardPreset>();
         public static Blocker Blocker = new Blocker();
 
         public static object? DialogReturnValue;

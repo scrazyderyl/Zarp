@@ -46,7 +46,7 @@ namespace Zarp.View
                 list.Add(item);
             }
 
-            Zarp.Core.Zarp.DialogReturnValue = list;
+            Core.Zarp.DialogReturnValue = list;
         }
     }
 }

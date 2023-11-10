@@ -18,6 +18,7 @@ namespace Zarp.Core
         private static string StartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu) + @"\Programs";
         private static string InstalledProgramsRegistryKey = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
         private static Regex InstalledApplicationsExcludeMatcher = new Regex(@"\{.+-.+-.+-.+-.+\}");
+        private static ApplicationNameAscending ApplicationComparer = new ApplicationNameAscending();
 
         public static List<ApplicationInfo> GetOpenWindows()
         {
@@ -128,7 +129,7 @@ namespace Zarp.Core
                 list.Add(new ApplicationInfo(executablePath, name));
             }
 
-            list.Sort();
+            list.Sort(ApplicationComparer);
             return list;
         }
 

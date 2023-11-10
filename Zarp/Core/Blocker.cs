@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Navigation;
 using Zarp.View;
 using static Zarp.Core.PInvoke;
 using static Zarp.Core.Util;
@@ -8,19 +9,21 @@ namespace Zarp.Core
 {
     public class Blocker
     {
+        public RulePreset AlwaysAllowed;
+        public RulePreset AlwaysBlocked;
+
         private Dictionary<IntPtr, BlockedOverlayView> BlockedApplicationOverlays;
-
-        private Dictionary<string, ApplicationInfo> AlwaysAllowedApplications;
-        private Dictionary<string, ApplicationInfo> AlwaysBlockedApplications;
-
+        private Dictionary<string, RewardPreset> EnabledRewards;
         private bool Enabled;
         private Event? ActiveEvent;
 
         public Blocker()
         {
+            AlwaysAllowed = new RulePreset("Always Allowed");
+            AlwaysBlocked = new RulePreset("Always Blocked");
+
             BlockedApplicationOverlays = new Dictionary<IntPtr, BlockedOverlayView>();
-            AlwaysAllowedApplications = new Dictionary<string, ApplicationInfo>();
-            AlwaysBlockedApplications = new Dictionary<string, ApplicationInfo>();
+            EnabledRewards = new Dictionary<string, RewardPreset>();
             Enabled = false;
             ActiveEvent = null;
         }
@@ -59,15 +62,33 @@ namespace Zarp.Core
             UpdateAll();
         }
 
+        public void EnableReward(RewardPreset reward)
+        {
+            try
+            {
+                EnabledRewards.Add(reward.Name, reward);
+            } catch { }
+        }
+
+        public void DisableReward(string name)
+        {
+            EnabledRewards.Remove(name);
+        }
+        
+        public bool IsRewardEnabled(string name)
+        {
+            return EnabledRewards.ContainsKey(name);
+        }
+
         public void AddAlwaysAllowedApplications(List<ApplicationInfo> applications)
         {
             foreach (ApplicationInfo application in applications)
             {
-                AlwaysBlockedApplications.Remove(application.ExecutablePath);
+                AlwaysBlocked.ApplicationRules.RemoveRule(application.Id);
 
                 try
                 {
-                    AlwaysAllowedApplications.Add(application.ExecutablePath, application);
+                    AlwaysAllowed.ApplicationRules.AddRule(application);
                 } catch { }
             }
 
@@ -82,7 +103,7 @@ namespace Zarp.Core
                         return;
                     }
 
-                    if (AlwaysBlockedApplications.ContainsKey(executablePath))
+                    if (AlwaysAllowed.ApplicationRules.Contains(executablePath))
                     {
                         TryUnblockApplication(handle);
                     }
@@ -92,7 +113,7 @@ namespace Zarp.Core
 
         public void RemoveAlwaysAllowedApplication(ApplicationInfo application)
         {
-            AlwaysBlockedApplications.Remove(application.ExecutablePath);
+            AlwaysAllowed.ApplicationRules.RemoveRule(application.Id);
 
             if (Enabled)
             {
@@ -100,12 +121,12 @@ namespace Zarp.Core
                 {
                     string? executablePath = GetWindowExecutablePath(handle);
 
-                    if (executablePath == null || ActiveEvent == null)
+                    if (executablePath == null || ActiveEvent == null || ActiveEvent.Rules == null)
                     {
                         return;
                     }
 
-                    if (ActiveEvent.IsApplicationBlocked(executablePath))
+                    if (ActiveEvent.Rules.ApplicationRules.IsBlocked(executablePath))
                     {
                         TryBlockApplication(handle);
                     }
@@ -117,11 +138,11 @@ namespace Zarp.Core
         {
             foreach (ApplicationInfo application in applications)
             {
-                AlwaysAllowedApplications.Remove(application.ExecutablePath);
+                AlwaysAllowed.ApplicationRules.RemoveRule(application.Id);
 
                 try
                 {
-                    AlwaysBlockedApplications.Add(application.ExecutablePath, application);
+                    AlwaysBlocked.ApplicationRules.AddRule(application);
                 } catch { }
             }
 
@@ -136,7 +157,7 @@ namespace Zarp.Core
                         return;
                     }
 
-                    if (AlwaysBlockedApplications.ContainsKey(executablePath))
+                    if (AlwaysBlocked.ApplicationRules.Contains(executablePath))
                     {
                         TryBlockApplication(handle);
                     }
@@ -146,7 +167,7 @@ namespace Zarp.Core
 
         public void RemoveAlwaysBlockedApplication(ApplicationInfo application)
         {
-            AlwaysBlockedApplications.Remove(application.ExecutablePath);
+            AlwaysBlocked.ApplicationRules.RemoveRule(application.Id);
 
             if (Enabled)
             {
@@ -154,27 +175,17 @@ namespace Zarp.Core
                 {
                     string? executablePath = GetWindowExecutablePath(handle);
 
-                    if (executablePath == null || ActiveEvent == null)
+                    if (executablePath == null || ActiveEvent == null || ActiveEvent.Rules == null)
                     {
                         return;
                     }
 
-                    if (!ActiveEvent.IsApplicationBlocked(executablePath))
+                    if (!ActiveEvent.Rules.ApplicationRules.IsBlocked(executablePath))
                     {
                         TryUnblockApplication(handle);
                     }
                 }
             }
-        }
-
-        public IEnumerable<ApplicationInfo> GetAlwaysAllowedApplications()
-        {
-            return AlwaysAllowedApplications.Values;
-        }
-
-        public IEnumerable<ApplicationInfo> GetAlwaysBlockedApplications()
-        {
-            return AlwaysBlockedApplications.Values;
         }
 
         public void UpdateAll()
@@ -194,24 +205,24 @@ namespace Zarp.Core
                 return;
             }
 
-            if (AlwaysAllowedApplications.ContainsKey(executablePath))
+            if (AlwaysAllowed.ApplicationRules.Contains(executablePath))
             {
                 TryUnblockApplication(handle);
                 return;
             }
 
-            if (AlwaysBlockedApplications.ContainsKey(executablePath))
+            if (AlwaysBlocked.ApplicationRules.Contains(executablePath))
             {
                 TryBlockApplication(handle);
                 return;
             }
 
-            if (ActiveEvent == null)
+            if (ActiveEvent == null || ActiveEvent.Rules == null)
             {
                 return;
             }
 
-            if (ActiveEvent.IsApplicationBlocked(executablePath))
+            if (ActiveEvent.Rules.ApplicationRules.IsBlocked(executablePath))
             {
                 TryBlockApplication(handle);
                 return;

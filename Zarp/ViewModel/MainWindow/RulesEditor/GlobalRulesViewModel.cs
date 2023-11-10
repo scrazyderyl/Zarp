@@ -15,10 +15,10 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
         public RelayCommand OpenApplicationSelectorCommand { get; set; }
 
         public ObservableCollection<ApplicationInfo> AllowedApplications { get; set; }
-        private int _AllowedApplicationSelectedIndex;
-        public int AllowedApplicationsSelectedIndex
+        private int _SelectedAllowedApplicationIndex;
+        public int SelectedAllowedApplicationIndex
         {
-            get { return _AllowedApplicationSelectedIndex; }
+            get { return _SelectedAllowedApplicationIndex; }
             set
             {
                 Core.Zarp.Blocker.RemoveAlwaysAllowedApplication(AllowedApplications[value]);
@@ -26,10 +26,10 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
             }
         }
         public ObservableCollection<ApplicationInfo> BlockedApplications { get; set; }
-        private int _BlockedApplicationSelectedIndex;
-        public int BlockedApplicationsSelectedIndex
+        private int _SelectedBlockedApplicationIndex;
+        public int SelectedBlockedApplicationIndex
         {
-            get { return _BlockedApplicationSelectedIndex; }
+            get { return _SelectedBlockedApplicationIndex; }
             set
             {
                 Core.Zarp.Blocker.RemoveAlwaysBlockedApplication(BlockedApplications[value]);
@@ -41,19 +41,19 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
         {
             OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationsSelector);
 
-            AllowedApplications = new ObservableCollection<ApplicationInfo>(Zarp.Core.Zarp.Blocker.GetAlwaysAllowedApplications());
-            BlockedApplications = new ObservableCollection<ApplicationInfo>(Zarp.Core.Zarp.Blocker.GetAlwaysBlockedApplications());
-            _AllowedApplicationSelectedIndex = -1;
-            _BlockedApplicationSelectedIndex = -1;
+            AllowedApplications = new ObservableCollection<ApplicationInfo>(Core.Zarp.Blocker.AlwaysAllowed.ApplicationRules.GetRules());
+            BlockedApplications = new ObservableCollection<ApplicationInfo>(Core.Zarp.Blocker.AlwaysBlocked.ApplicationRules.GetRules());
+            _SelectedAllowedApplicationIndex = -1;
+            _SelectedBlockedApplicationIndex = -1;
         }
 
         void OpenApplicationsSelector(object? parameter)
         {
             ObservableCollection<ApplicationInfo> list = (ObservableCollection<ApplicationInfo>)parameter;
-            Zarp.Core.Zarp.DialogReturnValue = null;
+            Core.Zarp.DialogReturnValue = null;
             new ApplicationSelectorView().ShowDialog();
 
-            List<ApplicationInfo>? newRules = (List<ApplicationInfo>?)Zarp.Core.Zarp.DialogReturnValue;
+            List<ApplicationInfo>? newRules = (List<ApplicationInfo>?)Core.Zarp.DialogReturnValue;
 
             if (newRules == null)
             {
@@ -62,15 +62,15 @@ namespace Zarp.ViewModel.MainWindow.RulesEditor
 
             if (list == AllowedApplications)
             {
-                Zarp.Core.Zarp.Blocker.AddAlwaysAllowedApplications(newRules);
+                Core.Zarp.Blocker.AddAlwaysAllowedApplications(newRules);
             }
             else
             {
-                Zarp.Core.Zarp.Blocker.AddAlwaysBlockedApplications(newRules);
+                Core.Zarp.Blocker.AddAlwaysBlockedApplications(newRules);
             }
 
-            AllowedApplications = new ObservableCollection<ApplicationInfo>(Zarp.Core.Zarp.Blocker.GetAlwaysAllowedApplications());
-            BlockedApplications = new ObservableCollection<ApplicationInfo>(Zarp.Core.Zarp.Blocker.GetAlwaysBlockedApplications());
+            AllowedApplications = new ObservableCollection<ApplicationInfo>(Core.Zarp.Blocker.AlwaysAllowed.ApplicationRules.GetRules());
+            BlockedApplications = new ObservableCollection<ApplicationInfo>(Core.Zarp.Blocker.AlwaysBlocked.ApplicationRules.GetRules());
 
             OnPropertyChanged("AllowedApplications");
             OnPropertyChanged("BlockedApplications");

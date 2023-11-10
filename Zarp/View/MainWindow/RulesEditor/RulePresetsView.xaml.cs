@@ -33,7 +33,6 @@ namespace Zarp.View.MainWindow.RulesEditor
                 RenameButton.IsEnabled = false;
                 DuplicateButton.IsEnabled = false;
                 ExportButton.IsEnabled = false;
-                AddAppsButton.IsEnabled = false;
             }
             else
             {
@@ -41,7 +40,6 @@ namespace Zarp.View.MainWindow.RulesEditor
                 RenameButton.IsEnabled = true;
                 DuplicateButton.IsEnabled = true;
                 ExportButton.IsEnabled = true;
-                AddAppsButton.IsEnabled = true;
             }
         }
     }

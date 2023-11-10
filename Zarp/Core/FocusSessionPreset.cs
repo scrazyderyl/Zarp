@@ -55,7 +55,13 @@ namespace Zarp.Core
 
             foreach (Event _event in Events)
             {
-                sumDuration += _event.Duration;
+                if (_event.DurationUnit == TimeUnit.Minutes)
+                {
+                    sumDuration += _event.Duration;
+                } else
+                {
+                    sumDuration += _event.Duration * 60;
+                }
 
                 if (time <  sumDuration)
                 {
