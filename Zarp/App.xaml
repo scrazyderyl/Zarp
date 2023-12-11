@@ -2,27 +2,27 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Zarp"
-             xmlns:viewModel="clr-namespace:Zarp.ViewModel"
-             xmlns:view="clr-namespace:Zarp.View"
-             xmlns:mainWindowViewModel="clr-namespace:Zarp.ViewModel.MainWindow"
-             xmlns:mainWindowView="clr-namespace:Zarp.View.MainWindow"
-             xmlns:rulesEditorViewModel="clr-namespace:Zarp.ViewModel.MainWindow.RulesEditor"
-             xmlns:rulesEditorView="clr-namespace:Zarp.View.MainWindow.RulesEditor"
-             StartupUri="View/MainWindowView.xaml"
+             xmlns:viewModel="clr-namespace:Zarp.GUI.ViewModel"
+             xmlns:view="clr-namespace:Zarp.GUI.View"
+             xmlns:mainWindowViewModel="clr-namespace:Zarp.GUI.ViewModel.MainWindow"
+             xmlns:mainWindowView="clr-namespace:Zarp.GUI.View.MainWindow"
+             xmlns:rulesEditorViewModel="clr-namespace:Zarp.GUI.ViewModel.MainWindow.RulesEditor"
+             xmlns:rulesEditorView="clr-namespace:Zarp.GUI.View.MainWindow.RulesEditor"
+             StartupUri="GUI/View/MainWindowView.xaml"
              ShutdownMode="OnMainWindowClose">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Theme/Global.xaml"/>
-                <ResourceDictionary Source="Theme/ListEditor.xaml"/>
-                <ResourceDictionary Source="Theme/InputWindow.xaml"/>
-                <ResourceDictionary Source="Theme/MainWindow/MenuButton.xaml"/>
-                <ResourceDictionary Source="Theme/MainWindow/Page.xaml"/>
-                <ResourceDictionary Source="Theme/MainWindow/FocusSession.xaml"/>
-                <ResourceDictionary Source="Theme/MainWindow/Settings.xaml"/>
-                <ResourceDictionary Source="Theme/MainWindow/RulesEditor/Tab.xaml"/>
-                <ResourceDictionary Source="Theme/MainWindow/RulesEditor/TabSelector.xaml"/>
-                <ResourceDictionary Source="Theme/BlockedOverlay/BlockedOverlayButton.xaml"/>
+                <ResourceDictionary Source="GUI/Theme/Global.xaml"/>
+                <ResourceDictionary Source="GUI/Theme/ListEditor.xaml"/>
+                <ResourceDictionary Source="GUI/Theme/InputWindow.xaml"/>
+                <ResourceDictionary Source="GUI/Theme/MainWindow/MenuButton.xaml"/>
+                <ResourceDictionary Source="GUI/Theme/MainWindow/Page.xaml"/>
+                <ResourceDictionary Source="GUI/Theme/MainWindow/FocusSession.xaml"/>
+                <ResourceDictionary Source="GUI/Theme/MainWindow/Settings.xaml"/>
+                <ResourceDictionary Source="GUI/Theme/MainWindow/RulesEditor/Tab.xaml"/>
+                <ResourceDictionary Source="GUI/Theme/MainWindow/RulesEditor/TabSelector.xaml"/>
+                <ResourceDictionary Source="GUI/Theme/BlockedOverlay/BlockedOverlayButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type mainWindowViewModel:HomeViewModel}">

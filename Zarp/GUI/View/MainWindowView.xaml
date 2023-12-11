@@ -1,0 +1,67 @@
+﻿<Window x:Class="Zarp.GUI.View.MainWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Zarp.GUI.View"
+        xmlns:viewModel="clr-namespace:Zarp.GUI.ViewModel"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        mc:Ignorable="d"
+        Title="Zarp" Height="720" Width="1200"
+        MinWidth="800" MinHeight="450">
+    <Window.DataContext>
+        <viewModel:MainWindowViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <tb:TaskbarIcon ToolTip="Zarp" LeftClickCommand="{Binding RestoreWindowCommand}">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Exit"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
+        <DockPanel>
+            <DockPanel DockPanel.Dock="Top" LastChildFill="False">
+                <Menu DockPanel.Dock="Top">
+                    <MenuItem Header="_File">
+                        <MenuItem Header="_Open"/>
+                        <MenuItem Header="_Export"/>
+                        <Separator/>
+                        <MenuItem Header="_Exit"/>
+                    </MenuItem>
+                    <MenuItem Header="_Session">
+                        <MenuItem Header="_Start"/>
+                        <MenuItem Header="_End" IsEnabled="False"/>
+                        <MenuItem Header="_Pause" IsEnabled="False"/>
+                        <MenuItem Header="_Extend" IsEnabled="False"/>
+                    </MenuItem>
+                    <MenuItem Header="_Help">
+                        <MenuItem Header="_Help"/>
+                        <Separator/>
+                        <MenuItem Header="_About"/>
+                    </MenuItem>
+                </Menu>
+            </DockPanel>
+            <Grid DockPanel.Dock="Top">
+                <Grid.Background>
+                    <SolidColorBrush Color="#FF7DA8D6"/>
+                </Grid.Background>
+                <TextBlock FontSize="14" HorizontalAlignment="Right" Margin="0,0,20,0" VerticalAlignment="Center">
+                    <Run Text="Status"></Run>
+                    <Run Text="Inactive" FontWeight="Bold"></Run>
+                </TextBlock>
+            </Grid>
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left" Width="160">
+                    <RadioButton Content="Home" IsChecked="True" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding HomeVM}"/>
+                    <RadioButton Content="Focus Session" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding FocusSessionVM}"/>
+                    <RadioButton Content="Schedule" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding ScheduleVM}"/>
+                    <RadioButton Content="Rules" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding RulesVM}"/>
+                    <RadioButton Content="History" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding HistoryVM}"/>
+                    <RadioButton Content="Settings" Style="{StaticResource MenuButton}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding SettingsVM}"/>
+                </StackPanel>
+                <ContentControl Content="{Binding CurrentView}"/>
+            </DockPanel>
+        </DockPanel>
+    </Grid>
+</Window>

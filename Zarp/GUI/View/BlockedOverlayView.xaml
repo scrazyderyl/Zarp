@@ -1,0 +1,19 @@
+﻿<Window x:Class="Zarp.GUI.View.BlockedOverlayView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Zarp.GUI.View"
+        mc:Ignorable="d" SizeToContent="Manual" ResizeMode="NoResize" WindowStyle="None"
+        Background="#E6696969" AllowsTransparency="True" ShowInTaskbar="False"
+        Closing="OnClose">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock FontSize="24">This application is currently disabled.</TextBlock>
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,8,0,0">
+                <Button Content="MINIMIZE" Style="{StaticResource BlockedOverlayButton}" Click="MinimizeAttachedWindow"></Button>
+                <Button Content="CLOSE" Style="{StaticResource BlockedOverlayButton}" Click="CloseAttachedWindow"></Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

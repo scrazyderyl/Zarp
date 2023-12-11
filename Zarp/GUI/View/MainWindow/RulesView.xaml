@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="Zarp.GUI.View.MainWindow.RulesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Zarp.GUI.View.MainWindow"
+             xmlns:viewModel="clr-namespace:Zarp.GUI.ViewModel.MainWindow"
+             mc:Ignorable="d">
+    <UserControl.DataContext>
+        <viewModel:RulesViewModel/>
+    </UserControl.DataContext>
+    <Grid Style="{StaticResource Page}">
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+            <StackPanel HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton Content="Presets" IsChecked="True" Style="{StaticResource TabSelector}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding PresetsVM}"/>
+                    <RadioButton Content="Global Rules" Style="{StaticResource TabSelector}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding GlobalRulesVM}"/>
+                    <RadioButton Content="Time Limits" Style="{StaticResource TabSelector}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding TimeLimitsVM}"/>
+                    <RadioButton Content="Rewards" Style="{StaticResource TabSelector}" Command="{Binding ChangeViewCommand}" CommandParameter="{Binding RewardsVM}"/>
+                </StackPanel>
+                <Border Width="600" Height="580" BorderThickness="2,2,2,2" BorderBrush="#FFBBBBBB">
+                    <ContentControl Content="{Binding CurrentView}"/>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>
