@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Zarp.Core.Datatypes
+﻿namespace Zarp.Core.Datatypes
 {
     public interface BasicRule
     {
-        string Id { get; }
+        public string Id { get; }
     }
 
     public struct ApplicationInfo : BasicRule

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Data;
+﻿using System.Windows;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.Util;
 using Zarp.GUI.View;
@@ -77,7 +71,7 @@ namespace Zarp.GUI.ViewModel
                 LoopCountFieldVisibility = Visibility.Hidden;
             }
 
-            OnPropertyChanged("LoopCountFieldVisibility");
+            OnPropertyChanged(nameof(LoopCountFieldVisibility));
         }
 
         void Confirm(object? parameter)

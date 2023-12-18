@@ -1,12 +1,4 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Zarp.GUI.Util;
+﻿using Zarp.GUI.Util;
 using Zarp.GUI.ViewModel.MainWindow.RulesEditor;
 
 namespace Zarp.GUI.ViewModel.MainWindow
@@ -37,7 +29,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
         public void ChangeView(object? parameter)
         {
             CurrentView = parameter!;
-            OnPropertyChanged("CurrentView");
+            OnPropertyChanged(nameof(CurrentView));
         }
     }
 }

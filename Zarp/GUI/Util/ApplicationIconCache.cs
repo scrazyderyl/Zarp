@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
+using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using System.Windows;
-using Zarp.Common;
-using System.Windows.Markup;
+using Zarp.Common.Cache;
 
 namespace Zarp.GUI.Util
 {
-    public class ApplicationIconCache : FileCache<BitmapSource>
+    public class ApplicationIconCache : FileCache<BitmapSource?>
     {
         public ApplicationIconCache() { }
 

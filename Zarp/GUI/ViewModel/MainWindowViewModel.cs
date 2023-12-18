@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using Zarp.GUI.Util;
 using Zarp.GUI.ViewModel.MainWindow;
 
@@ -47,7 +42,7 @@ namespace Zarp.GUI.ViewModel
         public void ChangeView(object? parameter)
         {
             CurrentView = parameter!;
-            OnPropertyChanged("CurrentView");
+            OnPropertyChanged(nameof(CurrentView));
         }
     }
 }

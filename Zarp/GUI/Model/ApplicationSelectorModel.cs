@@ -1,112 +1,109 @@
-﻿using Microsoft.Win32;
-using Shell32;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.Util;
-using static Zarp.Common.PInvoke;
-using Zarp.Common;
+using static Zarp.Common.Util.PInvoke;
 
 namespace Zarp.GUI.Model
 {
     class ApplicationSelectorModel
     {
         private static string WindowsPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-        private static string CommonStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu) + @"\Programs";
-        private static string UserStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + @"\Programs";
 
-        private static HashSet<string> _IgnoredApps = new HashSet<string>(new string[] { System.Windows.Forms.Application.ExecutablePath, WindowsPath + @"\ImmersiveControlPanel\SystemSettings.exe", WindowsPath + @"\System32\ApplicationFrameHost.exe", WindowsPath + @"\SystemApps\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\TextInputHost.exe" });
+        private static string[] _IgnoredAppPaths = new string[] {
+            System.Windows.Forms.Application.ExecutablePath,
+            WindowsPath + @"\explorer.exe",
+            WindowsPath + @"\ImmersiveControlPanel\SystemSettings.exe",
+            WindowsPath + @"\System32\ApplicationFrameHost.exe",
+            WindowsPath + @"\SystemApps\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\TextInputHost.exe"
+        };
+        private static HashSet<string> _IgnoredApps = new HashSet<string>(_IgnoredAppPaths);
 
-        private static Dictionary<string, ApplicationInfo> ApplicationLookup = new Dictionary<string, ApplicationInfo>();
+        private static ApplicationList? _ApplicationList;
+        private static ApplicationIconCache _IconCache = new ApplicationIconCache();
+        private static List<ItemWithIcon<ApplicationInfo>>? _Applications;
 
-        public static IEnumerable<ApplicationInfo> GetOpenApplications()
+        public static IEnumerable<ItemWithIcon<ApplicationInfo>> OpenApplications
         {
-            List<ApplicationInfo> applications = new List<ApplicationInfo>();
-            Process[] Processes = Process.GetProcesses();
-
-            foreach (Process process in Processes)
+            get
             {
-                string? executablePath = GetWindowExecutablePath(process.MainWindowHandle);
-
-                // Ignores titleless windows, .msc, Zarp, and invisible windows
-                if (executablePath == null || string.IsNullOrEmpty(process.MainWindowTitle) || _IgnoredApps.Contains(executablePath))
+                if (_ApplicationList == null)
                 {
-                    continue;
+                    _ApplicationList = new ApplicationList();
+                    UpdateInstalledApplications();
                 }
 
-                if (ApplicationLookup.TryGetValue(executablePath, out var applicationInfo))
+                List<ItemWithIcon<ApplicationInfo>> windows = new List<ItemWithIcon<ApplicationInfo>>(16);
+
+                EnumWindows((hWnd, lParam) =>
                 {
-                    applications.Add(applicationInfo);
-                }
-                else
-                {
-                    applications.Add(new ApplicationInfo(executablePath, process.MainWindowTitle));
-                }
+                    // Ignore invisible windows
+                    if (!IsWindowVisible(hWnd))
+                    {
+                        return true;
+                    }
+
+                    string? title = GetWindowTitle(hWnd);
+
+                    // Ignore titleless windows
+                    if (string.IsNullOrEmpty(title))
+                    {
+                        return true;
+                    }
+
+                    string? executablePath = GetWindowExecutablePath(hWnd);
+
+                    // Ignore windows with hidden executable path
+                    if (executablePath == null || _IgnoredApps.Contains(executablePath))
+                    {
+                        return true;
+                    }
+
+                    _IconCache.Get(executablePath, out BitmapSource? icon);
+                    windows.Add(new ItemWithIcon<ApplicationInfo>(new ApplicationInfo(executablePath, title), icon));
+
+                    return true;
+                }, IntPtr.Zero);
+                return windows;
             }
-
-            return applications;
         }
 
-        public static IEnumerable<ApplicationInfo> GetInstalledApplications()
+        public static IEnumerable<ItemWithIcon<ApplicationInfo>> InstalledApplications
         {
-            return GetStartMenuApplications(CommonStartMenuPath).Union(GetStartMenuApplications(UserStartMenuPath)).OrderBy(application => application.Name);
+            get
+            {
+                if (_ApplicationList == null)
+                {
+                    _ApplicationList = new ApplicationList();
+                    UpdateInstalledApplications();
+                }
+                else if (!_ApplicationList.Updated)
+                {
+                    UpdateInstalledApplications();
+                }
+
+                return _Applications!;
+            }
         }
 
-        public static IEnumerable<ApplicationInfo> GetStartMenuApplications(string path)
+        public static void UpdateInstalledApplications()
         {
-            DirectoryInfo directoryInfo = new DirectoryInfo(path);
+            _Applications = new List<ItemWithIcon<ApplicationInfo>>(_ApplicationList!.Count);
 
-            foreach (FileInfo fileInfo in directoryInfo.EnumerateFiles("*.lnk", SearchOption.AllDirectories))
+            foreach (ApplicationInfo application in _ApplicationList.OrderBy(application => application.Name))
             {
-                // Ignore uninstallers
-                if (fileInfo.Name.Contains("Uninstall"))
-                {
-                    continue;
-                }
-
-                string executablePath = ShortcutResolver.GetPath(fileInfo.FullName);
-
-                // Ignore internet links
-                if (executablePath.Equals(string.Empty))
-                {
-                    continue;
-                }
-
-                FileInfo executableFileInfo = new FileInfo(executablePath);
-
-                // Broken shortcut
-                if (!executableFileInfo.Exists)
-                {
-                    continue;
-                }
-
-                string extension = executableFileInfo.Extension.ToLowerInvariant();
-
-                // Ignore all files except .exe and .msc
-                if (!(extension.Equals(".exe") || extension.Equals(".msc")))
-                {
-                    continue;
-                }
-
-                string name = Path.GetFileNameWithoutExtension(fileInfo.Name);
-                ApplicationInfo applicationInfo = new ApplicationInfo(executablePath, name);
-                ApplicationLookup.TryAdd(executablePath, applicationInfo);
-
-                yield return applicationInfo;
+                _IconCache.Get(application.ExecutablePath, out BitmapSource? icon);
+                _Applications.Add(new ItemWithIcon<ApplicationInfo>(application, icon));
             }
+        }
+
+        public static BitmapSource? GetExecutableIcon(string path)
+        {
+            _IconCache.Get(path, out BitmapSource? data);
+
+            return data;
         }
     }
 }

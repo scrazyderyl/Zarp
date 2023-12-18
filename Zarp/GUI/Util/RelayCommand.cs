@@ -5,8 +5,8 @@ namespace Zarp.GUI.Util
 {
     internal class RelayCommand : ICommand
     {
-        private readonly Action<object?> _Execute;
-        private readonly Func<object?, bool>? _CanExecute;
+        private Action<object?> _Execute;
+        private Func<object?, bool>? _CanExecute;
 
         public event EventHandler? CanExecuteChanged
         {

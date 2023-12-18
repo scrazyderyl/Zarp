@@ -1,27 +1,27 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Windows.Forms;
-using System.IO;
-using static Zarp.GUI.Model.ApplicationSelectorModel;
-using Zarp.GUI.View;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
-using Zarp.Core.Datatypes;
-using Zarp.GUI.Util;
+using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+using Zarp.Core.Datatypes;
+using Zarp.GUI.Model;
+using Zarp.GUI.Util;
 
 namespace Zarp.GUI.ViewModel
 {
 
     internal class ApplicationSelectorViewModel : ObservableObject
     {
-        private static string WindowsPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+        private static string[] _WindowsPaths = new string[]
+        {
+            Environment.GetFolderPath(Environment.SpecialFolder.Windows),
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles)
+        };
 
         public RelayCommand SelectExecutableCommand { get; set; }
-        public RelayCommand CancelCommand { get; set; }
-        public RelayCommand DoneCommand { get; set; }
 
-        private List<ItemWithIcon<ApplicationInfo>> _AllInstalledApplications;
         public ObservableCollection<ItemWithIcon<ApplicationInfo>> InstalledApplications { get; set; }
         private string? _InstalledApplicationsQuery;
         public string? InstalledApplicationsQuery
@@ -30,9 +30,14 @@ namespace Zarp.GUI.ViewModel
             set
             {
                 _InstalledApplicationsQuery = value;
-                UpdateInstalledApplications();
+
+                if (!InstalledApplicationsQueryIsEmpty)
+                {
+                    UpdateInstalledApplications();
+                }
             }
         }
+        public bool InstalledApplicationsQueryIsEmpty { get; set; }
         private bool _HideSystemApplications;
         public bool HideSystemApplications
         {
@@ -43,37 +48,61 @@ namespace Zarp.GUI.ViewModel
                 UpdateInstalledApplications();
             }
         }
-        public ObservableCollection<ApplicationInfo> OpenApplications { get; set; }
-        public ObservableCollection<ApplicationInfo> OtherApplications { get; set; }
+        public ObservableCollection<ItemWithIcon<ApplicationInfo>> OpenApplications { get; set; }
+        public ObservableCollection<ItemWithIcon<ApplicationInfo>> OtherApplications { get; set; }
+        private int _OtherApplicationsSelectedIndex;
+        public int OtherApplicationsSelectedIndex
+        {
+            get => _OtherApplicationsSelectedIndex;
+            set
+            {
+                _OtherApplicationsUnique.Remove(OtherApplications[value].Data.ExecutablePath);
+                OtherApplications.RemoveAt(value);
+                _OtherApplicationsSelectedIndex = -1;
+            }
+        }
+        private HashSet<string> _OtherApplicationsUnique;
 
         public ApplicationSelectorViewModel()
         {
             _HideSystemApplications = true;
+            InstalledApplications = new ObservableCollection<ItemWithIcon<ApplicationInfo>>(GetFilteredApplications());
 
-            _AllInstalledApplications = new List<ItemWithIcon<ApplicationInfo>>(GetInstalledApplications().Select(application =>
-            {
-                Core.Service.Zarp.IconCache.Get(application.ExecutablePath, out BitmapSource? icon);
-                return new ItemWithIcon<ApplicationInfo>(application, icon);
-            }));
+            OpenApplications = new ObservableCollection<ItemWithIcon<ApplicationInfo>>(ApplicationSelectorModel.OpenApplications);
 
-            UpdateInstalledApplications();
-
-            OpenApplications = new ObservableCollection<ApplicationInfo>(GetOpenApplications());
-
-            OtherApplications = new ObservableCollection<ApplicationInfo>();
+            _OtherApplicationsUnique = new HashSet<string>();
+            _OtherApplicationsSelectedIndex = -1;
+            OtherApplications = new ObservableCollection<ItemWithIcon<ApplicationInfo>>();
 
             SelectExecutableCommand = new RelayCommand(SelectExecutable);
-            CancelCommand = new RelayCommand(Cancel);
-            DoneCommand = new RelayCommand(Done);
         }
 
-        private void UpdateInstalledApplications()
+        public void Search(string query)
         {
-            IEnumerable<ItemWithIcon<ApplicationInfo>> ApplicationList = _AllInstalledApplications;
+            _InstalledApplicationsQuery = query;
+            UpdateInstalledApplications();
+        }
+
+        private IEnumerable<ItemWithIcon<ApplicationInfo>> GetFilteredApplications()
+        {
+            IEnumerable<ItemWithIcon<ApplicationInfo>> ApplicationList = ApplicationSelectorModel.InstalledApplications;
 
             if (_HideSystemApplications)
             {
-                ApplicationList = ApplicationList.Where(application => !application.Data.ExecutablePath.Contains(WindowsPath));
+                ApplicationList = ApplicationList.Where(application =>
+                {
+                    string lowerPath = application.Data.ExecutablePath;
+
+                    foreach (string excludedPath in _WindowsPaths)
+                    {
+                        if (lowerPath.Contains(excludedPath))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                });
             }
 
             if (_InstalledApplicationsQuery != null)
@@ -82,40 +111,39 @@ namespace Zarp.GUI.ViewModel
                 ApplicationList = ApplicationList.Where(application => application.Data.Name.ToLowerInvariant().Contains(query));
             }
 
-            InstalledApplications = new ObservableCollection<ItemWithIcon<ApplicationInfo>>(ApplicationList);
-            OnPropertyChanged("InstalledApplications");
+            return ApplicationList;
+        }
+
+        private void UpdateInstalledApplications()
+        {
+            InstalledApplications = new ObservableCollection<ItemWithIcon<ApplicationInfo>>(GetFilteredApplications());
+            OnPropertyChanged(nameof(InstalledApplications));
         }
 
         private void SelectExecutable(object? obj)
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();
-            fileDialog.DefaultExt = ".exe";
-            fileDialog.Filter = "Executable files (*.exe)|*.exe";
-            fileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu) + @"\Programs";
-            fileDialog.Multiselect = true;
+            OpenFileDialog fileDialog = new OpenFileDialog()
+            {
+                DefaultExt = ".exe",
+                Filter = "Executable files (*.exe)|*.exe",
+                Multiselect = true
+            };
+
             fileDialog.ShowDialog();
 
             foreach (string fileName in fileDialog.FileNames)
             {
-                FileInfo fileInfo = new FileInfo(fileName);
-                string name = fileInfo.Name.Substring(0, fileInfo.Name.Length - 4);
-                ApplicationInfo info = new ApplicationInfo(fileInfo.FullName, name);
-
-                if (!OtherApplications.Contains(info))
+                if (!_OtherApplicationsUnique.Add(fileName))
                 {
-                    OtherApplications.Add(info);
+                    continue;
                 }
+
+                string name = Path.GetFileName(fileName);
+                name = name.Substring(0, name.Length - 4);
+                ApplicationInfo application = new ApplicationInfo(fileName, name);
+                BitmapSource? icon = ApplicationSelectorModel.GetExecutableIcon(fileName);
+                OtherApplications.Add(new ItemWithIcon<ApplicationInfo>(application, icon));
             }
-        }
-
-        private void Cancel(object? obj)
-        {
-            ((ApplicationSelectorView)obj!).Close();
-        }
-
-        private void Done(object? obj)
-        {
-            ((ApplicationSelectorView)obj!).Close();
         }
     }
 }

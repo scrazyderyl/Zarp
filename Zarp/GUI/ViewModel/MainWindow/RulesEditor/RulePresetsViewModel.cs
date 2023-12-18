@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Zarp.GUI.View;
-using System.Windows.Forms;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
-using Shell32;
-using System.Diagnostics;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.Util;
+using Zarp.GUI.View;
 
 namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 {
@@ -85,9 +77,9 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                 EditorVisibility = Visibility.Visible;
             }
 
-            OnPropertyChanged("Rules");
-            OnPropertyChanged("RulesetPolicy");
-            OnPropertyChanged("EditorVisibility");
+            OnPropertyChanged(nameof(Rules));
+            OnPropertyChanged(nameof(RulesetPolicy));
+            OnPropertyChanged(nameof(EditorVisibility));
         }
 
         public void CreatePreset(object? parameter)
@@ -103,8 +95,8 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
             RulePresets = new ObservableCollection<RulePreset>(Core.Service.Zarp.RulePresetManager.GetPresets());
             SelectedPresetIndex = RulePresets.Count - 1;
-            OnPropertyChanged("RulePresets");
-            OnPropertyChanged("SelectedPresetIndex");
+            OnPropertyChanged(nameof(RulePresets));
+            OnPropertyChanged(nameof(SelectedPresetIndex));
         }
 
         public void RemovePreset(object? parameter)
@@ -113,9 +105,9 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             Core.Service.Zarp.RulePresetManager.Remove(SelectedPreset.Name);
             int newIndex = SelectedPresetIndex - 1;
             RulePresets = new ObservableCollection<RulePreset>(Core.Service.Zarp.RulePresetManager.GetPresets());
-            OnPropertyChanged("RulePresets");
+            OnPropertyChanged(nameof(RulePresets));
             SelectedPresetIndex = newIndex == -1 && RulePresets.Count > 0 ? 0 : newIndex;
-            OnPropertyChanged("SelectedPresetIndex");
+            OnPropertyChanged(nameof(SelectedPresetIndex));
         }
 
         public void RenamePreset(object? parmaeter)
@@ -140,20 +132,19 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
         public void OpenApplicationSelector(object? parameter)
         {
-            Core.Service.Zarp.DialogReturnValue = null;
-            new ApplicationSelectorView().ShowDialog();
-            List<ApplicationInfo>? newRules = (List<ApplicationInfo>?)Core.Service.Zarp.DialogReturnValue;
+            ApplicationSelectorView selector = new ApplicationSelectorView();
+            selector.ShowDialog();
 
-            if (newRules == null)
+            if (!selector.Confirmed)
             {
                 return;
             }
 
             RulePreset SelectedPreset = RulePresets[SelectedPresetIndex];
-            SelectedPreset.ApplicationRules.AddRules(newRules);
+            SelectedPreset.ApplicationRules.AddRules(selector.Selected);
             Rules = new ObservableCollection<ApplicationInfo>(SelectedPreset.ApplicationRules.GetRules());
 
-            OnPropertyChanged("Rules");
+            OnPropertyChanged(nameof(Rules));
         }
     }
 }

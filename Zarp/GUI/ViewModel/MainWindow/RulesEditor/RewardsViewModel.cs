@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.Util;
 using Zarp.GUI.View;
@@ -71,7 +65,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                     FocusSessionSelectorVisibility = Visibility.Hidden;
                 }
 
-                OnPropertyChanged("FocusSessionSelectorVisibility");
+                OnPropertyChanged(nameof(FocusSessionSelectorVisibility));
             }
         }
         public Visibility FocusSessionSelectorVisibility { get; set; }
@@ -112,7 +106,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                     ActiveTimeInputVisibility = Visibility.Hidden;
                 }
 
-                OnPropertyChanged("ActiveTimeInputVisibility");
+                OnPropertyChanged(nameof(ActiveTimeInputVisibility));
             }
         }
         public Visibility ActiveTimeInputVisibility { get; set; }
@@ -226,7 +220,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                 (Applications[_SelectedApplicationIndex].Id);
                 Applications.RemoveAt(value);
                 _SelectedApplicationIndex = -1;
-                OnPropertyChanged("SelectedApplicationIndex");
+                OnPropertyChanged(nameof(SelectedApplicationIndex));
             }
         }
         public RelayCommand OpenApplicationSelectorCommand { get; set; }
@@ -257,13 +251,13 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             if (_SelectedRewardPresetIndex == -1)
             {
                 EditorVisibility = Visibility.Hidden;
-                OnPropertyChanged("EditorVisibility");
+                OnPropertyChanged(nameof(EditorVisibility));
                 return;
             }
 
             RewardPreset SelectedRewardPreset = RewardPresets[_SelectedRewardPresetIndex];
             RewardEnabled = Core.Service.Zarp.Blocker.IsRewardEnabled(SelectedRewardPreset.Name);
-            OnPropertyChanged("RewardEnabled");
+            OnPropertyChanged(nameof(RewardEnabled));
 
             switch (SelectedRewardPreset.RequirementType)
             {
@@ -272,33 +266,33 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                     _SelectedFocusSessionIndex = FocusSessionPresets.IndexOf(SelectedRewardPreset.CompletionRequirement);
                     _ActiveTime = null;
                     _ActiveTimeUnitsIndex = 0;
-                    OnPropertyChanged("FocusSessionOptionSelected");
-                    OnPropertyChanged("SelectedFocusSessionIndex");
-                    OnPropertyChanged("ActiveTime");
-                    OnPropertyChanged("ActiveTimeUnitsIndex");
+                    OnPropertyChanged(nameof(FocusSessionOptionSelected));
+                    OnPropertyChanged(nameof(SelectedFocusSessionIndex));
+                    OnPropertyChanged(nameof(ActiveTime));
+                    OnPropertyChanged(nameof(ActiveTimeUnitsIndex));
                     break;
                 case RewardRequirement.ActiveTime:
                     ActiveTimeOptionSelected = true;
                     _SelectedFocusSessionIndex = -1;
                     _ActiveTime = SelectedRewardPreset.ActiveTimeRequirement.ToString();
                     _ActiveTimeUnitsIndex = SelectedRewardPreset.ActiveTimeUnit == TimeUnit.Minutes ? 0 : 1;
-                    OnPropertyChanged("SelectedFocusSessionIndex");
-                    OnPropertyChanged("ActiveTimeOptionSelected");
-                    OnPropertyChanged("ActiveTime");
-                    OnPropertyChanged("ActiveTimeUnitsIndex");
+                    OnPropertyChanged(nameof(SelectedFocusSessionIndex));
+                    OnPropertyChanged(nameof(ActiveTimeOptionSelected));
+                    OnPropertyChanged(nameof(ActiveTime));
+                    OnPropertyChanged(nameof(ActiveTimeUnitsIndex));
                     break;
             }
 
             _TimeEarned = SelectedRewardPreset.EarnedTime.ToString();
             _TimeEarnedUnitsIndex = SelectedRewardPreset.EarnedTimeUnit == TimeUnit.Minutes ? 0 : 1;
-            OnPropertyChanged("TimeEarned");
-            OnPropertyChanged("TimeEarnedUnitsIndex");
+            OnPropertyChanged(nameof(TimeEarned));
+            OnPropertyChanged(nameof(TimeEarnedUnitsIndex));
 
             Applications = new ObservableCollection<ApplicationInfo>(SelectedRewardPreset.ApplicationRules.GetRules());
-            OnPropertyChanged("Applications");
+            OnPropertyChanged(nameof(Applications));
 
             EditorVisibility = Visibility.Visible;
-            OnPropertyChanged("EditorVisibility");
+            OnPropertyChanged(nameof(EditorVisibility));
         }
 
         public void CreatePreset(object? parameter)
@@ -314,8 +308,8 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
             RewardPresets = new ObservableCollection<RewardPreset>(Core.Service.Zarp.RewardPresetManager.GetPresets());
             SelectedRewardPresetIndex = RewardPresets.Count - 1;
-            OnPropertyChanged("RewardPresets");
-            OnPropertyChanged("SelectedRewardPresetIndex");
+            OnPropertyChanged(nameof(RewardPresets));
+            OnPropertyChanged(nameof(SelectedRewardPresetIndex));
         }
 
         public void RemovePreset(object? parameter)
@@ -357,9 +351,9 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             RulePreset SelectedPreset = RewardPresets[_SelectedRewardPresetIndex];
             SelectedPreset.ApplicationRules.AddRules(newRules);
             Applications = new ObservableCollection<ApplicationInfo>(SelectedPreset.ApplicationRules.GetRules());
-            OnPropertyChanged("Applications");
+            OnPropertyChanged(nameof(Applications));
             _SelectedApplicationIndex = -1;
-            OnPropertyChanged("SelectedApplicationIndex");
+            OnPropertyChanged(nameof(SelectedApplicationIndex));
         }
     }
 }

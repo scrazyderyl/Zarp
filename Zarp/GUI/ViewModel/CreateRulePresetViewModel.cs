@@ -1,8 +1,7 @@
-﻿using System;
-using Zarp.GUI.View;
-using System.Windows;
+﻿using System.Windows;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.Util;
+using Zarp.GUI.View;
 
 namespace Zarp.GUI.ViewModel
 {

@@ -13,6 +13,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="GUI/Components/TextBoxWithPlaceholder/Generic.xaml"/>
+
                 <ResourceDictionary Source="GUI/Theme/Global.xaml"/>
                 <ResourceDictionary Source="GUI/Theme/ListEditor.xaml"/>
                 <ResourceDictionary Source="GUI/Theme/InputWindow.xaml"/>

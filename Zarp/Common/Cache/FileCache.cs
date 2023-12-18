@@ -1,31 +1,23 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.IO.Enumeration;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Zarp.Common
+namespace Zarp.Common.Cache
 {
     public abstract class FileCache<T>
     {
-        protected Dictionary<string, CachedFileData<T>> Cache;
+        private Dictionary<string, CachedFile> Cache;
 
         public FileCache()
         {
-            Cache = new Dictionary<string, CachedFileData<T>>();
+            Cache = new();
         }
 
-        public bool Get(string path, out T? data)
+        public bool Get(string path, out T data)
         {
-            FileInfo file = new FileInfo(path);
+            FileInfo file = new(path);
 
-            if (Cache.TryGetValue(file.FullName, out CachedFileData<T>? entry))
+            if (Cache.TryGetValue(file.FullName, out CachedFile entry))
             {
                 // Entry found
                 if (entry.Updated)
@@ -37,6 +29,7 @@ namespace Zarp.Common
                 {
                     // Update outdated entry
                     entry.Data = data;
+                    entry.LastUpdate = entry.Info.LastWriteTime;
                 }
                 else
                 {
@@ -50,8 +43,7 @@ namespace Zarp.Common
                 if (TryFetch(file.FullName, out data))
                 {
                     // Create new entry
-                    entry = new CachedFileData<T>(file, data);
-                    Cache.Add(file.FullName, entry);
+                    Cache.Add(file.FullName, new CachedFile(file, data));
                 }
                 else
                 {
@@ -63,6 +55,29 @@ namespace Zarp.Common
             return true;
         }
 
-        protected abstract bool TryFetch(string path, out T? data);
+        protected abstract bool TryFetch(string path, out T data);
+
+        private struct CachedFile
+        {
+            public bool Updated
+            {
+                get
+                {
+                    Info.Refresh();
+                    return LastUpdate == Info.LastWriteTime;
+                }
+            }
+
+            public FileInfo Info;
+            public DateTime LastUpdate;
+            public T Data;
+
+            public CachedFile(FileInfo info, T data)
+            {
+                Info = info;
+                LastUpdate = info.LastWriteTime;
+                Data = data;
+            }
+        }
     }
 }

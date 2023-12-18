@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Navigation;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.View;
-using static Zarp.Common.PInvoke;
+using static Zarp.Common.Util.PInvoke;
 
 namespace Zarp.Core.Service
 {
@@ -103,7 +102,7 @@ namespace Zarp.Core.Service
             return EnabledRewards.ContainsKey(name);
         }
 
-        public void AddAlwaysAllowedApplications(List<ApplicationInfo> applications)
+        public void AddAlwaysAllowedApplications(IEnumerable<ApplicationInfo> applications)
         {
             foreach (ApplicationInfo application in applications)
             {
@@ -158,7 +157,7 @@ namespace Zarp.Core.Service
             }
         }
 
-        public void AddAlwaysBlockedApplications(List<ApplicationInfo> applications)
+        public void AddAlwaysBlockedApplications(IEnumerable<ApplicationInfo> applications)
         {
             foreach (ApplicationInfo application in applications)
             {
