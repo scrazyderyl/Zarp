@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace Zarp.Core.Datatypes
+﻿namespace Zarp.Core.Datatypes
 {
     public class RulePreset : Preset
     {

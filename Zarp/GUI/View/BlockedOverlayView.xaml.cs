@@ -11,50 +11,75 @@ namespace Zarp.GUI.View
     /// </summary>
     public partial class BlockedOverlayView : Window
     {
-        IntPtr AttachedWindowHandle;
+        private IntPtr OverlayHandle;
+        private IntPtr AttachedWindowHandle;
+        private bool IsClosing = false;
 
-        IntPtr MinimizeEvent;
-        IntPtr UnminimizeEvent;
-        IntPtr ActivateEvent;
-        IntPtr MoveSizeStartEvent;
-        IntPtr MoveSizeEndEvent;
-        IntPtr CloseEvent;
+        private IntPtr AttachedShowEvent;
+        private IntPtr AttachedLocationChangeEvent;
+        private IntPtr AttachedCloseEvent;
+
+        private WinEventDelegate AttachedShowEventHandler;
+        private WinEventDelegate AttachedLocationChangeEventHandler;
+        private WinEventDelegate AttachedCloseEventHandler;
 
         public BlockedOverlayView(IntPtr attachedWindowHandle)
         {
             AttachedWindowHandle = attachedWindowHandle;
 
-            InitializeComponent();
-            Show();
+            AttachedShowEventHandler = OnAttachedShow;
+            AttachedLocationChangeEventHandler = OnLocationChange;
+            AttachedCloseEventHandler = OnAttachedClose;
 
-            IntPtr hWnd = new WindowInteropHelper(this).Handle;
-            int style = WS_EX_TOOLWINDOW | GetWindowLong(hWnd, GWL_EXSTYLE);
-            SetWindowLong(hWnd, GWL_EXSTYLE, style);
-            GetWindowThreadProcessId(hWnd, out uint processId);
+            InitializeComponent();
+            OverlayHandle = new WindowInteropHelper(this).EnsureHandle();
+            int style = WS_EX_TOOLWINDOW | GetWindowLong(OverlayHandle, GWL_EXSTYLE);
+            SetWindowLong(OverlayHandle, GWL_EXSTYLE, style);
+            Closed += OnClosed;
+
+            GetWindowThreadProcessId(attachedWindowHandle, out uint processId);
+            AttachedShowEvent = SetWinEventHook(EVENT_OBJECT_SHOW, EVENT_OBJECT_SHOW, IntPtr.Zero, AttachedShowEventHandler, processId, 0, WINEVENT_OUTOFCONTEXT);
+            AttachedLocationChangeEvent = SetWinEventHook(EVENT_OBJECT_LOCATIONCHANGE, EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, AttachedLocationChangeEventHandler, processId, 0, WINEVENT_OUTOFCONTEXT);
 
             MoveOverlayToWindow();
+            MoveOverlayOverWindow();
+            Show();
 
-            MinimizeEvent = SubscribeWinEvent(EVENT_SYSTEM_MINIMIZESTART, new WinEventDelegate(OnAttachedMinimize), processId);
-            UnminimizeEvent = SubscribeWinEvent(EVENT_SYSTEM_MINIMIZEEND, new WinEventDelegate(OnAttachedUnminimize), processId);
-            ActivateEvent = SubscribeWinEvent(EVENT_SYSTEM_FOREGROUND, new WinEventDelegate(OnAttachedActivate), processId);
-            MoveSizeStartEvent = SubscribeWinEvent(EVENT_SYSTEM_MOVESIZESTART, new WinEventDelegate(OnAttachedMoveSizeStart), processId);
-            MoveSizeEndEvent = SubscribeWinEvent(EVENT_SYSTEM_MOVESIZEEND, new WinEventDelegate(OnAttachedMoveSizeEnd), processId);
-            CloseEvent = SubscribeWinEvent(EVENT_OBJECT_DESTROY, new WinEventDelegate(OnAttachedClose), processId);
-
-            Activate();
+            AttachedCloseEvent = SetWinEventHook(EVENT_OBJECT_DESTROY, EVENT_OBJECT_DESTROY, IntPtr.Zero, AttachedCloseEventHandler, processId, 0, WINEVENT_OUTOFCONTEXT);
         }
 
-        void MinimizeAttachedWindow(object sender, RoutedEventArgs e)
+        protected override void OnActivated(EventArgs e)
         {
-            MinimizeWindow(AttachedWindowHandle);
+            MoveOverlayOverWindow();
+            base.OnActivated(e);
         }
 
-        void CloseAttachedWindow(object sender, RoutedEventArgs e)
+        protected override void OnClosing(CancelEventArgs e)
         {
-            DestroyWindow(AttachedWindowHandle);
+            if (IsClosing)
+            {
+                return;
+            }
+
+            IsClosing = true;
+
+            UnhookWinEvent(AttachedShowEvent);
+            UnhookWinEvent(AttachedLocationChangeEvent);
+            UnhookWinEvent(AttachedCloseEvent);
+
+            base.OnClosing(e);
+        }
+        private void OnClosed(object? sender, EventArgs e)
+        {
+            Core.Service.Zarp.Blocker.WindowClosed(AttachedWindowHandle);
         }
 
-        void MoveOverlayToWindow()
+        internal void MoveOverlayOverWindow()
+        {
+            SetWindowPos(AttachedWindowHandle, OverlayHandle, 0, 0, 0, 0, SWP_ASYNCWINDOWPOS | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        }
+
+        internal void MoveOverlayToWindow()
         {
             System.Drawing.Rectangle? rect = GetWindowRect(AttachedWindowHandle);
 
@@ -68,49 +93,43 @@ namespace Zarp.GUI.View
             Width = rect.Value.Width;
             Height = rect.Value.Height;
         }
-
-        void OnClose(object sender, CancelEventArgs e)
+        private void MinimizeAttachedWindow(object sender, RoutedEventArgs e)
         {
-            e.Cancel = true;
+            MinimizeWindow(AttachedWindowHandle);
         }
 
-        void OnAttachedMinimize(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
+        private void CloseAttachedWindow(object sender, RoutedEventArgs e)
         {
-            Hide();
+            CloseWindow(AttachedWindowHandle);
         }
 
-        void OnAttachedUnminimize(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
+        private void OnAttachedShow(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
         {
-            Show();
+            if (hwnd == AttachedWindowHandle)
+            {
+                return;
+            }
+
+            MoveOverlayOverWindow();
         }
 
-        void OnAttachedActivate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
+        private void OnLocationChange(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
         {
+            if (hwnd != AttachedWindowHandle)
+            {
+                return;
+            }
+
             MoveOverlayToWindow();
-            Activate();
         }
 
-        void OnAttachedMoveSizeStart(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
+        private void OnAttachedClose(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
         {
-            Hide();
-        }
+            if (hwnd != AttachedWindowHandle)
+            {
+                return;
+            }
 
-        void OnAttachedMoveSizeEnd(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
-        {
-            Show();
-            MoveOverlayToWindow();
-            Activate();
-        }
-
-        void OnAttachedClose(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
-        {
-            UnhookWinEvent(MinimizeEvent);
-            UnhookWinEvent(UnminimizeEvent);
-            UnhookWinEvent(ActivateEvent);
-            UnhookWinEvent(MoveSizeStartEvent);
-            UnhookWinEvent(MoveSizeEndEvent);
-            UnhookWinEvent(CloseEvent);
-            Core.Service.Zarp.Blocker.WindowClosed(AttachedWindowHandle);
             Close();
         }
     }

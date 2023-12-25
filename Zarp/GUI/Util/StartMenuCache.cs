@@ -22,7 +22,7 @@ namespace Zarp.GUI.Util
                     return false;
                 }
 
-                string executablePath = ShortcutResolver.GetPath(Path.GetFullPath(path));
+                string executablePath = Shortcut.GetPath(Path.GetFullPath(path));
 
                 // Ignore internet links
                 if (executablePath.Equals(string.Empty))

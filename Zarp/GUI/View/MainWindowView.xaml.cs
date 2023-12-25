@@ -10,8 +10,6 @@ namespace Zarp.GUI.View
         public MainWindowView()
         {
             InitializeComponent();
-            Show();
-            new ApplicationSelectorView().Show();
         }
     }
 }

@@ -8,30 +8,25 @@ namespace Zarp.Common.Util
     public class PInvoke
     {
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        public const int OBJID_WINDOW = 0;
+
+        public const int CHILDID_SELF = 0;
+
         public delegate void WinEventDelegate(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime);
 
         [DllImport("user32.dll")]
         public static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetForegroundWindow();
-
         public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
 
         public const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
-        public const uint EVENT_SYSTEM_MINIMIZESTART = 0x0016;
-        public const uint EVENT_SYSTEM_MINIMIZEEND = 0x0017;
-        public const uint EVENT_SYSTEM_MOVESIZEEND = 0x000B;
-        public const uint EVENT_SYSTEM_MOVESIZESTART = 0x000A;
         public const uint EVENT_OBJECT_DESTROY = 0x8001;
+        public const uint EVENT_OBJECT_SHOW = 0x8002;
+        public const uint EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
 
         [DllImport("user32.dll")]
         public static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
-
-        public static IntPtr SubscribeWinEvent(uint eventConstant, WinEventDelegate dele, uint processId = 0)
-        {
-            return SetWinEventHook(eventConstant, eventConstant, IntPtr.Zero, dele, processId, 0, WINEVENT_OUTOFCONTEXT);
-        }
 
         [DllImport("user32.dll")]
         public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
@@ -71,23 +66,24 @@ namespace Zarp.Common.Util
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
-        [DllImport("user32.dll")]
-        public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
-
         public static Rectangle? GetWindowRect(IntPtr hWnd)
         {
             RECT windowRect;
-            RECT clientRect;
 
-            if (!GetWindowRect(hWnd, out windowRect) || !GetClientRect(hWnd, out clientRect))
+            if (!GetWindowRect(hWnd, out windowRect))
             {
                 return null;
             }
 
-            int width = clientRect.Right - clientRect.Left;
-            int height = clientRect.Bottom - clientRect.Top;
             int left = windowRect.Left + 8;
-            int top = windowRect.Bottom - height - 8;
+            int top = windowRect.Top;
+            int width = windowRect.Right - windowRect.Left - 16;
+            int height = windowRect.Bottom - windowRect.Top - 8;
+
+            if (width < 0 || height < 0)
+            {
+                return null;
+            }
 
             return new Rectangle(left, top, width, height);
         }
@@ -107,9 +103,7 @@ namespace Zarp.Common.Util
 
         public static string? GetWindowExecutablePath(IntPtr hWnd)
         {
-            uint processId;
-
-            if (GetWindowThreadProcessId(hWnd, out processId) == 0)
+            if (GetWindowThreadProcessId(hWnd, out uint processId) == 0)
             {
                 return null;
             }
@@ -132,6 +126,19 @@ namespace Zarp.Common.Util
         }
 
         [DllImport("user32.dll")]
+        public static extern IntPtr GetParent(IntPtr hWnd);
+
+        public const uint WM_CLOSE = 0x0010;
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        public static void CloseWindow(IntPtr hWnd)
+        {
+            SendMessage(hWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        [DllImport("user32.dll")]
         public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 
         public const int SW_RESTORE = 9;
@@ -147,8 +154,13 @@ namespace Zarp.Common.Util
             return ShowWindowAsync(hWnd, SW_RESTORE);
         }
 
+        public const int SWP_NOSIZE = 0x0001;
+        public const int SWP_NOMOVE = 0x0002;
+        public const int SWP_NOACTIVATE = 0x0010;
+        public const int SWP_ASYNCWINDOWPOS = 0x4000;
+
         [DllImport("user32.dll")]
-        public static extern bool DestroyWindow(IntPtr hWnd);
+        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
         public struct RECT
         {

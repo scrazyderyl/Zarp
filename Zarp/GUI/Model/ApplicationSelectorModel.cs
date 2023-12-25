@@ -66,6 +66,7 @@ namespace Zarp.GUI.Model
 
                     return true;
                 }, IntPtr.Zero);
+
                 return windows;
             }
         }

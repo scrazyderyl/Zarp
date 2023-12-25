@@ -1,17 +1,18 @@
-﻿using System.Collections.ObjectModel;
-using Zarp.Core.Datatypes;
-using Zarp.GUI.Util;
+﻿using Zarp.Core.Datatypes;
 
 namespace Zarp.Core.Service
 {
     public class Zarp
     {
-        public static PresetManager<FocusSessionPreset> FocusSessionPresetManager = new PresetManager<FocusSessionPreset>();
-        public static PresetManager<RulePreset> RulePresetManager = new PresetManager<RulePreset>();
-        public static PresetManager<RewardPreset> RewardPresetManager = new PresetManager<RewardPreset>();
-        public static Blocker Blocker = new Blocker();
+        internal static PresetManager<FocusSessionPreset> FocusSessionPresetManager = new PresetManager<FocusSessionPreset>();
+        internal static PresetManager<RulePreset> RulePresetManager = new PresetManager<RulePreset>();
+        internal static PresetManager<RewardPreset> RewardPresetManager = new PresetManager<RewardPreset>();
+        internal static Blocker Blocker = new Blocker();
 
-        public static ApplicationIconCache IconCache = new ApplicationIconCache();
+        static Zarp()
+        {
+            Blocker.Enable();
+        }
 
         public static object? DialogReturnValue;
     }

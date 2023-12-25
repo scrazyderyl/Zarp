@@ -111,10 +111,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
                         Events[SelectedEventIndex].Duration = duration;
                     }
                 }
-                catch
-                {
-
-                }
+                catch { }
             }
         }
         private int _EventDurationUnitsIndex;

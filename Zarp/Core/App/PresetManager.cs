@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Text.Json.Nodes;
 using System.Windows.Forms;
 using Zarp.Core.Datatypes;
 
 namespace Zarp.Core.Service
 {
-    public class PresetManager<T> where T : Preset
+    internal class PresetManager<T> where T : Preset
     {
         private Dictionary<string, T> Presets;
 
@@ -37,16 +35,7 @@ namespace Zarp.Core.Service
 
         public bool Add(T preset)
         {
-            try
-            {
-                Presets.Add(preset.Name, preset);
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
+            return Presets.TryAdd(preset.Name, preset);
         }
 
         public void Remove(string name)

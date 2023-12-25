@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Zarp.Core.Datatypes
 {
@@ -20,22 +16,14 @@ namespace Zarp.Core.Datatypes
 
         public void AddRule(T rule)
         {
-            try
-            {
-                Rules.Add(rule.Id, rule);
-            }
-            catch { }
+            Rules.TryAdd(rule.Id, rule);
         }
 
         public void AddRules(IEnumerable<T> rules)
         {
             foreach (T rule in rules)
             {
-                try
-                {
-                    Rules.Add(rule.Id, rule);
-                }
-                catch { }
+                Rules.TryAdd(rule.Id, rule);
             }
         }
 

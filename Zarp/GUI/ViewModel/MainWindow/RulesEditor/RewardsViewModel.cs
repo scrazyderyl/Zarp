@@ -133,10 +133,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                         RewardPresets[_SelectedRewardPresetIndex].ActiveTimeRequirement = activeTime;
                     }
                 }
-                catch
-                {
-
-                }
+                catch { }
             }
         }
         private int _ActiveTimeUnitsIndex;
@@ -179,10 +176,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                         RewardPresets[_SelectedRewardPresetIndex].EarnedTime = timeEarned;
                     }
                 }
-                catch
-                {
-
-                }
+                catch { }
             }
         }
         private int _TimeEarnedUnitsIndex;

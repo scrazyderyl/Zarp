@@ -40,10 +40,7 @@ namespace Zarp.GUI.ViewModel
                         _LoopCount = value;
                     }
                 }
-                catch
-                {
-
-                }
+                catch { }
             }
         }
         public Visibility LoopCountFieldVisibility { get; set; }

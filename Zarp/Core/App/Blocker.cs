@@ -1,21 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Windows;
+using System.Windows.Interop;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.View;
 using static Zarp.Common.Util.PInvoke;
 
 namespace Zarp.Core.Service
 {
-    public class Blocker
+    internal class Blocker
     {
         public RulePreset AlwaysAllowed;
         public RulePreset AlwaysBlocked;
 
         private Dictionary<IntPtr, BlockedOverlayView> BlockedApplicationOverlays;
         private Dictionary<string, RewardPreset> EnabledRewards;
-        private bool Enabled;
         private Event? ActiveEvent;
+        private bool Enabled;
+
+        private WinEventDelegate ForegroundEventHandler;
+        private IntPtr ForegroundEventHook;
 
         public Blocker()
         {
@@ -24,49 +28,50 @@ namespace Zarp.Core.Service
 
             BlockedApplicationOverlays = new Dictionary<IntPtr, BlockedOverlayView>();
             EnabledRewards = new Dictionary<string, RewardPreset>();
-            Enabled = false;
             ActiveEvent = null;
-        }
+            Enabled = false;
 
-        public static List<IntPtr> GetVisibleWindows()
-        {
-            List<IntPtr> visibleWindows = new List<IntPtr>();
-
-            Process[] processes = Process.GetProcesses();
-
-            foreach (Process process in processes)
-            {
-                try
-                {
-                    if (IsWindowVisible(process.MainWindowHandle) && !IsIconic(process.MainWindowHandle) && !string.IsNullOrEmpty(process.MainWindowTitle))
-                    {
-                        visibleWindows.Add(process.MainWindowHandle);
-                    }
-                }
-                catch { }
-            }
-
-            return visibleWindows;
+            ForegroundEventHandler = OnForegroundChanged;
         }
 
         public void Enable()
         {
             Enabled = true;
+            ForegroundEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, ForegroundEventHandler, 0, 0, WINEVENT_OUTOFCONTEXT);
             UpdateAll();
         }
 
         public void Disable()
         {
+            Enabled = false;
+
             foreach (BlockedOverlayView window in BlockedApplicationOverlays.Values)
             {
                 window.Close();
             }
 
             BlockedApplicationOverlays.Clear();
-            Enabled = false;
+            UnhookWinEvent(ForegroundEventHook);
         }
 
-        public void WindowClosed(IntPtr handle)
+        private void OnForegroundChanged(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
+        {
+            if (idObject != OBJID_WINDOW)
+            {
+                return;
+            }
+
+            if (BlockedApplicationOverlays.TryGetValue(hwnd, out BlockedOverlayView? overlay))
+            {
+                overlay.Activate();
+            }
+            else if (IsApplicationBlocked(hwnd))
+            {
+                TryBlockApplication(hwnd);
+            }
+        }
+
+        internal void WindowClosed(IntPtr handle)
         {
             BlockedApplicationOverlays.Remove(handle);
         }
@@ -85,11 +90,7 @@ namespace Zarp.Core.Service
 
         public void EnableReward(RewardPreset reward)
         {
-            try
-            {
-                EnabledRewards.Add(reward.Name, reward);
-            }
-            catch { }
+            EnabledRewards.TryAdd(reward.Name, reward);
         }
 
         public void DisableReward(string name)
@@ -102,161 +103,107 @@ namespace Zarp.Core.Service
             return EnabledRewards.ContainsKey(name);
         }
 
-        public void AddAlwaysAllowedApplications(IEnumerable<ApplicationInfo> applications)
+        public void AddAlwaysAllowed(IEnumerable<ApplicationInfo> applications)
         {
             foreach (ApplicationInfo application in applications)
             {
                 AlwaysBlocked.ApplicationRules.RemoveRule(application.Id);
-
-                try
-                {
-                    AlwaysAllowed.ApplicationRules.AddRule(application);
-                }
-                catch { }
+                AlwaysAllowed.ApplicationRules.AddRule(application);
             }
 
             if (Enabled)
             {
-                foreach (IntPtr handle in GetVisibleWindows())
-                {
-                    string? executablePath = GetWindowExecutablePath(handle);
-
-                    if (executablePath == null)
-                    {
-                        return;
-                    }
-
-                    if (AlwaysAllowed.ApplicationRules.Contains(executablePath))
-                    {
-                        TryUnblockApplication(handle);
-                    }
-                }
+                UpdateAll();
             }
         }
 
-        public void RemoveAlwaysAllowedApplication(ApplicationInfo application)
+        public void RemoveAlwaysAllowed(ApplicationInfo application)
         {
             AlwaysAllowed.ApplicationRules.RemoveRule(application.Id);
 
             if (Enabled)
             {
-                foreach (IntPtr handle in GetVisibleWindows())
-                {
-                    string? executablePath = GetWindowExecutablePath(handle);
-
-                    if (executablePath == null || ActiveEvent == null || ActiveEvent.Rules == null)
-                    {
-                        return;
-                    }
-
-                    if (ActiveEvent.Rules.ApplicationRules.IsBlocked(executablePath))
-                    {
-                        TryBlockApplication(handle);
-                    }
-                }
+                UpdateAll();
             }
         }
 
-        public void AddAlwaysBlockedApplications(IEnumerable<ApplicationInfo> applications)
+        public void AddAlwaysBlocked(IEnumerable<ApplicationInfo> applications)
         {
             foreach (ApplicationInfo application in applications)
             {
                 AlwaysAllowed.ApplicationRules.RemoveRule(application.Id);
-
-                try
-                {
-                    AlwaysBlocked.ApplicationRules.AddRule(application);
-                }
-                catch { }
+                AlwaysBlocked.ApplicationRules.AddRule(application);
             }
 
             if (Enabled)
             {
-                foreach (IntPtr handle in GetVisibleWindows())
-                {
-                    string? executablePath = GetWindowExecutablePath(handle);
-
-                    if (executablePath == null)
-                    {
-                        return;
-                    }
-
-                    if (AlwaysBlocked.ApplicationRules.Contains(executablePath))
-                    {
-                        TryBlockApplication(handle);
-                    }
-                }
+                UpdateAll();
             }
         }
 
-        public void RemoveAlwaysBlockedApplication(ApplicationInfo application)
+        public void RemoveAlwaysBlocked(ApplicationInfo application)
         {
             AlwaysBlocked.ApplicationRules.RemoveRule(application.Id);
 
             if (Enabled)
             {
-                foreach (IntPtr handle in GetVisibleWindows())
-                {
-                    string? executablePath = GetWindowExecutablePath(handle);
-
-                    if (executablePath == null || ActiveEvent == null || ActiveEvent.Rules == null)
-                    {
-                        return;
-                    }
-
-                    if (!ActiveEvent.Rules.ApplicationRules.IsBlocked(executablePath))
-                    {
-                        TryUnblockApplication(handle);
-                    }
-                }
+                UpdateAll();
             }
+        }
+
+        public bool IsApplicationBlocked(IntPtr handle)
+        {
+            string? executablePath = GetWindowExecutablePath(handle);
+
+            if (executablePath == null)
+            {
+                return false;
+            }
+            else if (AlwaysAllowed.ApplicationRules.Contains(executablePath))
+            {
+                return false;
+            }
+            else if (AlwaysBlocked.ApplicationRules.Contains(executablePath))
+            {
+                return true;
+            }
+            else if (ActiveEvent == null)
+            {
+                return false;
+            }
+            else if (ActiveEvent.Type == EventType.OfflineBreak)
+            {
+                return true;
+            }
+            else if (ActiveEvent.Rules != null && ActiveEvent.Rules.ApplicationRules.IsBlocked(executablePath))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public void UpdateAll()
         {
             foreach (IntPtr handle in GetVisibleWindows())
             {
-                UpdateApplication(handle);
+                if (IsApplicationBlocked(handle))
+                {
+                    TryBlockApplication(handle);
+                }
+                else
+                {
+                    TryUnblockApplication(handle);
+                }
+            }
+
+            if (Application.Current.MainWindow.IsVisible)
+            {
+                SetWindowPos(new WindowInteropHelper(Application.Current.MainWindow).Handle, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
             }
         }
 
-        public void UpdateApplication(IntPtr handle)
-        {
-            string? executablePath = GetWindowExecutablePath(handle);
-
-            if (executablePath == null)
-            {
-                return;
-            }
-
-            if (AlwaysAllowed.ApplicationRules.Contains(executablePath))
-            {
-                TryUnblockApplication(handle);
-                return;
-            }
-
-            if (AlwaysBlocked.ApplicationRules.Contains(executablePath))
-            {
-                TryBlockApplication(handle);
-                return;
-            }
-
-            if (ActiveEvent == null || ActiveEvent.Rules == null)
-            {
-                return;
-            }
-
-            if (ActiveEvent.Rules.ApplicationRules.IsBlocked(executablePath))
-            {
-                TryBlockApplication(handle);
-                return;
-            }
-
-
-            TryUnblockApplication(handle);
-        }
-
-        public void TryBlockApplication(IntPtr handle)
+        private void TryBlockApplication(IntPtr handle)
         {
             if (!BlockedApplicationOverlays.ContainsKey(handle))
             {
@@ -264,12 +211,40 @@ namespace Zarp.Core.Service
             }
         }
 
-        public void TryUnblockApplication(IntPtr handle)
+        private void TryUnblockApplication(IntPtr handle)
         {
-            if (BlockedApplicationOverlays.Remove(handle, out BlockedOverlayView? window))
+            if (BlockedApplicationOverlays.Remove(handle, out BlockedOverlayView? overlay))
             {
-                window.Close();
+                overlay.Close();
             }
+        }
+
+        public static IEnumerable<IntPtr> GetVisibleWindows()
+        {
+            List<IntPtr> visibleWindows = new List<IntPtr>(16);
+
+            EnumWindows((hWnd, lParam) =>
+            {
+                // Ignore invisible and minimized windows
+                if (!IsWindowVisible(hWnd) || IsIconic(hWnd))
+                {
+                    return true;
+                }
+
+                string? title = GetWindowTitle(hWnd);
+
+                // Ignore titleless windows
+                if (string.IsNullOrEmpty(title))
+                {
+                    return true;
+                }
+
+                visibleWindows.Add(hWnd);
+
+                return true;
+            }, IntPtr.Zero);
+
+            return visibleWindows;
         }
     }
 }

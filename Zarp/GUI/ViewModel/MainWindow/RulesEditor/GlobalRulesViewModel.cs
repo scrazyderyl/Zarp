@@ -16,7 +16,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             get { return _SelectedAllowedApplicationIndex; }
             set
             {
-                Core.Service.Zarp.Blocker.RemoveAlwaysAllowedApplication(AllowedApplications[value]);
+                Core.Service.Zarp.Blocker.RemoveAlwaysAllowed(AllowedApplications[value]);
                 AllowedApplications.RemoveAt(value);
             }
         }
@@ -27,7 +27,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             get { return _SelectedBlockedApplicationIndex; }
             set
             {
-                Core.Service.Zarp.Blocker.RemoveAlwaysBlockedApplication(BlockedApplications[value]);
+                Core.Service.Zarp.Blocker.RemoveAlwaysBlocked(BlockedApplications[value]);
                 BlockedApplications.RemoveAt(value);
             }
         }
@@ -55,11 +55,11 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
             if (list == AllowedApplications)
             {
-                Core.Service.Zarp.Blocker.AddAlwaysAllowedApplications(selector.Selected);
+                Core.Service.Zarp.Blocker.AddAlwaysAllowed(selector.Selected);
             }
             else
             {
-                Core.Service.Zarp.Blocker.AddAlwaysBlockedApplications(selector.Selected);
+                Core.Service.Zarp.Blocker.AddAlwaysBlocked(selector.Selected);
             }
 
             AllowedApplications = new ObservableCollection<ApplicationInfo>(Core.Service.Zarp.Blocker.AlwaysAllowed.ApplicationRules.GetRules());

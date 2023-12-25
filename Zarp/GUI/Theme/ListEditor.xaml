@@ -10,6 +10,12 @@
         </Style.Resources>
     </Style>
 
+    <DataTemplate x:Key="ListEntryWrap">
+        <Grid>
+            <TextBlock Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}" FontSize="14" TextWrapping="Wrap"></TextBlock>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="ItemWithIcon">
         <DockPanel>
             <Image DockPanel.Dock="Left" HorizontalAlignment="Left" Width="16" Margin="0,0,8,0" Source="{Binding Icon}"/>

@@ -21,7 +21,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
             TimeLimitsVM = new TimeLimitsViewModel();
             RewardsVM = new RewardsViewModel();
 
-            CurrentView = PresetsVM;
+            CurrentView = GlobalRulesVM;
 
             ChangeViewCommand = new RelayCommand(ChangeView);
         }
