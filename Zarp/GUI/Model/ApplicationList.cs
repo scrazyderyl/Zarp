@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using Zarp.Common.Cache;
 using Zarp.Core.Datatypes;
 
-namespace Zarp.GUI.Util
+namespace Zarp.GUI.Model
 {
-    public class ApplicationList : IListCache<ApplicationInfo>
+    internal class ApplicationList : IListCache<ApplicationInfo>
     {
         private static readonly string CommonStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu) + @"\Programs";
         private static readonly string UserStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + @"\Programs";

@@ -3,7 +3,7 @@ using Zarp.Common.Cache;
 using Zarp.Common.Util;
 using Zarp.Core.Datatypes;
 
-namespace Zarp.GUI.Util
+namespace Zarp.GUI.Model
 {
     public class StartMenuCache : DirectoryFileListCache<ApplicationInfo>
     {
@@ -18,7 +18,7 @@ namespace Zarp.GUI.Util
                 // Ignore uninstallers
                 if (shortcutName.Contains("Uninstall"))
                 {
-                    data = default(ApplicationInfo);
+                    data = default;
                     return false;
                 }
 
@@ -27,14 +27,14 @@ namespace Zarp.GUI.Util
                 // Ignore internet links
                 if (executablePath.Equals(string.Empty))
                 {
-                    data = default(ApplicationInfo);
+                    data = default;
                     return false;
                 }
 
                 // Broken shortcut
                 if (!File.Exists(executablePath))
                 {
-                    data = default(ApplicationInfo);
+                    data = default;
                     return false;
                 }
 
@@ -43,7 +43,7 @@ namespace Zarp.GUI.Util
                 // Ignore all files except .exe and .msc
                 if (!(extension.Equals(".exe") || extension.Equals(".msc")))
                 {
-                    data = default(ApplicationInfo);
+                    data = default;
                     return false;
                 }
 
@@ -52,7 +52,7 @@ namespace Zarp.GUI.Util
             }
             catch
             {
-                data = default(ApplicationInfo);
+                data = default;
                 return false;
             }
 

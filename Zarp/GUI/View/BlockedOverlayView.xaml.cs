@@ -71,7 +71,7 @@ namespace Zarp.GUI.View
         }
         private void OnClosed(object? sender, EventArgs e)
         {
-            Core.Service.Zarp.Blocker.WindowClosed(AttachedWindowHandle);
+            Core.App.Service.Blocker.WindowClosed(AttachedWindowHandle);
         }
 
         internal void MoveOverlayOverWindow()

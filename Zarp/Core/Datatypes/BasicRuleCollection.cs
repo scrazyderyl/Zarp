@@ -5,54 +5,55 @@ namespace Zarp.Core.Datatypes
     public class BasicRuleCollection<T> where T : BasicRule
     {
         public bool IsWhitelist;
+        public IEnumerable<T> Rules => _Rules.Values;
 
-        private Dictionary<string, T> Rules;
+        private Dictionary<string, T> _Rules;
 
         public BasicRuleCollection(bool isWhitelist)
         {
             IsWhitelist = isWhitelist;
-            Rules = new Dictionary<string, T>();
+            _Rules = new Dictionary<string, T>();
+        }
+
+        public BasicRuleCollection(BasicRuleCollection<T> basicRuleCollection)
+        {
+            IsWhitelist = basicRuleCollection.IsWhitelist;
+            _Rules = new Dictionary<string, T>(basicRuleCollection._Rules);
         }
 
         public void AddRule(T rule)
         {
-            Rules.TryAdd(rule.Id, rule);
+            _Rules.TryAdd(rule.Id, rule);
         }
 
         public void AddRules(IEnumerable<T> rules)
         {
             foreach (T rule in rules)
             {
-                Rules.TryAdd(rule.Id, rule);
+                _Rules.TryAdd(rule.Id, rule);
             }
         }
 
         public void RemoveRule(string id)
         {
-            Rules.Remove(id);
-        }
-
-        public IEnumerable<T> GetRules()
-        {
-            return Rules.Values;
+            _Rules.Remove(id);
         }
 
         public bool Contains(string id)
         {
-            return Rules.ContainsKey(id);
+            return _Rules.ContainsKey(id);
         }
 
         public bool IsBlocked(string id)
         {
             if (IsWhitelist)
             {
-                return !Rules.ContainsKey(id);
+                return !_Rules.ContainsKey(id);
             }
             else
             {
-                return Rules.ContainsKey(id);
+                return _Rules.ContainsKey(id);
             }
         }
-
     }
 }

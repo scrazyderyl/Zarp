@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using Zarp.Core.Datatypes;
-using Zarp.GUI.Util;
+using Zarp.GUI.DataTypes;
 using static Zarp.Common.Util.PInvoke;
 
 namespace Zarp.GUI.Model
 {
-    class ApplicationSelectorModel
+    internal class ApplicationSelectorModel
     {
         private static string WindowsPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 

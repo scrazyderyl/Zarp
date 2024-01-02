@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:Zarp"
              xmlns:viewModel="clr-namespace:Zarp.GUI.ViewModel"
              xmlns:view="clr-namespace:Zarp.GUI.View"
+             xmlns:converters="clr-namespace:Zarp.GUI.Converters"
              xmlns:mainWindowViewModel="clr-namespace:Zarp.GUI.ViewModel.MainWindow"
              xmlns:mainWindowView="clr-namespace:Zarp.GUI.View.MainWindow"
              xmlns:rulesEditorViewModel="clr-namespace:Zarp.GUI.ViewModel.MainWindow.RulesEditor"
@@ -26,6 +27,10 @@
                 <ResourceDictionary Source="GUI/Theme/MainWindow/RulesEditor/TabSelector.xaml"/>
                 <ResourceDictionary Source="GUI/Theme/BlockedOverlay/BlockedOverlayButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <converters:RulePresetConverter x:Key="RulePresetConverter"/>
+            <converters:FocusSessionPresetConverter x:Key="FocusSessionPresetConverter"/>
+            <converters:RewardPresetConverter x:Key="RewardPresetConverter"/>
 
             <DataTemplate DataType="{x:Type mainWindowViewModel:HomeViewModel}">
                 <mainWindowView:HomeView/>

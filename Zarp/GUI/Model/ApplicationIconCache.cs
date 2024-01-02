@@ -4,9 +4,9 @@ using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Zarp.Common.Cache;
 
-namespace Zarp.GUI.Util
+namespace Zarp.GUI.Model
 {
-    public class ApplicationIconCache : FileCache<BitmapSource?>
+    internal class ApplicationIconCache : FileCache<BitmapSource?>
     {
         public ApplicationIconCache() { }
 

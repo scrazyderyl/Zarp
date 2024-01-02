@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Zarp.GUI.Util
+namespace Zarp.GUI.DataTypes
 {
     internal class RelayCommand : ICommand
     {

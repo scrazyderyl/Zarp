@@ -1,4 +1,4 @@
-﻿using Zarp.GUI.Util;
+﻿using Zarp.GUI.DataTypes;
 using Zarp.GUI.ViewModel.MainWindow.RulesEditor;
 
 namespace Zarp.GUI.ViewModel.MainWindow
@@ -21,7 +21,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
             TimeLimitsVM = new TimeLimitsViewModel();
             RewardsVM = new RewardsViewModel();
 
-            CurrentView = GlobalRulesVM;
+            CurrentView = PresetsVM;
 
             ChangeViewCommand = new RelayCommand(ChangeView);
         }

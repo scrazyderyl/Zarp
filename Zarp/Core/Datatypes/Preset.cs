@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
-
-namespace Zarp.Core.Datatypes
+﻿namespace Zarp.Core.Datatypes
 {
-    public class Preset
+    public abstract class Preset
     {
         public string Name;
+
+        public Preset(string name)
+        {
+            Name = name;
+        }
+
+        public abstract Preset Duplicate(string name);
 
         public override string ToString()
         {

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using Zarp.Core.Datatypes;
-using Zarp.GUI.Util;
+using Zarp.GUI.DataTypes;
 using Zarp.GUI.View;
 
 namespace Zarp.GUI.ViewModel
@@ -34,13 +34,13 @@ namespace Zarp.GUI.ViewModel
             string name = Name.Trim();
             RulePreset newPreset = new RulePreset(name, IsWhitelist, IsWhitelist);
 
-            if (!Core.Service.Zarp.RulePresetManager.Add(newPreset))
+            if (!Core.App.Service.RulePresets.Add(newPreset))
             {
                 MessageBox.Show("A preset with the same name already exists.");
                 return;
             }
 
-            Core.Service.Zarp.DialogReturnValue = newPreset;
+            Core.App.Service.DialogReturnValue = newPreset;
 
             window.Close();
         }

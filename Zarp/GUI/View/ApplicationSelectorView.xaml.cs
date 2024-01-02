@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows;
 using Zarp.Core.Datatypes;
-using Zarp.GUI.Util;
+using Zarp.GUI.DataTypes;
 
 namespace Zarp.GUI.View
 {

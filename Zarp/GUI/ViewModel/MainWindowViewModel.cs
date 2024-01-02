@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using Zarp.GUI.Util;
+using Zarp.GUI.DataTypes;
 using Zarp.GUI.ViewModel.MainWindow;
 
 namespace Zarp.GUI.ViewModel

@@ -1,46 +1,59 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Zarp.Core.Datatypes
 {
     public class FocusSessionPreset : Preset
     {
         public int LoopCount { get; set; }
+        public IEnumerable<Event> Events => _Events;
 
-        private List<Event> Events;
+        private List<Event> _Events;
         private int Duration;
 
-        public FocusSessionPreset(string name, int loopCount)
+        public FocusSessionPreset(string name, int loopCount) : base(name)
         {
-            Name = name;
             LoopCount = loopCount;
 
-            Events = new List<Event>();
+            _Events = new List<Event>();
             Duration = 0;
+        }
+
+        public FocusSessionPreset(string name, FocusSessionPreset preset) : base(name)
+        {
+            LoopCount = preset.LoopCount;
+
+            _Events = new List<Event>(preset._Events.Count);
+
+            foreach (Event e in preset._Events)
+            {
+                _Events.Add(new Event(e));
+            }
+
+            Duration = preset.Duration;
         }
 
         public void NewEvent(Event _event)
         {
-            Events.Add(_event);
+            _Events.Add(_event);
             Duration += _event.Duration;
         }
 
         public void AddEventAtIndex(int index, Event _event)
         {
-            Events.Insert(index, _event);
+            _Events.Insert(index, _event);
             Duration += _event.Duration;
         }
 
         public void SwapEvents(int index1, int index2)
         {
-            Event temp = Events[index1];
-            Events[index1] = Events[index2];
-            Events[index2] = temp;
+            Event temp = _Events[index1];
+            _Events[index1] = _Events[index2];
+            _Events[index2] = temp;
         }
 
         public void RemoveEvent(int index)
         {
-            Events.RemoveAt(index);
+            _Events.RemoveAt(index);
         }
 
         public Event? GetEventByTime(int time)
@@ -53,7 +66,7 @@ namespace Zarp.Core.Datatypes
             time = time % Duration;
             int sumDuration = 0;
 
-            foreach (Event _event in Events)
+            foreach (Event _event in _Events)
             {
                 if (_event.DurationUnit == TimeUnit.Minutes)
                 {
@@ -75,12 +88,9 @@ namespace Zarp.Core.Datatypes
 
         public Event? GetEventByIndex(int index)
         {
-            return Events[index];
+            return _Events[index];
         }
 
-        public IEnumerable<Event> GetEvents()
-        {
-            return Events;
-        }
+        public override Preset Duplicate(string name) => new FocusSessionPreset(name, this);
     }
 }

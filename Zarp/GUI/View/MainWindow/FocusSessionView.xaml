@@ -5,24 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Zarp.GUI.View.MainWindow"
              xmlns:viewModel="clr-namespace:Zarp.GUI.ViewModel.MainWindow"
+             xmlns:userControls="clr-namespace:Zarp.GUI.UserControls"
              mc:Ignorable="d">
     <UserControl.DataContext>
         <viewModel:FocusSessionViewModel/>
     </UserControl.DataContext>
     <Grid Style="{StaticResource Page}">
         <StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <ComboBox x:Name="PresetSelector" HorizontalAlignment="Left" Width="200" ItemsSource="{Binding FocusSessionPresets}" SelectedIndex="{Binding SelectedFocusSessionIndex}" SelectionChanged="PresetChanged"/>
-                <Button Content="Start now" Margin="12,0,0,0"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <Button Content="Create" Command="{Binding CreatePresetCommand}"></Button>
-                <Button x:Name="RemoveButton" Content="Remove" IsEnabled="False" Margin="12,0,0,0" Command="{Binding RemovePresetCommand}"></Button>
-                <Button x:Name="RenameButton" Content="Rename" IsEnabled="False" Margin="12,0,0,0" Command="{Binding RenamePresetCommand}"></Button>
-                <Button x:Name="DuplicateButton" Content="Duplicate" IsEnabled="False" Margin="12,0,0,0" Command="{Binding DuplicatePresetCommand}"></Button>
-                <Button Content="Import" Margin="12,0,0,0" Command="{Binding ImportPresetCommand}"></Button>
-                <Button x:Name="ExportButton" Content="Export" IsEnabled="False" Margin="12,0,0,0" Command="{Binding ExportPresetCommand}"></Button>
-            </StackPanel>
+            <userControls:PresetSelector PresetCollection="{Binding PresetCollection}" CreateFunction="{Binding CreateFunction}" SelectedPreset="{Binding SelectedFocusSessionPreset, Converter={StaticResource FocusSessionPresetConverter}}"></userControls:PresetSelector>
             <StackPanel Orientation="Horizontal" Margin="0,30,0,0" Visibility="{Binding MainEditorVisibility}">
                 <StackPanel Width="200" HorizontalAlignment="Left">
                     <TextBlock Style="{StaticResource ControlLabel}">

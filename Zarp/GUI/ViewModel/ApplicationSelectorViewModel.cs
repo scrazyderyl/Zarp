@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using Zarp.Core.Datatypes;
+using Zarp.GUI.DataTypes;
 using Zarp.GUI.Model;
 using Zarp.GUI.Util;
 
@@ -122,16 +122,9 @@ namespace Zarp.GUI.ViewModel
 
         private void SelectExecutable(object? obj)
         {
-            OpenFileDialog fileDialog = new OpenFileDialog()
-            {
-                DefaultExt = ".exe",
-                Filter = "Executable files (*.exe)|*.exe",
-                Multiselect = true
-            };
+            string[] fileNames = FileDialogs.OpenExeMulti();
 
-            fileDialog.ShowDialog();
-
-            foreach (string fileName in fileDialog.FileNames)
+            foreach (string fileName in fileNames)
             {
                 if (!_OtherApplicationsUnique.Add(fileName))
                 {

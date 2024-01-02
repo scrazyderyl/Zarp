@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Zarp.GUI.Util
+namespace Zarp.GUI.DataTypes
 {
     internal class ObservableObject : INotifyPropertyChanged
     {

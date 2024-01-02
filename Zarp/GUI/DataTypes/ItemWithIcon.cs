@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace Zarp.GUI.Util
+namespace Zarp.GUI.DataTypes
 {
     public struct ItemWithIcon<T>
     {

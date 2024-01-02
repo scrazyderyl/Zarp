@@ -10,6 +10,7 @@ namespace Zarp.GUI.View
         public CreateRewardView()
         {
             InitializeComponent();
+            NameField.Focus();
         }
     }
 }

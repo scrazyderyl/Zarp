@@ -27,13 +27,13 @@
                         <MenuItem Header="_Open"/>
                         <MenuItem Header="_Export"/>
                         <Separator/>
-                        <MenuItem Header="_Exit"/>
+                        <MenuItem Header="E_xit"/>
                     </MenuItem>
                     <MenuItem Header="_Session">
                         <MenuItem Header="_Start"/>
                         <MenuItem Header="_End" IsEnabled="False"/>
                         <MenuItem Header="_Pause" IsEnabled="False"/>
-                        <MenuItem Header="_Extend" IsEnabled="False"/>
+                        <MenuItem Header="E_xtend" IsEnabled="False"/>
                     </MenuItem>
                     <MenuItem Header="_Help">
                         <MenuItem Header="_Help"/>

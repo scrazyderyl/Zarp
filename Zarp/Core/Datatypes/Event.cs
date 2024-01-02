@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Zarp.Core.Datatypes
+﻿namespace Zarp.Core.Datatypes
 {
 
     public class Event
@@ -22,6 +16,15 @@ namespace Zarp.Core.Datatypes
             DurationUnit = unit;
             Type = type;
             Rules = rules;
+        }
+
+        public Event(Event e)
+        {
+            Name = e.Name;
+            Duration = e.Duration;
+            DurationUnit = e.DurationUnit;
+            Type = e.Type;
+            Rules = e.Rules;
         }
 
         public override string ToString()

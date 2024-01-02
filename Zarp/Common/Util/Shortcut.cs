@@ -81,14 +81,14 @@ namespace Zarp.Common.Util
         [ComImport(), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("000214F9-0000-0000-C000-000000000046")]
         interface IShellLinkW
         {
-            uint GetPath([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile, int cchMaxPath, out WIN32_FIND_DATAW pfd, SLGP_FLAGS fFlags);
+            uint GetPath([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile, int cch, out WIN32_FIND_DATAW pfd, SLGP_FLAGS fFlags);
             uint GetIDList(out IntPtr ppidl);
             uint SetIDList(IntPtr pidl);
-            uint GetDescription([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszName, int cchMaxName);
+            uint GetDescription([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszName, int cch);
             uint SetDescription([MarshalAs(UnmanagedType.LPWStr)] string pszName);
-            uint GetWorkingDirectory([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszDir, int cchMaxPath);
+            uint GetWorkingDirectory([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszDir, int cch);
             uint SetWorkingDirectory([MarshalAs(UnmanagedType.LPWStr)] string pszDir);
-            uint GetArguments([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszArgs, int cchMaxPath);
+            uint GetArguments([Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszArgs, int cch);
             uint SetArguments([MarshalAs(UnmanagedType.LPWStr)] string pszArgs);
             uint GetHotkey(out short pwHotkey);
             uint SetHotkey(short wHotkey);

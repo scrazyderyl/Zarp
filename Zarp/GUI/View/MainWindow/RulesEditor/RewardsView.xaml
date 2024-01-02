@@ -5,24 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Zarp.GUI.View.MainWindow.RulesEditor"
              xmlns:viewModel="clr-namespace:Zarp.GUI.ViewModel.MainWindow.RulesEditor"
+             xmlns:userControls="clr-namespace:Zarp.GUI.UserControls"
              mc:Ignorable="d">
     <UserControl.DataContext>
         <viewModel:RewardsViewModel/>
     </UserControl.DataContext>
     <Grid Style="{StaticResource Tab}">
         <StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <ComboBox x:Name="PresetSelector" Width="200" HorizontalAlignment="Left" ItemsSource="{Binding RewardPresets}" SelectedIndex="{Binding SelectedRewardPresetIndex}" SelectionChanged="PresetChanged"></ComboBox>
-                <CheckBox Content="Enabled" IsChecked="{Binding RewardEnabled}" Visibility="{Binding EditorVisibility}" VerticalAlignment="Center" Margin="16,0,0,0"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <Button Content="Create" Command="{Binding CreatePresetCommand}"></Button>
-                <Button x:Name="RemoveButton" Content="Remove" IsEnabled="False" Margin="12,0,0,0" Command="{Binding RemovePresetCommand}"></Button>
-                <Button x:Name="RenameButton" Content="Rename" IsEnabled="False" Margin="12,0,0,0" Command="{Binding RenamePresetCommand}"></Button>
-                <Button x:Name="DuplicateButton" Content="Duplicate" IsEnabled="False" Margin="12,0,0,0" Command="{Binding DuplicatePresetCommand}"></Button>
-                <Button Content="Import" Margin="12,0,0,0" Command="{Binding ImportPresetCommand}"></Button>
-                <Button x:Name="ExportButton" Content="Export" IsEnabled="False" Margin="12,0,0,0" Command="{Binding ExportPresetCommand}"></Button>
-            </StackPanel>
+            <userControls:PresetSelector PresetCollection="{Binding PresetCollection}" CreateFunction="{Binding CreateFunction}" SelectedPreset="{Binding SelectedRewardPreset, Converter={StaticResource RewardPresetConverter}}"></userControls:PresetSelector>
+            <CheckBox Content="Enabled" IsChecked="{Binding RewardEnabled}" Visibility="{Binding EditorVisibility}" Margin="0,8,0,0"/>
             <StackPanel Margin="0,20,0,0" Visibility="{Binding EditorVisibility}">
                 <TextBlock Text="Criteria" Style="{StaticResource ControlLabel}" Margin="0,12,0,0"/>
                 <StackPanel Orientation="Horizontal">
@@ -33,10 +24,10 @@
                     <RadioButton GroupName="Criteria" Content="Active Time" Margin="4,0,0,0" VerticalAlignment="Center" IsChecked="{Binding ActiveTimeOptionSelected}"/>
                     <StackPanel Orientation="Horizontal" Visibility="{Binding ActiveTimeInputVisibility}">
                         <TextBox Width="36" Margin="12,0,0,0" FontSize="16" MaxLength="3" Text="{Binding ActiveTime, UpdateSourceTrigger=PropertyChanged}"/>
-                    <ComboBox Margin="4,0,0,0" SelectedIndex="{Binding ActiveTimeUnitsIndex}">
-                        <ComboBoxItem Content="Minutes" IsSelected="True"/>
-                        <ComboBoxItem Content="Hours"/>
-                    </ComboBox>
+                        <ComboBox Margin="4,0,0,0" SelectedIndex="{Binding ActiveTimeUnitsIndex}">
+                            <ComboBoxItem Content="Minutes" IsSelected="True"/>
+                            <ComboBoxItem Content="Hours"/>
+                        </ComboBox>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,20,0,0">

@@ -9,7 +9,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
 
         public ScheduleViewModel()
         {
-            FocusSessions = new ObservableCollection<FocusSessionPreset>(Core.Service.Zarp.FocusSessionPresetManager.GetPresets());
+            FocusSessions = new ObservableCollection<FocusSessionPreset>();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using Zarp.Core.Datatypes;
-using Zarp.GUI.Util;
+using Zarp.GUI.DataTypes;
 using Zarp.GUI.View;
 
 namespace Zarp.GUI.ViewModel
@@ -30,13 +30,13 @@ namespace Zarp.GUI.ViewModel
             string name = Name.Trim();
             RewardPreset newPreset = new RewardPreset(name);
 
-            if (!Core.Service.Zarp.RewardPresetManager.Add(newPreset))
+            if (!Core.App.Service.RewardPresets.Add(newPreset))
             {
                 MessageBox.Show("A preset with the same name already exists.");
                 return;
             }
 
-            Core.Service.Zarp.DialogReturnValue = newPreset;
+            Core.App.Service.DialogReturnValue = newPreset;
 
             window.Close();
         }

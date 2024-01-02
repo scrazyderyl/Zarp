@@ -1,29 +1,25 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
+using Zarp.Core.App;
 using Zarp.Core.Datatypes;
-using Zarp.GUI.Util;
+using Zarp.GUI.DataTypes;
 using Zarp.GUI.View;
 
 namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 {
     internal class RulePresetsViewModel : ObservableObject
     {
-        public RelayCommand CreatePresetCommand { get; set; }
-        public RelayCommand RemovePresetCommand { get; set; }
-        public RelayCommand RenamePresetCommand { get; set; }
-        public RelayCommand DuplicatePresetCommand { get; set; }
-        public RelayCommand ImportPresetCommand { get; set; }
-        public RelayCommand ExportPresetCommand { get; set; }
-        public RelayCommand OpenApplicationSelectorCommand { get; set; }
+        public static PresetCollection PresetCollection => Service.RulePresets;
+        public static Func<Preset?> CreateFunction => Create;
 
-        public ObservableCollection<RulePreset> RulePresets { get; set; }
-        private int _SelectedPresetIndex;
-        public int SelectedPresetIndex
+        private RulePreset? _SelectedPreset;
+        public RulePreset? SelectedPreset
         {
-            get { return _SelectedPresetIndex; }
+            get => _SelectedPreset;
             set
             {
-                _SelectedPresetIndex = value;
+                _SelectedPreset = value;
                 OnPresetSelectionChanged();
             }
         }
@@ -34,36 +30,36 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
         private int _SelectedRuleIndex;
         public int SelectedRuleIndex
         {
-            get { return _SelectedRuleIndex; }
+            get => _SelectedRuleIndex;
             set
             {
-                RulePresets[_SelectedPresetIndex].ApplicationRules.RemoveRule(Rules[value].Id);
+                SelectedPreset!.ApplicationRules.RemoveRule(Rules[value].Id);
                 Rules.RemoveAt(value);
             }
         }
 
+        public RelayCommand OpenApplicationSelectorCommand { get; set; }
+
         public RulePresetsViewModel()
         {
-            CreatePresetCommand = new RelayCommand(CreatePreset);
-            RemovePresetCommand = new RelayCommand(RemovePreset);
-            RenamePresetCommand = new RelayCommand(RenamePreset);
-            DuplicatePresetCommand = new RelayCommand(DuplicatePreset);
-            ImportPresetCommand = new RelayCommand(ImportPreset);
-            ExportPresetCommand = new RelayCommand(ExportPreset);
-            OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationSelector);
-
-            RulePresets = new ObservableCollection<RulePreset>(Core.Service.Zarp.RulePresetManager.GetPresets());
-            _SelectedPresetIndex = -1;
-
             EditorVisibility = Visibility.Hidden;
             Rules = new ObservableCollection<ApplicationInfo>();
             _SelectedRuleIndex = -1;
             RulesetPolicy = string.Empty;
+
+            OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationSelector);
+        }
+
+        public static Preset? Create()
+        {
+            Service.DialogReturnValue = null;
+            new CreateRulePresetView().ShowDialog();
+            return (Preset?)Service.DialogReturnValue;
         }
 
         private void OnPresetSelectionChanged()
         {
-            if (SelectedPresetIndex == -1)
+            if (_SelectedPreset == null)
             {
                 Rules = new ObservableCollection<ApplicationInfo>();
                 RulesetPolicy = string.Empty;
@@ -71,8 +67,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             }
             else
             {
-                RulePreset SelectedPreset = RulePresets[SelectedPresetIndex];
-                Rules = new ObservableCollection<ApplicationInfo>(SelectedPreset.ApplicationRules.GetRules());
+                Rules = new ObservableCollection<ApplicationInfo>(SelectedPreset!.ApplicationRules.Rules);
                 RulesetPolicy = SelectedPreset.ApplicationRules.IsWhitelist ? "Block all except" : "Allow all except";
                 EditorVisibility = Visibility.Visible;
             }
@@ -80,54 +75,6 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             OnPropertyChanged(nameof(Rules));
             OnPropertyChanged(nameof(RulesetPolicy));
             OnPropertyChanged(nameof(EditorVisibility));
-        }
-
-        public void CreatePreset(object? parameter)
-        {
-            Core.Service.Zarp.DialogReturnValue = null;
-            new CreateRulePresetView().ShowDialog();
-            RulePreset? newPreset = (RulePreset?)Core.Service.Zarp.DialogReturnValue;
-
-            if (newPreset == null)
-            {
-                return;
-            }
-
-            RulePresets = new ObservableCollection<RulePreset>(Core.Service.Zarp.RulePresetManager.GetPresets());
-            SelectedPresetIndex = RulePresets.Count - 1;
-            OnPropertyChanged(nameof(RulePresets));
-            OnPropertyChanged(nameof(SelectedPresetIndex));
-        }
-
-        public void RemovePreset(object? parameter)
-        {
-            RulePreset SelectedPreset = RulePresets[SelectedPresetIndex];
-            Core.Service.Zarp.RulePresetManager.Remove(SelectedPreset.Name);
-            int newIndex = SelectedPresetIndex - 1;
-            RulePresets = new ObservableCollection<RulePreset>(Core.Service.Zarp.RulePresetManager.GetPresets());
-            OnPropertyChanged(nameof(RulePresets));
-            SelectedPresetIndex = newIndex == -1 && RulePresets.Count > 0 ? 0 : newIndex;
-            OnPropertyChanged(nameof(SelectedPresetIndex));
-        }
-
-        public void RenamePreset(object? parmaeter)
-        {
-
-        }
-
-        public void DuplicatePreset(object? parameter)
-        {
-
-        }
-
-        public void ImportPreset(object? parameter)
-        {
-
-        }
-
-        public void ExportPreset(object? parameter)
-        {
-
         }
 
         public void OpenApplicationSelector(object? parameter)
@@ -140,9 +87,8 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                 return;
             }
 
-            RulePreset SelectedPreset = RulePresets[SelectedPresetIndex];
-            SelectedPreset.ApplicationRules.AddRules(selector.Selected);
-            Rules = new ObservableCollection<ApplicationInfo>(SelectedPreset.ApplicationRules.GetRules());
+            SelectedPreset!.ApplicationRules.AddRules(selector.Selected);
+            Rules = new ObservableCollection<ApplicationInfo>(SelectedPreset.ApplicationRules.Rules);
 
             OnPropertyChanged(nameof(Rules));
         }

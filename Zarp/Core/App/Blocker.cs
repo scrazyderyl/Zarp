@@ -6,7 +6,7 @@ using Zarp.Core.Datatypes;
 using Zarp.GUI.View;
 using static Zarp.Common.Util.PInvoke;
 
-namespace Zarp.Core.Service
+namespace Zarp.Core.App
 {
     internal class Blocker
     {
@@ -23,8 +23,8 @@ namespace Zarp.Core.Service
 
         public Blocker()
         {
-            AlwaysAllowed = new RulePreset("Always Allowed");
-            AlwaysBlocked = new RulePreset("Always Blocked");
+            AlwaysAllowed = new RulePreset();
+            AlwaysBlocked = new RulePreset();
 
             BlockedApplicationOverlays = new Dictionary<IntPtr, BlockedOverlayView>();
             EnabledRewards = new Dictionary<string, RewardPreset>();
