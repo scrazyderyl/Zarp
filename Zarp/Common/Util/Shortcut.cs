@@ -111,7 +111,7 @@ namespace Zarp.Common.Util
         {
             StringBuilder resolvedFilename = new StringBuilder(MAX_PATH);
             ShellLink link = new ShellLink();
-            ((IPersistFile)link).Load(filename, (int)(STGM_FLAGS.STGM_READ));
+            ((IPersistFile)link).Load(filename, (int)STGM_FLAGS.STGM_READ);
             uint result = ((IShellLinkW)link).GetPath(resolvedFilename, resolvedFilename.Capacity, out WIN32_FIND_DATAW data, 0);
 
             if (result == S_OK || result == S_FALSE)

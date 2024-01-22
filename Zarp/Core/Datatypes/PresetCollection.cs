@@ -6,7 +6,7 @@ namespace Zarp.Core.Datatypes
 {
     public interface PresetCollection : IEnumerable<string>
     {
-        public Preset Get(string name);
+        public Preset this[string name] { get; set; }
         public bool Add(Preset preset);
         public bool Remove(string name);
         public bool Rename(string name, string newName);
@@ -20,7 +20,12 @@ namespace Zarp.Core.Datatypes
 
         }
 
-        public Preset Get(string name) => this[name];
+        Preset PresetCollection.this[string name]
+        {
+            get => this[name];
+            set => this[name] = (T)value;
+        }
+
         public bool Add(Preset preset) => TryAdd(preset.Name, (T)preset);
 
         public bool Rename(string oldName, string newName)

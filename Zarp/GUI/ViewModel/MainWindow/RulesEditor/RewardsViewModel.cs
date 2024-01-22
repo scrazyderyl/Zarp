@@ -80,7 +80,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                 }
                 else
                 {
-                    _SelectedRewardPreset!.CompletionRequirement = (FocusSessionPreset)Service.FocusSessionPresets.Get((string)FocusSessionPresets[_SelectedFocusSessionIndex]);
+                    _SelectedRewardPreset!.CompletionRequirement = Service.FocusSessionPresets[FocusSessionPresets[_SelectedFocusSessionIndex]];
                 }
             }
         }

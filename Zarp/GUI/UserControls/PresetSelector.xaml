@@ -8,7 +8,7 @@
     <Grid>
         <StackPanel>
             <StackPanel Orientation="Horizontal">
-                <ComboBox x:Name="Selector" HorizontalAlignment="Left" Width="200" SelectionChanged="PresetChanged"/>
+                <ComboBox x:Name="Selector" HorizontalAlignment="Left" Width="200" SelectionChanged="Selector_SelectionChanged"/>
                 <Menu x:Name="Options" BorderThickness="1" BorderBrush="#FFACACAC" Margin="4,0,0,0" VerticalAlignment="Center" IsEnabled="False">
                     <MenuItem Header="▼">
                         <MenuItem Header="Rename" Click="Rename_Click"/>

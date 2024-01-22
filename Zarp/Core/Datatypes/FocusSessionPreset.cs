@@ -6,16 +6,20 @@ namespace Zarp.Core.Datatypes
     {
         public int LoopCount { get; set; }
         public IEnumerable<Event> Events => _Events;
+        public List<Event> _Events;
+        public int Duration
+        {
+            get => _Duration;
+        }
 
-        private List<Event> _Events;
-        private int Duration;
+        private int _Duration;
 
         public FocusSessionPreset(string name, int loopCount) : base(name)
         {
             LoopCount = loopCount;
 
             _Events = new List<Event>();
-            Duration = 0;
+            _Duration = 0;
         }
 
         public FocusSessionPreset(string name, FocusSessionPreset preset) : base(name)
@@ -29,19 +33,19 @@ namespace Zarp.Core.Datatypes
                 _Events.Add(new Event(e));
             }
 
-            Duration = preset.Duration;
+            _Duration = preset._Duration;
         }
 
         public void NewEvent(Event _event)
         {
             _Events.Add(_event);
-            Duration += _event.Duration;
+            _Duration += _event.Duration;
         }
 
         public void AddEventAtIndex(int index, Event _event)
         {
             _Events.Insert(index, _event);
-            Duration += _event.Duration;
+            _Duration += _event.Duration;
         }
 
         public void SwapEvents(int index1, int index2)
@@ -58,12 +62,12 @@ namespace Zarp.Core.Datatypes
 
         public Event? GetEventByTime(int time)
         {
-            if (time / Duration > LoopCount)
+            if (time / _Duration > LoopCount)
             {
                 return null;
             }
 
-            time = time % Duration;
+            time = time % _Duration;
             int sumDuration = 0;
 
             foreach (Event _event in _Events)

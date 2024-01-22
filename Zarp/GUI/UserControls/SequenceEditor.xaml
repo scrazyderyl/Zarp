@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="Zarp.GUI.UserControls.SequenceEditor"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Zarp.GUI.UserControls"
+             mc:Ignorable="d">
+    <Grid>
+        <StackPanel>
+            <ListBox x:Name="Selector" MinHeight="30" ItemTemplate="{StaticResource ListEntryWrap}" SelectionChanged="Selector_SelectionChanged"/>
+            <UniformGrid Rows="1">
+                <Button x:Name="Add" Content="+" IsEnabled="False" Click="Add_Click"/>
+                <Button x:Name="Remove" Content="−" IsEnabled="False" Click="Remove_Click"/>
+                <Button x:Name="MoveUp" Content="▲" IsEnabled="False" Click="MoveUp_Click"/>
+                <Button x:Name="MoveDown" Content="▼" IsEnabled="False" Click="MoveDown_Click"/>
+            </UniformGrid>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -11,5 +11,10 @@ namespace Zarp.GUI.View.MainWindow
         {
             InitializeComponent();
         }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            EventsSequence.NameChanged();
+        }
     }
 }

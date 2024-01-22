@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Windows;
 using Zarp.Core.App;
@@ -26,27 +27,17 @@ namespace Zarp.GUI.ViewModel.MainWindow
 
         public Visibility MainEditorVisibility { get; set; }
 
-        public ObservableCollection<Event> Events { get; set; }
-        public string? LoopCount { get; set; }
-        public int _SelectedEventIndex;
-        public int SelectedEventIndex
+        public IList? EventList { get; set; }
+        private Event? _SelectedEvent;
+        public Event? SelectedEvent
         {
-            get { return _SelectedEventIndex; }
+            get => _SelectedEvent;
             set
             {
-                _SelectedEventIndex = value;
+                _SelectedEvent = value;
                 OnEventSelectionChanged();
             }
         }
-
-        public RelayCommand AddEventCommand { get; set; }
-        public RelayCommand RemoveEventCommand { get; set; }
-        public RelayCommand MoveUpCommand { get; set; }
-        public RelayCommand MoveDownCommand { get; set; }
-        public bool IsAddEventButtonEnabled { get; set; }
-        public bool IsRemoveEventButtonEnabled { get; set; }
-        public bool IsMoveUpButtonEnabled { get; set; }
-        public bool IsMoveDownButtonEnabled { get; set; }
 
         public ObservableCollection<string> RulePresets { get; set; }
         private bool _IsEventActivity;
@@ -77,12 +68,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
             set
             {
                 _EventName = value;
-                Events[SelectedEventIndex].Name = value;
-                int index = SelectedEventIndex;
-                Events = new ObservableCollection<Event>(_SelectedFocusSessionPreset.Events);
-                _SelectedEventIndex = index;
-                OnPropertyChanged(nameof(Events));
-                OnPropertyChanged(nameof(SelectedEventIndex));
+                _SelectedEvent!.Name = value!;
                 OnEventSelectionChanged();
             }
         }
@@ -106,7 +92,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
                     if (duration > 0)
                     {
                         _EventDuration = value;
-                        Events[SelectedEventIndex].Duration = duration;
+                        _SelectedEvent!.Duration = duration;
                     }
                 }
                 catch { }
@@ -119,7 +105,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
             set
             {
                 _EventDurationUnitsIndex = value;
-                Events[SelectedEventIndex].DurationUnit = _EventDurationUnitsIndex == 0 ? TimeUnit.Minutes : TimeUnit.Hours;
+                _SelectedEvent!.DurationUnit = _EventDurationUnitsIndex == 0 ? TimeUnit.Minutes : TimeUnit.Hours;
             }
         }
         private int _SelectedRulePresetIndex;
@@ -132,11 +118,11 @@ namespace Zarp.GUI.ViewModel.MainWindow
 
                 if (value == -1)
                 {
-                    Events[_SelectedEventIndex].Rules = null;
+                    _SelectedEvent!.Rules = null;
                 }
                 else
                 {
-                    Events[_SelectedEventIndex].Rules = (RulePreset)Service.RulePresets.Get((string)RulePresets[_SelectedRulePresetIndex]);
+                    _SelectedEvent!.Rules = Service.RulePresets[RulePresets[_SelectedRulePresetIndex]];
                 }
             }
         }
@@ -146,17 +132,6 @@ namespace Zarp.GUI.ViewModel.MainWindow
         public FocusSessionViewModel()
         {
             MainEditorVisibility = Visibility.Hidden;
-
-            Events = new ObservableCollection<Event>();
-            _SelectedEventIndex = -1;
-            IsAddEventButtonEnabled = false;
-            IsRemoveEventButtonEnabled = false;
-            IsMoveUpButtonEnabled = false;
-            IsMoveDownButtonEnabled = false;
-            AddEventCommand = new RelayCommand(AddEvent);
-            RemoveEventCommand = new RelayCommand(RemoveEvent);
-            MoveUpCommand = new RelayCommand(MoveUp);
-            MoveDownCommand = new RelayCommand(MoveDown);
 
             RulePresets = new ObservableCollection<string>(Service.RulePresets);
             _SelectedRulePresetIndex = -1;
@@ -175,77 +150,29 @@ namespace Zarp.GUI.ViewModel.MainWindow
         {
             if (_SelectedFocusSessionPreset == null)
             {
-                IsAddEventButtonEnabled = false;
+                EventList = null;
                 MainEditorVisibility = Visibility.Hidden;
             }
             else
             {
-                IsAddEventButtonEnabled = true;
-                FocusSessionPreset SelectedFocusSession = _SelectedFocusSessionPreset;
-                Events = new ObservableCollection<Event>(SelectedFocusSession.Events);
-                LoopCount = SelectedFocusSession.LoopCount.ToString();
+                EventList = SelectedFocusSessionPreset!._Events;
                 MainEditorVisibility = Visibility.Visible;
-                OnPropertyChanged(nameof(Events));
-                OnPropertyChanged(nameof(LoopCount));
             }
 
-            IsRemoveEventButtonEnabled = false;
-            IsMoveUpButtonEnabled = false;
-            IsMoveDownButtonEnabled = false;
-
-            OnPropertyChanged(nameof(IsAddEventButtonEnabled));
-            OnPropertyChanged(nameof(IsRemoveEventButtonEnabled));
-            OnPropertyChanged(nameof(IsMoveUpButtonEnabled));
-            OnPropertyChanged(nameof(IsMoveDownButtonEnabled));
+            OnPropertyChanged(nameof(EventList));
             OnPropertyChanged(nameof(MainEditorVisibility));
         }
 
         void OnEventSelectionChanged()
         {
-            if (SelectedEventIndex == -1)
-            {
-                IsRemoveEventButtonEnabled = false;
-                IsMoveUpButtonEnabled = false;
-                IsMoveDownButtonEnabled = false;
-                EventEditorVisibility = Visibility.Hidden;
-                OnPropertyChanged(nameof(IsRemoveEventButtonEnabled));
-                OnPropertyChanged(nameof(EventEditorVisibility));
-                return;
-            }
-
-            IsRemoveEventButtonEnabled = true;
-
-            if (SelectedEventIndex == 0)
-            {
-                IsMoveUpButtonEnabled = false;
-            }
-            else
-            {
-                IsMoveUpButtonEnabled = true;
-            }
-
-            if (SelectedEventIndex == Events.Count - 1)
-            {
-                IsMoveDownButtonEnabled = false;
-            }
-            else
-            {
-                IsMoveDownButtonEnabled = true;
-            }
-
-            OnPropertyChanged(nameof(IsRemoveEventButtonEnabled));
-            OnPropertyChanged(nameof(IsMoveUpButtonEnabled));
-            OnPropertyChanged(nameof(IsMoveDownButtonEnabled));
-
-            Event SelectedEvent = Events[SelectedEventIndex];
-            _EventName = SelectedEvent.Name;
-            EventDuration = SelectedEvent.Duration.ToString();
-            EventDurationUnitsIndex = SelectedEvent.DurationUnit == TimeUnit.Minutes ? 0 : 1;
+            _EventName = _SelectedEvent!.Name;
+            EventDuration = _SelectedEvent.Duration.ToString();
+            EventDurationUnitsIndex = _SelectedEvent.DurationUnit == TimeUnit.Minutes ? 0 : 1;
             OnPropertyChanged(nameof(EventName));
             OnPropertyChanged(nameof(EventDuration));
             OnPropertyChanged(nameof(EventDurationUnitsIndex));
 
-            switch (SelectedEvent.Type)
+            switch (_SelectedEvent.Type)
             {
                 case EventType.Regular:
                     IsEventActivity = true;
@@ -261,7 +188,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
 
             OnPropertyChanged(nameof(ActivityParametersVisibility));
 
-            SelectedRulePresetIndex = SelectedEvent.Rules == null ? -1 : RulePresets.IndexOf(SelectedEvent.Rules.Name);
+            SelectedRulePresetIndex = _SelectedEvent.Rules == null ? -1 : RulePresets.IndexOf(_SelectedEvent.Rules.Name);
             EventEditorVisibility = Visibility.Visible;
             OnPropertyChanged(nameof(SelectedRulePresetIndex));
             OnPropertyChanged(nameof(EventEditorVisibility));
@@ -272,73 +199,15 @@ namespace Zarp.GUI.ViewModel.MainWindow
             if (IsEventActivity)
             {
                 ActivityParametersVisibility = Visibility.Visible;
-                Events[SelectedEventIndex].Type = EventType.Regular;
+                _SelectedEvent!.Type = EventType.Regular;
             }
             else
             {
                 ActivityParametersVisibility = Visibility.Collapsed;
-                Events[SelectedEventIndex].Type = EventType.OfflineBreak;
+                _SelectedEvent!.Type = EventType.OfflineBreak;
             }
 
             OnPropertyChanged(nameof(ActivityParametersVisibility));
-        }
-
-        public void AddEvent(object? parameter)
-        {
-            Event newEvent = new Event(string.Empty, 30, TimeUnit.Minutes, EventType.Regular, null);
-
-            if (SelectedEventIndex == -1)
-            {
-                _SelectedFocusSessionPreset!.NewEvent(newEvent);
-                _SelectedEventIndex = Events.Count;
-                Events.Add(newEvent);
-            }
-            else
-            {
-                int newIndex = SelectedEventIndex + 1;
-                _SelectedFocusSessionPreset!.AddEventAtIndex(SelectedEventIndex, newEvent);
-                Events.Insert(SelectedEventIndex + 1, newEvent);
-                _SelectedEventIndex = newIndex;
-            }
-
-            OnEventSelectionChanged();
-            OnPropertyChanged(nameof(SelectedEventIndex));
-            OnPropertyChanged(nameof(Events));
-        }
-
-        public void RemoveEvent(object? parameter)
-        {
-            int newIndex = SelectedEventIndex - 1;
-            _SelectedFocusSessionPreset!.RemoveEvent(SelectedEventIndex);
-            Events.RemoveAt(SelectedEventIndex);
-            SelectedEventIndex = newIndex == -1 && Events.Count > 0 ? 0 : newIndex;
-            OnPropertyChanged(nameof(SelectedEventIndex));
-        }
-
-        public void MoveUp(object? parameter)
-        {
-            _SelectedFocusSessionPreset!.SwapEvents(SelectedEventIndex, SelectedEventIndex - 1);
-
-            int newIndex = SelectedEventIndex;
-            Event temp = Events[SelectedEventIndex];
-            Events[SelectedEventIndex] = Events[SelectedEventIndex - 1];
-            Events[newIndex - 1] = temp;
-
-            SelectedEventIndex = newIndex - 1;
-            OnPropertyChanged(nameof(SelectedEventIndex));
-        }
-
-        public void MoveDown(object? parameter)
-        {
-            _SelectedFocusSessionPreset!.SwapEvents(SelectedEventIndex, SelectedEventIndex + 1);
-
-            int oldIndex = SelectedEventIndex;
-            Event temp = Events[SelectedEventIndex];
-            Events[SelectedEventIndex] = Events[SelectedEventIndex + 1];
-            Events[oldIndex + 1] = temp;
-
-            SelectedEventIndex = oldIndex + 1;
-            OnPropertyChanged(nameof(SelectedEventIndex));
         }
 
         public void EventTypeChanged()

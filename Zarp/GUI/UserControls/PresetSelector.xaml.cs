@@ -15,7 +15,7 @@ namespace Zarp.GUI.UserControls
     {
         public static readonly DependencyProperty PresetCollectionProperty = DependencyProperty.Register(nameof(PresetCollection), typeof(PresetCollection), typeof(PresetSelector), new FrameworkPropertyMetadata(OnPresetCollectionChanged));
 
-        public PresetCollection PresetCollection
+        public PresetCollection? PresetCollection
         {
             get => (PresetCollection)GetValue(PresetCollectionProperty);
             set => SetValue(PresetCollectionProperty, value);
@@ -28,7 +28,15 @@ namespace Zarp.GUI.UserControls
 
         protected void OnPresetCollectionChanged()
         {
-            PresetList = new ObservableCollection<string>(PresetCollection);
+            if (PresetCollection == null)
+            {
+                PresetList = new ObservableCollection<string>();
+            }
+            else
+            {
+                PresetList = new ObservableCollection<string>(PresetCollection);
+            }
+
             Selector.ItemsSource = PresetList;
         }
 
@@ -55,12 +63,13 @@ namespace Zarp.GUI.UserControls
 
         private void OnSelectedPresetChanged()
         {
-            if (PresetList != null && SelectedPreset != null)
+            if (SelectedItemChangedExternally && PresetList != null && SelectedPreset != null)
             {
                 Selector.SelectedIndex = PresetList.IndexOf(SelectedPreset.Name);
             }
         }
 
+        private bool SelectedItemChangedExternally = true;
         public ObservableCollection<string>? PresetList;
 
         public PresetSelector()
@@ -68,8 +77,10 @@ namespace Zarp.GUI.UserControls
             InitializeComponent();
         }
 
-        private void PresetChanged(object Sender, RoutedEventArgs e)
+        private void Selector_SelectionChanged(object Sender, RoutedEventArgs e)
         {
+            SelectedItemChangedExternally = false;
+
             if (Selector.SelectedIndex == -1)
             {
                 Options.IsEnabled = false;
@@ -78,8 +89,10 @@ namespace Zarp.GUI.UserControls
             else
             {
                 Options.IsEnabled = true;
-                SelectedPreset = PresetCollection.Get((string)Selector.SelectedItem);
+                SelectedPreset = PresetCollection![(string)Selector.SelectedItem];
             }
+
+            SelectedItemChangedExternally = true;
         }
 
         private void Create_Click(object sender, RoutedEventArgs e)
@@ -88,7 +101,7 @@ namespace Zarp.GUI.UserControls
 
             if (result != null)
             {
-                PresetCollection.Add(result);
+                PresetCollection!.Add(result);
                 PresetList?.Add(result.Name);
                 Selector.SelectedIndex = Selector.Items.Count - 1;
             }
@@ -106,7 +119,7 @@ namespace Zarp.GUI.UserControls
 
         private void Rename_Click(object sender, RoutedEventArgs e)
         {
-            RenamePresetView renameView = new RenamePresetView(PresetCollection);
+            RenamePresetView renameView = new RenamePresetView(PresetCollection!);
             renameView.ShowDialog();
 
             if (!renameView.Confirmed)
@@ -114,7 +127,7 @@ namespace Zarp.GUI.UserControls
                 return;
             }
 
-            if (renameView.Confirmed && PresetCollection.Rename(SelectedPreset!.Name, renameView.ChosenName))
+            if (renameView.Confirmed && PresetCollection!.Rename(SelectedPreset!.Name, renameView.ChosenName))
             {
                 PresetList?.RemoveAt(Selector.SelectedIndex);
                 PresetList?.Add(renameView.ChosenName);
@@ -124,7 +137,7 @@ namespace Zarp.GUI.UserControls
 
         private void Duplicate_Click(object sender, RoutedEventArgs e)
         {
-            RenamePresetView renameView = new RenamePresetView(PresetCollection);
+            RenamePresetView renameView = new RenamePresetView(PresetCollection!);
             renameView.ShowDialog();
 
             if (!renameView.Confirmed)
@@ -132,7 +145,7 @@ namespace Zarp.GUI.UserControls
                 return;
             }
 
-            PresetCollection.Add(SelectedPreset!.Duplicate(renameView.ChosenName));
+            PresetCollection!.Add(SelectedPreset!.Duplicate(renameView.ChosenName));
             PresetList?.Add(renameView.ChosenName);
             Selector.SelectedIndex = Selector.Items.Count - 1;
         }
@@ -149,7 +162,7 @@ namespace Zarp.GUI.UserControls
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            PresetCollection.Remove(SelectedPreset!.Name);
+            PresetCollection!.Remove(SelectedPreset!.Name);
             int selectedIndex = Selector.SelectedIndex;
             PresetList?.RemoveAt(selectedIndex);
             Selector.SelectedIndex = Selector.Items.Count == selectedIndex ? Selector.Items.Count - 1 : selectedIndex;
