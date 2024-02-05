@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="Application Selector"
         SizeToContent="WidthAndHeight"
-        ResizeMode="CanMinimize">
+        ResizeMode="NoResize">
     <Window.DataContext>
         <viewModel:ApplicationSelectorViewModel/>
     </Window.DataContext>

@@ -107,8 +107,8 @@ namespace Zarp.Core.App
         {
             foreach (ApplicationInfo application in applications)
             {
-                AlwaysBlocked.ApplicationRules.RemoveRule(application.Id);
-                AlwaysAllowed.ApplicationRules.AddRule(application);
+                AlwaysBlocked.ApplicationRules.Remove(application.Id);
+                AlwaysAllowed.ApplicationRules.Add(application);
             }
 
             if (Enabled)
@@ -119,7 +119,7 @@ namespace Zarp.Core.App
 
         public void RemoveAlwaysAllowed(ApplicationInfo application)
         {
-            AlwaysAllowed.ApplicationRules.RemoveRule(application.Id);
+            AlwaysAllowed.ApplicationRules.Remove(application.Id);
 
             if (Enabled)
             {
@@ -131,8 +131,8 @@ namespace Zarp.Core.App
         {
             foreach (ApplicationInfo application in applications)
             {
-                AlwaysAllowed.ApplicationRules.RemoveRule(application.Id);
-                AlwaysBlocked.ApplicationRules.AddRule(application);
+                AlwaysAllowed.ApplicationRules.Remove(application.Id);
+                AlwaysBlocked.ApplicationRules.Add(application);
             }
 
             if (Enabled)
@@ -143,7 +143,7 @@ namespace Zarp.Core.App
 
         public void RemoveAlwaysBlocked(ApplicationInfo application)
         {
-            AlwaysBlocked.ApplicationRules.RemoveRule(application.Id);
+            AlwaysBlocked.ApplicationRules.Remove(application.Id);
 
             if (Enabled)
             {

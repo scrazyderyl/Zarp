@@ -2,6 +2,7 @@
 {
     public class RewardPreset : Preset
     {
+        public string Name { get; set; }
         public int EarnedTime;
         public TimeUnit EarnedTimeUnit;
         public RewardRequirement RequirementType;
@@ -10,8 +11,9 @@
         public TimeUnit ActiveTimeUnit;
         public RulePreset Rules;
 
-        public RewardPreset(string name) : base(name)
+        public RewardPreset(string name)
         {
+            Name = name;
             EarnedTime = 30;
             EarnedTimeUnit = TimeUnit.Minutes;
             RequirementType = RewardRequirement.FocusSessionCompletion;
@@ -21,8 +23,9 @@
             Rules = new RulePreset();
         }
 
-        public RewardPreset(string name, RewardPreset preset) : base(name)
+        public RewardPreset(string name, RewardPreset preset)
         {
+            Name = name;
             EarnedTime = preset.EarnedTime;
             EarnedTimeUnit = preset.EarnedTimeUnit;
             RequirementType = preset.RequirementType;
@@ -32,7 +35,7 @@
             Rules = new RulePreset(preset.Rules);
         }
 
-        public override Preset Duplicate(string name) => new RewardPreset(name, this);
+        public Preset Duplicate(string name) => new RewardPreset(name, this);
     }
 
     public enum RewardRequirement

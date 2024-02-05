@@ -26,18 +26,25 @@ namespace Zarp.GUI.View
         public BlockedOverlayView(IntPtr attachedWindowHandle)
         {
             AttachedWindowHandle = attachedWindowHandle;
-
             AttachedShowEventHandler = OnAttachedShow;
             AttachedLocationChangeEventHandler = OnLocationChange;
             AttachedCloseEventHandler = OnAttachedClose;
 
             InitializeComponent();
-            OverlayHandle = new WindowInteropHelper(this).EnsureHandle();
-            int style = WS_EX_TOOLWINDOW | GetWindowLong(OverlayHandle, GWL_EXSTYLE);
-            SetWindowLong(OverlayHandle, GWL_EXSTYLE, style);
-            Closed += OnClosed;
 
-            GetWindowThreadProcessId(attachedWindowHandle, out uint processId);
+            OverlayHandle = new WindowInteropHelper(this).EnsureHandle();
+            long style = GetWindowLong(OverlayHandle, GWL_EXSTYLE);
+
+            if (style == 0 || SetWindowLong(OverlayHandle, GWL_EXSTYLE, style | WS_EX_TOOLWINDOW) == 0)
+            {
+                throw new Exception();
+            }
+
+            if (GetWindowThreadProcessId(attachedWindowHandle, out uint processId) == 0 || processId == 0)
+            {
+                throw new Exception();
+            }
+
             AttachedShowEvent = SetWinEventHook(EVENT_OBJECT_SHOW, EVENT_OBJECT_SHOW, IntPtr.Zero, AttachedShowEventHandler, processId, 0, WINEVENT_OUTOFCONTEXT);
             AttachedLocationChangeEvent = SetWinEventHook(EVENT_OBJECT_LOCATIONCHANGE, EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, AttachedLocationChangeEventHandler, processId, 0, WINEVENT_OUTOFCONTEXT);
 
@@ -69,9 +76,11 @@ namespace Zarp.GUI.View
 
             base.OnClosing(e);
         }
-        private void OnClosed(object? sender, EventArgs e)
+
+        protected override void OnClosed(EventArgs e)
         {
             Core.App.Service.Blocker.WindowClosed(AttachedWindowHandle);
+            base.OnClosed(e);
         }
 
         internal void MoveOverlayOverWindow()
@@ -93,6 +102,7 @@ namespace Zarp.GUI.View
             Width = rect.Value.Width;
             Height = rect.Value.Height;
         }
+
         private void MinimizeAttachedWindow(object sender, RoutedEventArgs e)
         {
             MinimizeWindow(AttachedWindowHandle);

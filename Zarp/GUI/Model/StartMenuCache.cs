@@ -22,10 +22,10 @@ namespace Zarp.GUI.Model
                     return false;
                 }
 
-                string executablePath = Shortcut.GetPath(Path.GetFullPath(path));
+                string? executablePath = Shortcut.GetPath(Path.GetFullPath(path));
 
                 // Ignore internet links
-                if (executablePath.Equals(string.Empty))
+                if (executablePath == null || executablePath.Equals(string.Empty))
                 {
                     data = default;
                     return false;

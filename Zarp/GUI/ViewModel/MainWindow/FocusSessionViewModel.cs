@@ -22,6 +22,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
             {
                 _SelectedFocusSessionPreset = value;
                 OnFocusSessionSelectionChanged();
+                OnEventSelectionChanged();
             }
         }
 
@@ -155,7 +156,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
             }
             else
             {
-                EventList = SelectedFocusSessionPreset!._Events;
+                EventList = SelectedFocusSessionPreset!.Events;
                 MainEditorVisibility = Visibility.Visible;
             }
 
@@ -165,7 +166,14 @@ namespace Zarp.GUI.ViewModel.MainWindow
 
         void OnEventSelectionChanged()
         {
-            _EventName = _SelectedEvent!.Name;
+            if (_SelectedEvent == null)
+            {
+                EventEditorVisibility = Visibility.Hidden;
+                OnPropertyChanged(nameof(EventEditorVisibility));
+                return;
+            }
+
+            _EventName = _SelectedEvent.Name;
             EventDuration = _SelectedEvent.Duration.ToString();
             EventDurationUnitsIndex = _SelectedEvent.DurationUnit == TimeUnit.Minutes ? 0 : 1;
             OnPropertyChanged(nameof(EventName));
@@ -208,18 +216,6 @@ namespace Zarp.GUI.ViewModel.MainWindow
             }
 
             OnPropertyChanged(nameof(ActivityParametersVisibility));
-        }
-
-        public void EventTypeChanged()
-        {
-            if (IsEventActivity)
-            {
-                ActivityParametersVisibility = Visibility.Visible;
-            }
-            else
-            {
-                ActivityParametersVisibility = Visibility.Collapsed;
-            }
         }
     }
 }

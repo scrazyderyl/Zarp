@@ -1,19 +1,9 @@
 ﻿namespace Zarp.Core.Datatypes
 {
-    public abstract class Preset
+    public interface Preset
     {
-        public string Name;
+        public string Name { get; set; }
 
-        public Preset(string name)
-        {
-            Name = name;
-        }
-
-        public abstract Preset Duplicate(string name);
-
-        public override string ToString()
-        {
-            return Name;
-        }
+        public Preset Duplicate(string name);
     }
 }

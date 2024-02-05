@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using Zarp.Core.Datatypes;
@@ -110,10 +112,28 @@ namespace Zarp.GUI.UserControls
         private void Import_Click(object sender, RoutedEventArgs e)
         {
             string[] fileNames = FileDialogs.OpenJSONMulti();
+            bool added = false;
 
             foreach (string fileName in fileNames)
             {
+                try
+                {
+                    throw new NotImplementedException();
+                    string json = File.ReadAllText(fileName);
+                    Preset? preset = PresetCollection!.Deserialize(json);
 
+                    if (preset != null && PresetCollection!.Add(preset))
+                    {
+                        added = true;
+                        PresetList?.Add(preset.Name);
+                    }
+                }
+                catch { }
+            }
+
+            if (added)
+            {
+                Selector.SelectedIndex = Selector.Items.Count - 1;
             }
         }
 
@@ -127,7 +147,7 @@ namespace Zarp.GUI.UserControls
                 return;
             }
 
-            if (renameView.Confirmed && PresetCollection!.Rename(SelectedPreset!.Name, renameView.ChosenName))
+            if (renameView.Confirmed && PresetCollection!.Rename((string)Selector.SelectedItem, renameView.ChosenName))
             {
                 PresetList?.RemoveAt(Selector.SelectedIndex);
                 PresetList?.Add(renameView.ChosenName);
@@ -154,10 +174,22 @@ namespace Zarp.GUI.UserControls
         {
             string fileName = FileDialogs.SaveJSON();
 
-            if (!fileName.Equals(string.Empty))
+            if (fileName.Equals(string.Empty))
             {
-
+                return;
             }
+
+            try
+            {
+                throw new NotImplementedException();
+                string json = JsonSerializer.Serialize<object>(SelectedPreset!, new JsonSerializerOptions()
+                {
+                    IncludeFields = true
+                });
+
+                File.WriteAllText(fileName, json);
+            }
+            catch { }
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)

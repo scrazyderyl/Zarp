@@ -43,6 +43,7 @@ namespace Zarp.GUI.UserControls
             }
 
             Selector.ItemsSource = ItemNames;
+            Selector.SelectedIndex = -1;
         }
 
         public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(SequenceEditor), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedItemChanged));
@@ -67,6 +68,7 @@ namespace Zarp.GUI.UserControls
         }
 
         private bool SelectedItemChangedExternally = true;
+        private bool SuppressSelectionChangeEvent = false;
         public ObservableCollection<string>? ItemNames;
 
         public SequenceEditor()
@@ -76,15 +78,20 @@ namespace Zarp.GUI.UserControls
 
         public void NameChanged()
         {
-            SelectedItemChangedExternally = false;
+            SuppressSelectionChangeEvent = true;
             int index = Selector.SelectedIndex;
             ItemNames![index] = ItemList![index]!.ToString()!;
             Selector.SelectedIndex = index;
-            SelectedItemChangedExternally = true;
+            SuppressSelectionChangeEvent = false;
         }
 
         private void Selector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (SuppressSelectionChangeEvent)
+            {
+                return;
+            }
+
             SelectedItemChangedExternally = false;
 
             if (Selector.SelectedIndex == -1)

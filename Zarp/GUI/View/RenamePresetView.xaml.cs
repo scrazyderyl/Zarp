@@ -32,7 +32,7 @@ namespace Zarp.GUI.View
                 return;
             }
 
-            if (PresetCollection.ContainsKey(ChosenName))
+            if (PresetCollection.Contains(ChosenName))
             {
                 MessageBox.Show("A preset with the same name already exists");
                 return;

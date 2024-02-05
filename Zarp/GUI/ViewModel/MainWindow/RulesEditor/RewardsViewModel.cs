@@ -206,8 +206,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                     return;
                 }
 
-                _SelectedRewardPreset!.Rules.ApplicationRules.RemoveRule
-                (Applications[_SelectedApplicationIndex].Id);
+                _SelectedRewardPreset!.Rules.ApplicationRules.Remove(Applications[_SelectedApplicationIndex].Id);
                 Applications.RemoveAt(value);
                 _SelectedApplicationIndex = -1;
                 OnPropertyChanged(nameof(SelectedApplicationIndex));
@@ -224,6 +223,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             ActiveTimeInputVisibility = Visibility.Hidden;
 
             OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationSelector);
+            Applications = new ObservableCollection<ApplicationInfo>();
             _SelectedApplicationIndex = -1;
         }
 
@@ -275,7 +275,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             OnPropertyChanged(nameof(TimeEarned));
             OnPropertyChanged(nameof(TimeEarnedUnitsIndex));
 
-            Applications = new ObservableCollection<ApplicationInfo>(SelectedRewardPreset.Rules.ApplicationRules.Rules);
+            Applications = new ObservableCollection<ApplicationInfo>(SelectedRewardPreset.Rules.ApplicationRules);
             OnPropertyChanged(nameof(Applications));
 
             EditorVisibility = Visibility.Visible;
@@ -292,8 +292,11 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                 return;
             }
 
-            SelectedRewardPreset!.Rules.ApplicationRules.AddRules(selector.Selected);
-            Applications = new ObservableCollection<ApplicationInfo>(SelectedRewardPreset!.Rules.ApplicationRules.Rules);
+            foreach (ApplicationInfo application in selector.Selected)
+            {
+                SelectedRewardPreset!.Rules.ApplicationRules.Add(application);
+            }
+            Applications = new ObservableCollection<ApplicationInfo>(SelectedRewardPreset!.Rules.ApplicationRules);
 
             OnPropertyChanged(nameof(Applications));
         }

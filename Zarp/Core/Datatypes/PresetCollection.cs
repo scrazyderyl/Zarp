@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace Zarp.Core.Datatypes
 {
@@ -10,14 +11,23 @@ namespace Zarp.Core.Datatypes
         public bool Add(Preset preset);
         public bool Remove(string name);
         public bool Rename(string name, string newName);
-        public bool ContainsKey(string name);
+        public bool Contains(string name);
+        public Preset? Deserialize(string json);
     }
 
-    internal class PresetCollection<T> : Dictionary<string, T>, PresetCollection where T : Preset
+    internal class PresetCollection<T> : PresetCollection where T : Preset
     {
-        public PresetCollection() : base(StringComparer.OrdinalIgnoreCase)
-        {
+        private Dictionary<string, T> Presets;
 
+        public PresetCollection()
+        {
+            Presets = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        public T this[string name]
+        {
+            get => Presets[name];
+            set => Presets[name] = (T)value;
         }
 
         Preset PresetCollection.this[string name]
@@ -26,23 +36,33 @@ namespace Zarp.Core.Datatypes
             set => this[name] = (T)value;
         }
 
-        public bool Add(Preset preset) => TryAdd(preset.Name, (T)preset);
+        public bool Add(Preset preset) => Presets.TryAdd(preset.Name, (T)preset);
+        public bool Remove(string name) => Presets.Remove(name);
 
         public bool Rename(string oldName, string newName)
         {
-            if (!TryGetValue(oldName, out T? preset) || !TryAdd(newName, preset!))
+            if (!Presets.TryGetValue(oldName, out T? preset) || !Presets.TryAdd(newName, preset!))
             {
                 return false;
             }
 
-            Remove(oldName);
+            Presets.Remove(oldName);
             preset!.Name = newName;
 
             return true;
         }
 
-        IEnumerator<string> IEnumerable<string>.GetEnumerator() => Keys.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public bool Contains(string name) => Presets.ContainsKey(name);
 
+        public Preset? Deserialize(string json)
+        {
+            return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions()
+            {
+                IncludeFields = true
+            });
+        }
+
+        public IEnumerator<string> GetEnumerator() => Presets.Keys.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Zarp.Common.Util
 {
-    public class PInvoke
+    internal class PInvoke
     {
         public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
@@ -31,7 +31,7 @@ namespace Zarp.Common.Util
         [DllImport("user32.dll")]
         public static extern bool UnhookWinEvent(IntPtr hWinEventHook);
 
-        public const int WS_EX_TOOLWINDOW = 0x00000080;
+        public const long WS_EX_TOOLWINDOW = 0x00000080L;
 
         public const int GWL_EXSTYLE = -20;
 
@@ -52,10 +52,10 @@ namespace Zarp.Common.Util
         }
 
         [DllImport("user32.dll")]
-        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        public static extern long GetWindowLong(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern int SetWindowLong(IntPtr hWnd, int nIndex, long dwNewLong);
+        public static extern long SetWindowLong(IntPtr hWnd, int nIndex, long dwNewLong);
 
         [DllImport("user32.dll")]
         public static extern bool IsWindowVisible(IntPtr hWnd);

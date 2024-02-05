@@ -33,7 +33,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             get => _SelectedRuleIndex;
             set
             {
-                SelectedPreset!.ApplicationRules.RemoveRule(Rules[value].Id);
+                SelectedPreset!.ApplicationRules.Remove(Rules[value].Id);
                 Rules.RemoveAt(value);
             }
         }
@@ -67,7 +67,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             }
             else
             {
-                Rules = new ObservableCollection<ApplicationInfo>(SelectedPreset!.ApplicationRules.Rules);
+                Rules = new ObservableCollection<ApplicationInfo>(SelectedPreset!.ApplicationRules);
                 RulesetPolicy = SelectedPreset.ApplicationRules.IsWhitelist ? "Block all except" : "Allow all except";
                 EditorVisibility = Visibility.Visible;
             }
@@ -87,8 +87,11 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                 return;
             }
 
-            SelectedPreset!.ApplicationRules.AddRules(selector.Selected);
-            Rules = new ObservableCollection<ApplicationInfo>(SelectedPreset.ApplicationRules.Rules);
+            foreach (ApplicationInfo application in selector.Selected)
+            {
+                SelectedPreset!.ApplicationRules.Add(application);
+            }
+            Rules = new ObservableCollection<ApplicationInfo>(SelectedPreset!.ApplicationRules);
 
             OnPropertyChanged(nameof(Rules));
         }

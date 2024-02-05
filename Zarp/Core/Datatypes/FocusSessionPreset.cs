@@ -4,97 +4,83 @@ namespace Zarp.Core.Datatypes
 {
     public class FocusSessionPreset : Preset
     {
-        public int LoopCount { get; set; }
-        public IEnumerable<Event> Events => _Events;
-        public List<Event> _Events;
+        public string Name { get; set; }
+        public int LoopCount;
         public int Duration
         {
-            get => _Duration;
-        }
-
-        private int _Duration;
-
-        public FocusSessionPreset(string name, int loopCount) : base(name)
-        {
-            LoopCount = loopCount;
-
-            _Events = new List<Event>();
-            _Duration = 0;
-        }
-
-        public FocusSessionPreset(string name, FocusSessionPreset preset) : base(name)
-        {
-            LoopCount = preset.LoopCount;
-
-            _Events = new List<Event>(preset._Events.Count);
-
-            foreach (Event e in preset._Events)
+            get
             {
-                _Events.Add(new Event(e));
+                int total = 0;
+
+                foreach (Event item in Events)
+                {
+                    total += item.Duration;
+                }
+
+                return total;
             }
-
-            _Duration = preset._Duration;
         }
 
-        public void NewEvent(Event _event)
+        internal List<Event> Events;
+
+        public FocusSessionPreset()
         {
-            _Events.Add(_event);
-            _Duration += _event.Duration;
+            Name = string.Empty;
+            Events = new List<Event>();
         }
 
-        public void AddEventAtIndex(int index, Event _event)
+        public FocusSessionPreset(string name, int loopCount)
         {
-            _Events.Insert(index, _event);
-            _Duration += _event.Duration;
+            Name = name;
+            LoopCount = loopCount;
+            Events = new List<Event>();
         }
 
-        public void SwapEvents(int index1, int index2)
+        public FocusSessionPreset(string name, FocusSessionPreset preset)
         {
-            Event temp = _Events[index1];
-            _Events[index1] = _Events[index2];
-            _Events[index2] = temp;
-        }
+            Name = name;
+            LoopCount = preset.LoopCount;
+            Events = new List<Event>(preset.Events.Count);
 
-        public void RemoveEvent(int index)
-        {
-            _Events.RemoveAt(index);
+            foreach (Event item in preset.Events)
+            {
+                Events.Add(new Event(item));
+            }
         }
 
         public Event? GetEventByTime(int time)
         {
-            if (time / _Duration > LoopCount)
+            int duration = Duration;
+
+            if (time / duration > LoopCount)
             {
                 return null;
             }
 
-            time = time % _Duration;
-            int sumDuration = 0;
+            time %= duration;
+            int cumulativeDuration = 0;
 
-            foreach (Event _event in _Events)
+            foreach (Event item in Events)
             {
-                if (_event.DurationUnit == TimeUnit.Minutes)
+                switch (item.DurationUnit)
                 {
-                    sumDuration += _event.Duration;
-                }
-                else
-                {
-                    sumDuration += _event.Duration * 60;
+                    case TimeUnit.Minutes:
+                        cumulativeDuration += item.Duration;
+                        break;
+                    case TimeUnit.Hours:
+                        cumulativeDuration += item.Duration * 60;
+                        break;
                 }
 
-                if (time < sumDuration)
+                if (time < cumulativeDuration)
                 {
-                    return _event;
+                    return item;
                 }
             }
 
             return null;
         }
 
-        public Event? GetEventByIndex(int index)
-        {
-            return _Events[index];
-        }
-
-        public override Preset Duplicate(string name) => new FocusSessionPreset(name, this);
+        public Preset Duplicate(string name) => new FocusSessionPreset(name, this);
     }
 }
