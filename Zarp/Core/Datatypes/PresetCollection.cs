@@ -5,17 +5,7 @@ using System.Text.Json;
 
 namespace Zarp.Core.Datatypes
 {
-    public interface PresetCollection : IEnumerable<string>
-    {
-        public Preset this[string name] { get; set; }
-        public bool Add(Preset preset);
-        public bool Remove(string name);
-        public bool Rename(string name, string newName);
-        public bool Contains(string name);
-        public Preset? Deserialize(string json);
-    }
-
-    internal class PresetCollection<T> : PresetCollection where T : Preset
+    internal class PresetCollection<T> : IPresetCollection where T : IPreset
     {
         private Dictionary<string, T> Presets;
 
@@ -30,13 +20,13 @@ namespace Zarp.Core.Datatypes
             set => Presets[name] = (T)value;
         }
 
-        Preset PresetCollection.this[string name]
+        IPreset IPresetCollection.this[string name]
         {
             get => this[name];
             set => this[name] = (T)value;
         }
 
-        public bool Add(Preset preset) => Presets.TryAdd(preset.Name, (T)preset);
+        public bool Add(IPreset preset) => Presets.TryAdd(preset.Name, (T)preset);
         public bool Remove(string name) => Presets.Remove(name);
 
         public bool Rename(string oldName, string newName)
@@ -54,7 +44,7 @@ namespace Zarp.Core.Datatypes
 
         public bool Contains(string name) => Presets.ContainsKey(name);
 
-        public Preset? Deserialize(string json)
+        public IPreset? Deserialize(string json)
         {
             return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions()
             {

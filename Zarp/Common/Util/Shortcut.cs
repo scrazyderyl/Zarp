@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Zarp.Common.Util
 {
-    public class Shortcut
+    internal class Shortcut
     {
         const uint S_OK = 0x00000000;
         const uint S_FALSE = 0x00000001;

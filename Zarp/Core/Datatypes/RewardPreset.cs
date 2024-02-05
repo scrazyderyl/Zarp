@@ -1,6 +1,6 @@
 ﻿namespace Zarp.Core.Datatypes
 {
-    public class RewardPreset : Preset
+    internal class RewardPreset : IPreset
     {
         public string Name { get; set; }
         public int EarnedTime;
@@ -35,7 +35,7 @@
             Rules = new RulePreset(preset.Rules);
         }
 
-        public Preset Duplicate(string name) => new RewardPreset(name, this);
+        public IPreset Duplicate(string name) => new RewardPreset(name, this);
     }
 
     public enum RewardRequirement

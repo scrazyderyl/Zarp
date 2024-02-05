@@ -5,7 +5,7 @@ using Zarp.GUI.View;
 
 namespace Zarp.GUI.ViewModel
 {
-    class CreateFocusSessionViewModel : ObservableObject
+    internal class CreateFocusSessionViewModel : ObservableObject
     {
         public string? Name { get; set; }
         private bool _LoopEnabled;

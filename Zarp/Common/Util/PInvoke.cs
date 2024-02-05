@@ -169,11 +169,5 @@ namespace Zarp.Common.Util
             public int Right;
             public int Bottom;
         }
-
-        public struct POINT
-        {
-            public int X;
-            public int Y;
-        }
     }
 }

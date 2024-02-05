@@ -1,9 +1,9 @@
 ﻿namespace Zarp.Core.Datatypes
 {
-    public interface Preset
+    public interface IPreset
     {
         public string Name { get; set; }
 
-        public Preset Duplicate(string name);
+        public IPreset Duplicate(string name);
     }
 }

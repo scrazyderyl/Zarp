@@ -10,16 +10,13 @@ using Zarp.GUI.View;
 
 namespace Zarp.GUI.UserControls
 {
-    /// <summary>
-    /// Interaction logic for PresetSelector.xaml
-    /// </summary>
     public partial class PresetSelector : UserControl
     {
-        public static readonly DependencyProperty PresetCollectionProperty = DependencyProperty.Register(nameof(PresetCollection), typeof(PresetCollection), typeof(PresetSelector), new FrameworkPropertyMetadata(OnPresetCollectionChanged));
+        public static readonly DependencyProperty PresetCollectionProperty = DependencyProperty.Register(nameof(PresetCollection), typeof(IPresetCollection), typeof(PresetSelector), new FrameworkPropertyMetadata(OnPresetCollectionChanged));
 
-        public PresetCollection? PresetCollection
+        public IPresetCollection? PresetCollection
         {
-            get => (PresetCollection)GetValue(PresetCollectionProperty);
+            get => (IPresetCollection)GetValue(PresetCollectionProperty);
             set => SetValue(PresetCollectionProperty, value);
         }
 
@@ -42,19 +39,19 @@ namespace Zarp.GUI.UserControls
             Selector.ItemsSource = PresetList;
         }
 
-        public static readonly DependencyProperty CreateFunctionProperty = DependencyProperty.Register(nameof(CreateFunction), typeof(Func<Preset>), typeof(PresetSelector));
+        public static readonly DependencyProperty CreateFunctionProperty = DependencyProperty.Register(nameof(CreateFunction), typeof(Func<IPreset>), typeof(PresetSelector));
 
-        public Func<Preset?> CreateFunction
+        public Func<IPreset?> CreateFunction
         {
-            get => (Func<Preset>)GetValue(CreateFunctionProperty);
+            get => (Func<IPreset>)GetValue(CreateFunctionProperty);
             set => SetValue(CreateFunctionProperty, value);
         }
 
-        public static readonly DependencyProperty SelectedPresetProperty = DependencyProperty.Register(nameof(SelectedPreset), typeof(Preset), typeof(PresetSelector), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedPresetChanged));
+        public static readonly DependencyProperty SelectedPresetProperty = DependencyProperty.Register(nameof(SelectedPreset), typeof(IPreset), typeof(PresetSelector), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedPresetChanged));
 
-        public Preset? SelectedPreset
+        public IPreset? SelectedPreset
         {
-            get => (Preset?)GetValue(SelectedPresetProperty);
+            get => (IPreset?)GetValue(SelectedPresetProperty);
             set => SetValue(SelectedPresetProperty, value);
         }
 
@@ -99,7 +96,7 @@ namespace Zarp.GUI.UserControls
 
         private void Create_Click(object sender, RoutedEventArgs e)
         {
-            Preset? result = CreateFunction();
+            IPreset? result = CreateFunction();
 
             if (result != null)
             {
@@ -120,7 +117,7 @@ namespace Zarp.GUI.UserControls
                 {
                     throw new NotImplementedException();
                     string json = File.ReadAllText(fileName);
-                    Preset? preset = PresetCollection!.Deserialize(json);
+                    IPreset? preset = PresetCollection!.Deserialize(json);
 
                     if (preset != null && PresetCollection!.Add(preset))
                     {

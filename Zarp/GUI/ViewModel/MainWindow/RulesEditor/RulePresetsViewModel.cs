@@ -10,8 +10,8 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 {
     internal class RulePresetsViewModel : ObservableObject
     {
-        public static PresetCollection PresetCollection => Service.RulePresets;
-        public static Func<Preset?> CreateFunction => Create;
+        public static IPresetCollection PresetCollection => Service.RulePresets;
+        public static Func<IPreset?> CreateFunction => Create;
 
         private RulePreset? _SelectedPreset;
         public RulePreset? SelectedPreset
@@ -50,11 +50,11 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationSelector);
         }
 
-        public static Preset? Create()
+        public static IPreset? Create()
         {
             Service.DialogReturnValue = null;
             new CreateRulePresetView().ShowDialog();
-            return (Preset?)Service.DialogReturnValue;
+            return (IPreset?)Service.DialogReturnValue;
         }
 
         private void OnPresetSelectionChanged()

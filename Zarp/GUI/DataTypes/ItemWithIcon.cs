@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.DataTypes
 {
-    public struct ItemWithIcon<T>
+    internal struct ItemWithIcon<T>
     {
         public T Data { get; set; }
         public ImageSource? Icon { get; set; }

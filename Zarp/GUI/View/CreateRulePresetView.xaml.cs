@@ -2,9 +2,6 @@
 
 namespace Zarp.GUI.View
 {
-    /// <summary>
-    /// Interaction logic for TextInputWindow.xaml
-    /// </summary>
     public partial class CreateRulePresetView : Window
     {
         public CreateRulePresetView()

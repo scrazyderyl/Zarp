@@ -10,8 +10,8 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 {
     internal class RewardsViewModel : ObservableObject
     {
-        public static PresetCollection PresetCollection => Service.RewardPresets;
-        public static Func<Preset?> CreateFunction => Create;
+        public static IPresetCollection PresetCollection => Service.RewardPresets;
+        public static Func<IPreset?> CreateFunction => Create;
 
         private RewardPreset? _SelectedRewardPreset;
         public RewardPreset? SelectedRewardPreset
@@ -227,11 +227,11 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             _SelectedApplicationIndex = -1;
         }
 
-        public static Preset? Create()
+        public static IPreset? Create()
         {
             Service.DialogReturnValue = null;
             new CreateRewardView().ShowDialog();
-            return (Preset?)Service.DialogReturnValue;
+            return (IPreset?)Service.DialogReturnValue;
         }
 
         private void OnRewardPresetSelectionChanged()

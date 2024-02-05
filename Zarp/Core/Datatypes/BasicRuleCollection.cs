@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Zarp.Core.Datatypes
 {
-    public class BasicRuleCollection<T> : IEnumerable<T> where T : BasicRule
+    internal class BasicRuleCollection<T> : IEnumerable<T> where T : IBasicRule
     {
         public bool IsWhitelist;
 

@@ -5,9 +5,6 @@ using System.Windows.Input;
 
 namespace Zarp.GUI.Components
 {
-    /// <summary>
-    /// Interaction logic for TextBoxWithPlaceholder.xaml
-    /// </summary>
     public class TextBoxWithPlaceholder : TextBox
     {
         public static readonly DependencyProperty PlaceholderTextProperty = DependencyProperty.Register(nameof(PlaceholderText), typeof(string), typeof(TextBoxWithPlaceholder), new PropertyMetadata(null, OnPlaceholderTextChanged));

@@ -3,16 +3,13 @@ using Zarp.Core.Datatypes;
 
 namespace Zarp.GUI.View
 {
-    /// <summary>
-    /// Interaction logic for RenamePresetView.xaml
-    /// </summary>
     public partial class RenamePresetView : Window
     {
         public bool Confirmed = false;
         public string ChosenName => NameField.Text;
-        private PresetCollection PresetCollection;
+        private IPresetCollection PresetCollection;
 
-        public RenamePresetView(PresetCollection collection)
+        public RenamePresetView(IPresetCollection collection)
         {
             PresetCollection = collection;
             InitializeComponent();

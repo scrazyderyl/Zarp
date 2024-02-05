@@ -11,8 +11,8 @@ namespace Zarp.GUI.ViewModel.MainWindow
 {
     internal class FocusSessionViewModel : ObservableObject
     {
-        public static PresetCollection PresetCollection => Service.FocusSessionPresets;
-        public static Func<Preset?> CreateFunction => Create;
+        public static IPresetCollection PresetCollection => Service.FocusSessionPresets;
+        public static Func<IPreset?> CreateFunction => Create;
 
         private FocusSessionPreset? _SelectedFocusSessionPreset;
         public FocusSessionPreset? SelectedFocusSessionPreset
@@ -140,11 +140,11 @@ namespace Zarp.GUI.ViewModel.MainWindow
             ActivityParametersVisibility = Visibility.Collapsed;
         }
 
-        public static Preset? Create()
+        public static IPreset? Create()
         {
             Service.DialogReturnValue = null;
             new CreateFocusSessionView().ShowDialog();
-            return (Preset?)Service.DialogReturnValue;
+            return (IPreset?)Service.DialogReturnValue;
         }
 
         void OnFocusSessionSelectionChanged()

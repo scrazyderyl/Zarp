@@ -5,7 +5,7 @@ using Zarp.Core.Datatypes;
 
 namespace Zarp.GUI.Model
 {
-    public class StartMenuCache : DirectoryFileListCache<ApplicationInfo>
+    internal class StartMenuCache : DirectoryFileListCache<ApplicationInfo>
     {
         public StartMenuCache(string path) : base(path, "*.lnk", true) { }
 

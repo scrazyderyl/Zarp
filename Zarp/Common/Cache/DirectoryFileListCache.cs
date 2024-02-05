@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Zarp.Common.Cache
 {
-    public abstract class DirectoryFileListCache<T> : IListCache<T>
+    internal abstract class DirectoryFileListCache<T> : IListCache<T>
     {
         private FileSystemWatcher _Watcher;
         private Dictionary<string, T> _Cache;

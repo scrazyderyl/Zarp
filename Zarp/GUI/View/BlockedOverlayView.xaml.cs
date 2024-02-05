@@ -6,9 +6,6 @@ using static Zarp.Common.Util.PInvoke;
 
 namespace Zarp.GUI.View
 {
-    /// <summary>
-    /// Interaction logic for BlockedOverlay.xaml
-    /// </summary>
     public partial class BlockedOverlayView : Window
     {
         private IntPtr OverlayHandle;

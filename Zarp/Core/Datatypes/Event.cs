@@ -1,7 +1,7 @@
 ﻿namespace Zarp.Core.Datatypes
 {
 
-    public class Event
+    internal class Event
     {
         public string Name;
         public int Duration;

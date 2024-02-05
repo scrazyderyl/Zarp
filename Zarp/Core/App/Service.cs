@@ -7,7 +7,7 @@ namespace Zarp.Core.App
 {
     internal class Service
     {
-        public static string UserDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Zarp\";
+        internal static string UserDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Zarp\";
 
         internal static PresetCollection<FocusSessionPreset> FocusSessionPresets = new PresetCollection<FocusSessionPreset>();
         internal static PresetCollection<RulePreset> RulePresets = new PresetCollection<RulePreset>();

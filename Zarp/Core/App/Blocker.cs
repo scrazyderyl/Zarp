@@ -10,8 +10,8 @@ namespace Zarp.Core.App
 {
     internal class Blocker
     {
-        public RulePreset AlwaysAllowed;
-        public RulePreset AlwaysBlocked;
+        internal RulePreset AlwaysAllowed;
+        internal RulePreset AlwaysBlocked;
 
         private Dictionary<IntPtr, BlockedOverlayView> BlockedApplicationOverlays;
         private Dictionary<string, RewardPreset> EnabledRewards;

@@ -5,7 +5,7 @@ using Zarp.GUI.View;
 
 namespace Zarp.GUI.ViewModel
 {
-    class CreateRulePresetViewModel : ObservableObject
+    internal class CreateRulePresetViewModel : ObservableObject
     {
         public string? Name { get; set; }
         public bool IsWhitelist { get; set; }
@@ -32,7 +32,7 @@ namespace Zarp.GUI.ViewModel
             }
 
             string name = Name.Trim();
-            RulePreset newPreset = new RulePreset(name, IsWhitelist, IsWhitelist);
+            RulePreset newPreset = new RulePreset(name, IsWhitelist);
 
             if (!Core.App.Service.RulePresets.Add(newPreset))
             {

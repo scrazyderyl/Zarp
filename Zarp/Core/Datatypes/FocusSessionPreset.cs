@@ -2,7 +2,7 @@
 
 namespace Zarp.Core.Datatypes
 {
-    public class FocusSessionPreset : Preset
+    internal class FocusSessionPreset : IPreset
     {
         public string Name { get; set; }
         public int LoopCount;
@@ -81,6 +81,6 @@ namespace Zarp.Core.Datatypes
             return null;
         }
 
-        public Preset Duplicate(string name) => new FocusSessionPreset(name, this);
+        public IPreset Duplicate(string name) => new FocusSessionPreset(name, this);
     }
 }

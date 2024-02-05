@@ -5,7 +5,7 @@ using Zarp.Core.Datatypes;
 
 namespace Zarp.GUI.Converters
 {
-    public class RulePresetConverter : IValueConverter
+    internal class RulePresetConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -14,11 +14,11 @@ namespace Zarp.GUI.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (Preset)value;
+            return (IPreset)value;
         }
     }
 
-    public class FocusSessionPresetConverter : IValueConverter
+    internal class FocusSessionPresetConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -27,11 +27,11 @@ namespace Zarp.GUI.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (Preset)value;
+            return (IPreset)value;
         }
     }
 
-    public class RewardPresetConverter : IValueConverter
+    internal class RewardPresetConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -40,7 +40,7 @@ namespace Zarp.GUI.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (Preset)value;
+            return (IPreset)value;
         }
     }
 }

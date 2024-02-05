@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Zarp.Common.Cache
 {
-    public abstract class FileCache<T>
+    internal abstract class FileCache<T>
     {
         private Dictionary<string, CachedFile> Cache;
 

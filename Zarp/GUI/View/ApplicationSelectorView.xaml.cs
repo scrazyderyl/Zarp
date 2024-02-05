@@ -6,9 +6,6 @@ using Zarp.GUI.DataTypes;
 
 namespace Zarp.GUI.View
 {
-    /// <summary>
-    /// Interaction logic for ApplicationSelectorView.xaml
-    /// </summary>
     public partial class ApplicationSelectorView : Window
     {
         public bool Confirmed = false;
