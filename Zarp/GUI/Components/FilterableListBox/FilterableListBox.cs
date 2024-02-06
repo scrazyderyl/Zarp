@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace Zarp.GUI.Components
 {
-    public class FilterableListBox : ListBox
+    internal class FilterableListBox : ListBox
     {
         private List<object> Selected;
 

@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View.MainWindow
 {
-    public partial class FocusSessionView : UserControl
+    internal partial class FocusSessionView : UserControl
     {
         public FocusSessionView()
         {

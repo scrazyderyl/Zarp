@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View
 {
-    public partial class CreateRewardView : Window
+    internal partial class CreateRewardView : Window
     {
         public CreateRewardView()
         {

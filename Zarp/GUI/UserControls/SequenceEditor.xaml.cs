@@ -6,7 +6,7 @@ using Zarp.Core.Datatypes;
 
 namespace Zarp.GUI.UserControls
 {
-    public partial class SequenceEditor : UserControl
+    internal partial class SequenceEditor : UserControl
     {
         public static readonly DependencyProperty ItemListProperty = DependencyProperty.Register(nameof(ItemList), typeof(IList), typeof(SequenceEditor), new FrameworkPropertyMetadata(OnItemListChanged));
 

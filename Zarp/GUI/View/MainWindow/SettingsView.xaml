@@ -1,4 +1,5 @@
 ﻿<UserControl x:Class="Zarp.GUI.View.MainWindow.SettingsView"
+             x:ClassModifier="internal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -9,6 +10,11 @@
         <ScrollViewer>
             <Grid Style="{StaticResource Page}">
                 <StackPanel>
+                    <StackPanel Style="{StaticResource Section}">
+                        <TextBlock Text="Appearance" Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Text="Theme" Style="{StaticResource ControlLabel}"/>
+                        <ComboBox/>
+                        </StackPanel>
                     <StackPanel Style="{StaticResource Section}">
                         <TextBlock Text="Focus Session" Style="{StaticResource SectionHeader}"/>
                         <CheckBox Content="Warn before switch" IsChecked="True" IsEnabled="False" Style="{StaticResource ToggleSetting}"/>

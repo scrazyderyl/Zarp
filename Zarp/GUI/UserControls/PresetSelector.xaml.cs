@@ -10,7 +10,7 @@ using Zarp.GUI.View;
 
 namespace Zarp.GUI.UserControls
 {
-    public partial class PresetSelector : UserControl
+    internal partial class PresetSelector : UserControl
     {
         public static readonly DependencyProperty PresetCollectionProperty = DependencyProperty.Register(nameof(PresetCollection), typeof(IPresetCollection), typeof(PresetSelector), new FrameworkPropertyMetadata(OnPresetCollectionChanged));
 
@@ -115,7 +115,6 @@ namespace Zarp.GUI.UserControls
             {
                 try
                 {
-                    throw new NotImplementedException();
                     string json = File.ReadAllText(fileName);
                     IPreset? preset = PresetCollection!.Deserialize(json);
 
@@ -178,7 +177,6 @@ namespace Zarp.GUI.UserControls
 
             try
             {
-                throw new NotImplementedException();
                 string json = JsonSerializer.Serialize<object>(SelectedPreset!, new JsonSerializerOptions()
                 {
                     IncludeFields = true

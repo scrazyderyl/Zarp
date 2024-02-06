@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View.MainWindow
 {
-    public partial class HomeView : UserControl
+    internal partial class HomeView : UserControl
     {
         public HomeView()
         {

@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View.MainWindow
 {
-    public partial class SettingsView : UserControl
+    internal partial class SettingsView : UserControl
     {
         public SettingsView()
         {

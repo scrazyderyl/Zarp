@@ -3,7 +3,7 @@ using Zarp.Core.Datatypes;
 
 namespace Zarp.GUI.View
 {
-    public partial class RenamePresetView : Window
+    internal partial class RenamePresetView : Window
     {
         public bool Confirmed = false;
         public string ChosenName => NameField.Text;

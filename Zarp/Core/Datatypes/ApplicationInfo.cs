@@ -1,6 +1,6 @@
 ﻿namespace Zarp.Core.Datatypes
 {
-    public struct ApplicationInfo : IBasicRule
+    internal struct ApplicationInfo : IBasicRule
     {
         public string Id => ExecutablePath;
         public string ExecutablePath;

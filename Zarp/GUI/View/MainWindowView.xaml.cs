@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View
 {
-    public partial class MainWindowView : Window
+    internal partial class MainWindowView : Window
     {
         public MainWindowView()
         {

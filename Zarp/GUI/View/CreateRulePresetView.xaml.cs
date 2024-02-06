@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View
 {
-    public partial class CreateRulePresetView : Window
+    internal partial class CreateRulePresetView : Window
     {
         public CreateRulePresetView()
         {

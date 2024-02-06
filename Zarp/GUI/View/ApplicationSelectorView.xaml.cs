@@ -6,7 +6,7 @@ using Zarp.GUI.DataTypes;
 
 namespace Zarp.GUI.View
 {
-    public partial class ApplicationSelectorView : Window
+    internal partial class ApplicationSelectorView : Window
     {
         public bool Confirmed = false;
         public IEnumerable<ApplicationInfo> Selected => InstalledApplicationsList.SelectedItems.Cast<ItemWithIcon<ApplicationInfo>>().Select(item => item.Data)

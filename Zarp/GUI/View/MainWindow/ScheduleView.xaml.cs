@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View.MainWindow
 {
-    public partial class ScheduleView : UserControl
+    internal partial class ScheduleView : UserControl
     {
         public ScheduleView()
         {

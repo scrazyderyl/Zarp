@@ -1,6 +1,6 @@
 ﻿namespace Zarp.Core.Datatypes
 {
-    public interface IPreset
+    internal interface IPreset
     {
         public string Name { get; set; }
 

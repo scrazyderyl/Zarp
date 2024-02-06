@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View.MainWindow.RulesEditor
 {
-    public partial class RulePresetsView : UserControl
+    internal partial class RulePresetsView : UserControl
     {
         public RulePresetsView()
         {

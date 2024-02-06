@@ -6,7 +6,7 @@ using static Zarp.Common.Util.PInvoke;
 
 namespace Zarp.GUI.View
 {
-    public partial class BlockedOverlayView : Window
+    internal partial class BlockedOverlayView : Window
     {
         private IntPtr OverlayHandle;
         private IntPtr AttachedWindowHandle;

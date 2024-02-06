@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 namespace Zarp.GUI.Components
 {
-    public class TextBoxWithPlaceholder : TextBox
+    internal class TextBoxWithPlaceholder : TextBox
     {
         public static readonly DependencyProperty PlaceholderTextProperty = DependencyProperty.Register(nameof(PlaceholderText), typeof(string), typeof(TextBoxWithPlaceholder), new PropertyMetadata(null, OnPlaceholderTextChanged));
 

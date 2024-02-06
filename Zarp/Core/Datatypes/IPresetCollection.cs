@@ -2,7 +2,7 @@
 
 namespace Zarp.Core.Datatypes
 {
-    public interface IPresetCollection : IEnumerable<string>
+    internal interface IPresetCollection : IEnumerable<string>
     {
         public IPreset this[string name] { get; set; }
         public bool Add(IPreset preset);

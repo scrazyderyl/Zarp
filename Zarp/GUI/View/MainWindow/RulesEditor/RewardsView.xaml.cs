@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View.MainWindow.RulesEditor
 {
-    public partial class RewardsView : UserControl
+    internal partial class RewardsView : UserControl
     {
         public RewardsView()
         {

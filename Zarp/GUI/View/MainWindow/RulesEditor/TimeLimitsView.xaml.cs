@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View.MainWindow.RulesEditor
 {
-    public partial class TimeLimitsView : UserControl
+    internal partial class TimeLimitsView : UserControl
     {
         public TimeLimitsView()
         {

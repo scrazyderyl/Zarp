@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View
 {
-    public partial class CreateFocusSessionView : Window
+    internal partial class CreateFocusSessionView : Window
     {
         public CreateFocusSessionView()
         {

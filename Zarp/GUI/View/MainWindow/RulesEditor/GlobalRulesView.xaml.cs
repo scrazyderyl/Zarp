@@ -2,7 +2,7 @@
 
 namespace Zarp.GUI.View.MainWindow.RulesEditor
 {
-    public partial class GlobalRulesView : UserControl
+    internal partial class GlobalRulesView : UserControl
     {
         public GlobalRulesView()
         {

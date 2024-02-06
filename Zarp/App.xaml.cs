@@ -2,7 +2,7 @@
 
 namespace Zarp
 {
-    public partial class App : Application
+    internal partial class App : Application
     {
         public App()
         {
