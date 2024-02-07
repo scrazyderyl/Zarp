@@ -14,13 +14,6 @@
         <viewModel:MainWindowViewModel/>
     </Window.DataContext>
     <Grid>
-        <tb:TaskbarIcon ToolTip="Zarp" LeftClickCommand="{Binding RestoreWindowCommand}">
-            <tb:TaskbarIcon.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Exit"/>
-                </ContextMenu>
-            </tb:TaskbarIcon.ContextMenu>
-        </tb:TaskbarIcon>
         <DockPanel>
             <DockPanel DockPanel.Dock="Top" LastChildFill="False">
                 <Menu DockPanel.Dock="Top">

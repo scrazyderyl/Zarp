@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using Zarp.GUI.DataTypes;
+﻿using Zarp.GUI.DataTypes;
 using Zarp.GUI.ViewModel.MainWindow;
 
 namespace Zarp.GUI.ViewModel
@@ -13,7 +12,6 @@ namespace Zarp.GUI.ViewModel
         public HistoryViewModel HistoryVM { get; set; }
         public SettingsViewModel SettingsVM { get; set; }
 
-        public RelayCommand RestoreWindowCommand { get; set; }
         public RelayCommand ChangeViewCommand { get; set; }
 
         public object? CurrentView { get; set; }
@@ -30,13 +28,6 @@ namespace Zarp.GUI.ViewModel
             CurrentView = FocusSessionVM;
 
             ChangeViewCommand = new RelayCommand(ChangeView);
-            RestoreWindowCommand = new RelayCommand(RestoreWindow);
-        }
-
-        public void RestoreWindow(object? parameter)
-        {
-            Application.Current.MainWindow.Show();
-            Application.Current.MainWindow.WindowState = WindowState.Normal;
         }
 
         public void ChangeView(object? parameter)

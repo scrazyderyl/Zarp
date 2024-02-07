@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using Zarp.Core.Datatypes;
@@ -13,7 +14,7 @@ namespace Zarp.GUI.Model
         private static string WindowsPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 
         private static string[] _IgnoredAppPaths = new string[] {
-            System.Windows.Forms.Application.ExecutablePath,
+            Process.GetCurrentProcess().MainModule!.FileName!,
             WindowsPath + @"\explorer.exe",
             WindowsPath + @"\ImmersiveControlPanel\SystemSettings.exe",
             WindowsPath + @"\System32\ApplicationFrameHost.exe",
