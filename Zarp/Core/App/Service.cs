@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Text.Json;
 using Zarp.Core.Datatypes;
 
 namespace Zarp.Core.App
@@ -22,7 +20,7 @@ namespace Zarp.Core.App
 
         private static void CurrentDomain_ProcessExit(object? sender, EventArgs e)
         {
-            File.WriteAllText(UserDataPath + "save.json", JsonSerializer.Serialize<object>(RulePresets, new JsonSerializerOptions() { IncludeFields = true }));
+
         }
 
         public static object? DialogReturnValue;

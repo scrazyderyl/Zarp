@@ -35,7 +35,7 @@ namespace Zarp.Common.Util
 
         public const int GWL_EXSTYLE = -20;
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
 
         public static string? GetWindowTitle(IntPtr hWnd)
@@ -68,9 +68,7 @@ namespace Zarp.Common.Util
 
         public static Rectangle? GetWindowRect(IntPtr hWnd)
         {
-            RECT windowRect;
-
-            if (!GetWindowRect(hWnd, out windowRect))
+            if (!GetWindowRect(hWnd, out RECT windowRect))
             {
                 return null;
             }
@@ -94,7 +92,7 @@ namespace Zarp.Common.Util
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
 
-        [DllImport("psapi.dll")]
+        [DllImport("psapi.dll", CharSet = CharSet.Unicode)]
         public static extern int GetModuleFileNameEx(IntPtr hProcess, IntPtr hModule, StringBuilder lpFilename, int nSize);
 
         public static int PROCESS_QUERY_INFORMATION = 0x0400;

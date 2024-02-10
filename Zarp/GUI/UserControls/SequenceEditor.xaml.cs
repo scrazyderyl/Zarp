@@ -58,14 +58,14 @@ namespace Zarp.GUI.UserControls
 
         private void OnSelectedItemChanged()
         {
-            if (SelectedItemChangedExternally && ItemList != null && SelectedItem != null)
+            if (_SelectedItemChangedExternally && ItemList != null && SelectedItem != null)
             {
                 Selector.SelectedIndex = ItemList.IndexOf(SelectedItem);
             }
         }
 
-        private bool SelectedItemChangedExternally = true;
-        private bool SuppressSelectionChangeEvent = false;
+        private bool _SelectedItemChangedExternally = true;
+        private bool _SuppressSelectionChangeEvent = false;
         public ObservableCollection<string>? ItemNames;
 
         public SequenceEditor()
@@ -75,21 +75,21 @@ namespace Zarp.GUI.UserControls
 
         public void NameChanged()
         {
-            SuppressSelectionChangeEvent = true;
+            _SuppressSelectionChangeEvent = true;
             int index = Selector.SelectedIndex;
             ItemNames![index] = ItemList![index]!.ToString()!;
             Selector.SelectedIndex = index;
-            SuppressSelectionChangeEvent = false;
+            _SuppressSelectionChangeEvent = false;
         }
 
         private void Selector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (SuppressSelectionChangeEvent)
+            if (_SuppressSelectionChangeEvent)
             {
                 return;
             }
 
-            SelectedItemChangedExternally = false;
+            _SelectedItemChangedExternally = false;
 
             if (Selector.SelectedIndex == -1)
             {
@@ -122,14 +122,12 @@ namespace Zarp.GUI.UserControls
                 }
             }
 
-            SelectedItemChangedExternally = true;
+            _SelectedItemChangedExternally = true;
         }
-
-        private static int count = 0;
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            object newItem = new Event(count++.ToString(), 30, TimeUnit.Minutes, EventType.Regular, null);
+            object newItem = new Event(string.Empty, 30, TimeUnit.Minutes, EventType.Regular, null);
 
             if (Selector.SelectedIndex == -1)
             {

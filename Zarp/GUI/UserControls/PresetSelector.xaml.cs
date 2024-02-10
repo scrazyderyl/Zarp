@@ -62,13 +62,13 @@ namespace Zarp.GUI.UserControls
 
         private void OnSelectedPresetChanged()
         {
-            if (SelectedItemChangedExternally && PresetList != null && SelectedPreset != null)
+            if (_SelectedItemChangedExternally && PresetList != null && SelectedPreset != null)
             {
                 Selector.SelectedIndex = PresetList.IndexOf(SelectedPreset.Name);
             }
         }
 
-        private bool SelectedItemChangedExternally = true;
+        private bool _SelectedItemChangedExternally = true;
         public ObservableCollection<string>? PresetList;
 
         public PresetSelector()
@@ -78,7 +78,7 @@ namespace Zarp.GUI.UserControls
 
         private void Selector_SelectionChanged(object Sender, RoutedEventArgs e)
         {
-            SelectedItemChangedExternally = false;
+            _SelectedItemChangedExternally = false;
 
             if (Selector.SelectedIndex == -1)
             {
@@ -91,7 +91,7 @@ namespace Zarp.GUI.UserControls
                 SelectedPreset = PresetCollection![(string)Selector.SelectedItem];
             }
 
-            SelectedItemChangedExternally = true;
+            _SelectedItemChangedExternally = true;
         }
 
         private void Create_Click(object sender, RoutedEventArgs e)

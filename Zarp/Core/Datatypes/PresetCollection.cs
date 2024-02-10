@@ -7,17 +7,17 @@ namespace Zarp.Core.Datatypes
 {
     internal class PresetCollection<T> : IPresetCollection where T : IPreset
     {
-        private Dictionary<string, T> Presets;
+        private Dictionary<string, T> _Presets;
 
         public PresetCollection()
         {
-            Presets = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
+            _Presets = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
         }
 
         public T this[string name]
         {
-            get => Presets[name];
-            set => Presets[name] = (T)value;
+            get => _Presets[name];
+            set => _Presets[name] = (T)value;
         }
 
         IPreset IPresetCollection.this[string name]
@@ -26,23 +26,23 @@ namespace Zarp.Core.Datatypes
             set => this[name] = (T)value;
         }
 
-        public bool Add(IPreset preset) => Presets.TryAdd(preset.Name, (T)preset);
-        public bool Remove(string name) => Presets.Remove(name);
+        public bool Add(IPreset preset) => _Presets.TryAdd(preset.Name, (T)preset);
+        public bool Remove(string name) => _Presets.Remove(name);
 
         public bool Rename(string oldName, string newName)
         {
-            if (!Presets.TryGetValue(oldName, out T? preset) || !Presets.TryAdd(newName, preset!))
+            if (!_Presets.TryGetValue(oldName, out T? preset) || !_Presets.TryAdd(newName, preset!))
             {
                 return false;
             }
 
-            Presets.Remove(oldName);
+            _Presets.Remove(oldName);
             preset!.Name = newName;
 
             return true;
         }
 
-        public bool Contains(string name) => Presets.ContainsKey(name);
+        public bool Contains(string name) => _Presets.ContainsKey(name);
 
         public IPreset? Deserialize(string json)
         {
@@ -52,7 +52,7 @@ namespace Zarp.Core.Datatypes
             });
         }
 
-        public IEnumerator<string> GetEnumerator() => Presets.Keys.GetEnumerator();
+        public IEnumerator<string> GetEnumerator() => _Presets.Keys.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

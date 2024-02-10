@@ -14,7 +14,7 @@ namespace Zarp.GUI.ViewModel
 
     internal class ApplicationSelectorViewModel : ObservableObject
     {
-        private static string[] _WindowsPaths = new string[]
+        private static string[] WindowsPaths = new string[]
         {
             Environment.GetFolderPath(Environment.SpecialFolder.Windows),
             Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles)
@@ -93,7 +93,7 @@ namespace Zarp.GUI.ViewModel
                 {
                     string lowerPath = application.Data.ExecutablePath;
 
-                    foreach (string excludedPath in _WindowsPaths)
+                    foreach (string excludedPath in WindowsPaths)
                     {
                         if (lowerPath.Contains(excludedPath))
                         {

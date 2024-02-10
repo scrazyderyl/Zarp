@@ -8,8 +8,8 @@ namespace Zarp.GUI.Model
 {
     internal class ApplicationList : IListCache<ApplicationInfo>
     {
-        private static readonly string CommonStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu) + @"\Programs";
-        private static readonly string UserStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + @"\Programs";
+        private static string CommonStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu) + @"\Programs";
+        private static string UserStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + @"\Programs";
 
         private IListCache<ApplicationInfo>[] _ApplicationLists;
         private Dictionary<string, ApplicationInfo> _Applications;

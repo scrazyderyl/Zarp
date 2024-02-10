@@ -12,7 +12,7 @@ namespace Zarp.Core.Datatypes
             {
                 int total = 0;
 
-                foreach (Event item in Events)
+                foreach (Event item in _Events)
                 {
                     total += item.Duration;
                 }
@@ -21,30 +21,30 @@ namespace Zarp.Core.Datatypes
             }
         }
 
-        internal List<Event> Events;
+        internal List<Event> _Events;
 
         public FocusSessionPreset()
         {
             Name = string.Empty;
-            Events = new List<Event>();
+            _Events = new List<Event>();
         }
 
         public FocusSessionPreset(string name, int loopCount)
         {
             Name = name;
             LoopCount = loopCount;
-            Events = new List<Event>();
+            _Events = new List<Event>();
         }
 
         public FocusSessionPreset(string name, FocusSessionPreset preset)
         {
             Name = name;
             LoopCount = preset.LoopCount;
-            Events = new List<Event>(preset.Events.Count);
+            _Events = new List<Event>(preset._Events.Count);
 
-            foreach (Event item in preset.Events)
+            foreach (Event item in preset._Events)
             {
-                Events.Add(new Event(item));
+                _Events.Add(new Event(item));
             }
         }
 
@@ -60,7 +60,7 @@ namespace Zarp.Core.Datatypes
             time %= duration;
             int cumulativeDuration = 0;
 
-            foreach (Event item in Events)
+            foreach (Event item in _Events)
             {
                 switch (item.DurationUnit)
                 {

@@ -7,10 +7,10 @@ namespace Zarp.Common.Util
 {
     internal class Shortcut
     {
-        const uint S_OK = 0x00000000;
-        const uint S_FALSE = 0x00000001;
+        private const uint S_OK = 0x00000000;
+        private const uint S_FALSE = 0x00000001;
 
-        const int MAX_PATH = 260;
+        private const int MAX_PATH = 260;
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         struct WIN32_FIND_DATAW
@@ -112,7 +112,7 @@ namespace Zarp.Common.Util
             StringBuilder resolvedFilename = new StringBuilder(MAX_PATH);
             ShellLink link = new ShellLink();
             ((IPersistFile)link).Load(filename, (int)STGM_FLAGS.STGM_READ);
-            uint result = ((IShellLinkW)link).GetPath(resolvedFilename, resolvedFilename.Capacity, out WIN32_FIND_DATAW data, 0);
+            uint result = ((IShellLinkW)link).GetPath(resolvedFilename, resolvedFilename.Capacity, out _, 0);
 
             if (result == S_OK || result == S_FALSE)
             {

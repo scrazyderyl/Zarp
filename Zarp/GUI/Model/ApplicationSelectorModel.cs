@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using Zarp.Core.Datatypes;
@@ -13,26 +12,26 @@ namespace Zarp.GUI.Model
     {
         private static string WindowsPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 
-        private static string[] _IgnoredAppPaths = new string[] {
-            Process.GetCurrentProcess().MainModule!.FileName!,
+        private static string[] IgnoredAppPaths = new string[] {
+            Environment.ProcessPath!,
             WindowsPath + @"\explorer.exe",
             WindowsPath + @"\ImmersiveControlPanel\SystemSettings.exe",
             WindowsPath + @"\System32\ApplicationFrameHost.exe",
             WindowsPath + @"\SystemApps\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\TextInputHost.exe"
         };
-        private static HashSet<string> _IgnoredApps = new HashSet<string>(_IgnoredAppPaths);
+        private static HashSet<string> IgnoredApps = new HashSet<string>(IgnoredAppPaths);
 
-        private static ApplicationList? _ApplicationList;
-        private static ApplicationIconCache _IconCache = new ApplicationIconCache();
-        private static List<ItemWithIcon<ApplicationInfo>>? _Applications;
+        private static ApplicationList? ApplicationList;
+        private static ApplicationIconCache IconCache = new ApplicationIconCache();
+        private static List<ItemWithIcon<ApplicationInfo>>? Applications;
 
         public static IEnumerable<ItemWithIcon<ApplicationInfo>> OpenApplications
         {
             get
             {
-                if (_ApplicationList == null)
+                if (ApplicationList == null)
                 {
-                    _ApplicationList = new ApplicationList();
+                    ApplicationList = new ApplicationList();
                     UpdateInstalledApplications();
                 }
 
@@ -57,12 +56,12 @@ namespace Zarp.GUI.Model
                     string? executablePath = GetWindowExecutablePath(hWnd);
 
                     // Ignore windows with hidden executable path
-                    if (executablePath == null || _IgnoredApps.Contains(executablePath))
+                    if (executablePath == null || IgnoredApps.Contains(executablePath))
                     {
                         return true;
                     }
 
-                    _IconCache.Get(executablePath, out BitmapSource? icon);
+                    IconCache.Get(executablePath, out BitmapSource? icon);
                     windows.Add(new ItemWithIcon<ApplicationInfo>(new ApplicationInfo(executablePath, title), icon));
 
                     return true;
@@ -76,34 +75,34 @@ namespace Zarp.GUI.Model
         {
             get
             {
-                if (_ApplicationList == null)
+                if (ApplicationList == null)
                 {
-                    _ApplicationList = new ApplicationList();
+                    ApplicationList = new ApplicationList();
                     UpdateInstalledApplications();
                 }
-                else if (!_ApplicationList.Updated)
+                else if (!ApplicationList.Updated)
                 {
                     UpdateInstalledApplications();
                 }
 
-                return _Applications!;
+                return Applications!;
             }
         }
 
         public static void UpdateInstalledApplications()
         {
-            _Applications = new List<ItemWithIcon<ApplicationInfo>>(_ApplicationList!.Count);
+            Applications = new List<ItemWithIcon<ApplicationInfo>>(ApplicationList!.Count);
 
-            foreach (ApplicationInfo application in _ApplicationList.OrderBy(application => application.Name))
+            foreach (ApplicationInfo application in ApplicationList.OrderBy(application => application.Name))
             {
-                _IconCache.Get(application.ExecutablePath, out BitmapSource? icon);
-                _Applications.Add(new ItemWithIcon<ApplicationInfo>(application, icon));
+                IconCache.Get(application.ExecutablePath, out BitmapSource? icon);
+                Applications.Add(new ItemWithIcon<ApplicationInfo>(application, icon));
             }
         }
 
         public static BitmapSource? GetExecutableIcon(string path)
         {
-            _IconCache.Get(path, out BitmapSource? data);
+            IconCache.Get(path, out BitmapSource? data);
 
             return data;
         }

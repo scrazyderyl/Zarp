@@ -6,11 +6,11 @@ namespace Zarp.GUI.Components
 {
     internal class FilterableListBox : ListBox
     {
-        private List<object> Selected;
+        private List<object> _Selected;
 
         public FilterableListBox()
         {
-            Selected = new List<object>();
+            _Selected = new List<object>();
             SelectionChanged += OnSelectionChanged;
         }
 
@@ -18,7 +18,7 @@ namespace Zarp.GUI.Components
         {
             SelectionChanged -= OnSelectionChanged;
             base.OnItemsChanged(e);
-            SetSelectedItems(Selected);
+            SetSelectedItems(_Selected);
             SelectionChanged += OnSelectionChanged;
         }
 
@@ -26,12 +26,12 @@ namespace Zarp.GUI.Components
         {
             foreach (object obj in e.AddedItems)
             {
-                Selected.Add(obj);
+                _Selected.Add(obj);
             }
 
             foreach (object obj in e.RemovedItems)
             {
-                Selected.Remove(obj);
+                _Selected.Remove(obj);
             }
         }
     }

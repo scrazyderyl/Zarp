@@ -8,31 +8,31 @@ namespace Zarp.GUI.View
 {
     internal partial class BlockedOverlayView : Window
     {
-        private IntPtr OverlayHandle;
-        private IntPtr AttachedWindowHandle;
-        private bool IsClosing = false;
+        private IntPtr _OverlayHandle;
+        private IntPtr _AttachedWindowHandle;
+        private bool _IsClosing = false;
 
-        private IntPtr AttachedShowEvent;
-        private IntPtr AttachedLocationChangeEvent;
-        private IntPtr AttachedCloseEvent;
+        private IntPtr _AttachedShowEvent;
+        private IntPtr _AttachedLocationChangeEvent;
+        private IntPtr _AttachedCloseEvent;
 
-        private WinEventDelegate AttachedShowEventHandler;
-        private WinEventDelegate AttachedLocationChangeEventHandler;
-        private WinEventDelegate AttachedCloseEventHandler;
+        private WinEventDelegate _AttachedShowEventHandler;
+        private WinEventDelegate _AttachedLocationChangeEventHandler;
+        private WinEventDelegate _AttachedCloseEventHandler;
 
         public BlockedOverlayView(IntPtr attachedWindowHandle)
         {
-            AttachedWindowHandle = attachedWindowHandle;
-            AttachedShowEventHandler = OnAttachedShow;
-            AttachedLocationChangeEventHandler = OnLocationChange;
-            AttachedCloseEventHandler = OnAttachedClose;
+            _AttachedWindowHandle = attachedWindowHandle;
+            _AttachedShowEventHandler = OnAttachedShow;
+            _AttachedLocationChangeEventHandler = OnLocationChange;
+            _AttachedCloseEventHandler = OnAttachedClose;
 
             InitializeComponent();
 
-            OverlayHandle = new WindowInteropHelper(this).EnsureHandle();
-            long style = GetWindowLong(OverlayHandle, GWL_EXSTYLE);
+            _OverlayHandle = new WindowInteropHelper(this).EnsureHandle();
+            long style = GetWindowLong(_OverlayHandle, GWL_EXSTYLE);
 
-            if (style == 0 || SetWindowLong(OverlayHandle, GWL_EXSTYLE, style | WS_EX_TOOLWINDOW) == 0)
+            if (style == 0 || SetWindowLong(_OverlayHandle, GWL_EXSTYLE, style | WS_EX_TOOLWINDOW) == 0)
             {
                 throw new Exception();
             }
@@ -42,14 +42,14 @@ namespace Zarp.GUI.View
                 throw new Exception();
             }
 
-            AttachedShowEvent = SetWinEventHook(EVENT_OBJECT_SHOW, EVENT_OBJECT_SHOW, IntPtr.Zero, AttachedShowEventHandler, processId, 0, WINEVENT_OUTOFCONTEXT);
-            AttachedLocationChangeEvent = SetWinEventHook(EVENT_OBJECT_LOCATIONCHANGE, EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, AttachedLocationChangeEventHandler, processId, 0, WINEVENT_OUTOFCONTEXT);
+            _AttachedShowEvent = SetWinEventHook(EVENT_OBJECT_SHOW, EVENT_OBJECT_SHOW, IntPtr.Zero, _AttachedShowEventHandler, processId, 0, WINEVENT_OUTOFCONTEXT);
+            _AttachedLocationChangeEvent = SetWinEventHook(EVENT_OBJECT_LOCATIONCHANGE, EVENT_OBJECT_LOCATIONCHANGE, IntPtr.Zero, _AttachedLocationChangeEventHandler, processId, 0, WINEVENT_OUTOFCONTEXT);
 
             MoveOverlayToWindow();
             MoveOverlayOverWindow();
             Show();
 
-            AttachedCloseEvent = SetWinEventHook(EVENT_OBJECT_DESTROY, EVENT_OBJECT_DESTROY, IntPtr.Zero, AttachedCloseEventHandler, processId, 0, WINEVENT_OUTOFCONTEXT);
+            _AttachedCloseEvent = SetWinEventHook(EVENT_OBJECT_DESTROY, EVENT_OBJECT_DESTROY, IntPtr.Zero, _AttachedCloseEventHandler, processId, 0, WINEVENT_OUTOFCONTEXT);
         }
 
         protected override void OnActivated(EventArgs e)
@@ -60,34 +60,34 @@ namespace Zarp.GUI.View
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            if (IsClosing)
+            if (_IsClosing)
             {
                 return;
             }
 
-            IsClosing = true;
+            _IsClosing = true;
 
-            UnhookWinEvent(AttachedShowEvent);
-            UnhookWinEvent(AttachedLocationChangeEvent);
-            UnhookWinEvent(AttachedCloseEvent);
+            UnhookWinEvent(_AttachedShowEvent);
+            UnhookWinEvent(_AttachedLocationChangeEvent);
+            UnhookWinEvent(_AttachedCloseEvent);
 
             base.OnClosing(e);
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            Core.App.Service.Blocker.WindowClosed(AttachedWindowHandle);
+            Core.App.Service.Blocker.WindowClosed(_AttachedWindowHandle);
             base.OnClosed(e);
         }
 
         internal void MoveOverlayOverWindow()
         {
-            SetWindowPos(AttachedWindowHandle, OverlayHandle, 0, 0, 0, 0, SWP_ASYNCWINDOWPOS | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            SetWindowPos(_AttachedWindowHandle, _OverlayHandle, 0, 0, 0, 0, SWP_ASYNCWINDOWPOS | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
         }
 
         internal void MoveOverlayToWindow()
         {
-            System.Drawing.Rectangle? rect = GetWindowRect(AttachedWindowHandle);
+            System.Drawing.Rectangle? rect = GetWindowRect(_AttachedWindowHandle);
 
             if (rect == null)
             {
@@ -102,17 +102,17 @@ namespace Zarp.GUI.View
 
         private void MinimizeAttachedWindow(object sender, RoutedEventArgs e)
         {
-            MinimizeWindow(AttachedWindowHandle);
+            MinimizeWindow(_AttachedWindowHandle);
         }
 
         private void CloseAttachedWindow(object sender, RoutedEventArgs e)
         {
-            CloseWindow(AttachedWindowHandle);
+            CloseWindow(_AttachedWindowHandle);
         }
 
         private void OnAttachedShow(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
         {
-            if (hwnd == AttachedWindowHandle)
+            if (hwnd == _AttachedWindowHandle)
             {
                 return;
             }
@@ -122,7 +122,7 @@ namespace Zarp.GUI.View
 
         private void OnLocationChange(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
         {
-            if (hwnd != AttachedWindowHandle)
+            if (hwnd != _AttachedWindowHandle)
             {
                 return;
             }
@@ -132,7 +132,7 @@ namespace Zarp.GUI.View
 
         private void OnAttachedClose(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
         {
-            if (hwnd != AttachedWindowHandle)
+            if (hwnd != _AttachedWindowHandle)
             {
                 return;
             }

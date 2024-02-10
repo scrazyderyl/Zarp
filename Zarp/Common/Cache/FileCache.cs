@@ -6,18 +6,18 @@ namespace Zarp.Common.Cache
 {
     internal abstract class FileCache<T>
     {
-        private Dictionary<string, CachedFile> Cache;
+        private Dictionary<string, CachedFile> _Cache;
 
         public FileCache()
         {
-            Cache = new();
+            _Cache = new();
         }
 
         public bool Get(string path, out T data)
         {
             FileInfo file = new(path);
 
-            if (Cache.TryGetValue(file.FullName, out CachedFile entry))
+            if (_Cache.TryGetValue(file.FullName, out CachedFile entry))
             {
                 // Entry found
                 if (entry.Updated)
@@ -43,7 +43,7 @@ namespace Zarp.Common.Cache
                 if (TryFetch(file.FullName, out data))
                 {
                     // Create new entry
-                    Cache.Add(file.FullName, new CachedFile(file, data));
+                    _Cache.Add(file.FullName, new CachedFile(file, data));
                 }
                 else
                 {

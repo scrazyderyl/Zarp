@@ -156,7 +156,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
             }
             else
             {
-                EventList = SelectedFocusSessionPreset!.Events;
+                EventList = SelectedFocusSessionPreset!._Events;
                 MainEditorVisibility = Visibility.Visible;
             }
 

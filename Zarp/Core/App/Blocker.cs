@@ -10,48 +10,48 @@ namespace Zarp.Core.App
 {
     internal class Blocker
     {
-        internal RulePreset AlwaysAllowed;
-        internal RulePreset AlwaysBlocked;
+        internal RulePreset _AlwaysAllowed;
+        internal RulePreset _AlwaysBlocked;
 
-        private Dictionary<IntPtr, BlockedOverlayView> BlockedApplicationOverlays;
-        private Dictionary<string, RewardPreset> EnabledRewards;
-        private Event? ActiveEvent;
-        private bool Enabled;
+        private Dictionary<IntPtr, BlockedOverlayView> _BlockedApplicationOverlays;
+        private Dictionary<string, RewardPreset> _EnabledRewards;
+        private Event? _ActiveEvent;
+        private bool _Enabled;
 
-        private WinEventDelegate ForegroundEventHandler;
-        private IntPtr ForegroundEventHook;
+        private WinEventDelegate _ForegroundEventHandler;
+        private IntPtr _ForegroundEventHook;
 
         public Blocker()
         {
-            AlwaysAllowed = new RulePreset();
-            AlwaysBlocked = new RulePreset();
+            _AlwaysAllowed = new RulePreset();
+            _AlwaysBlocked = new RulePreset();
 
-            BlockedApplicationOverlays = new Dictionary<IntPtr, BlockedOverlayView>();
-            EnabledRewards = new Dictionary<string, RewardPreset>();
-            ActiveEvent = null;
-            Enabled = false;
+            _BlockedApplicationOverlays = new Dictionary<IntPtr, BlockedOverlayView>();
+            _EnabledRewards = new Dictionary<string, RewardPreset>();
+            _ActiveEvent = null;
+            _Enabled = false;
 
-            ForegroundEventHandler = OnForegroundChanged;
+            _ForegroundEventHandler = OnForegroundChanged;
         }
 
         public void Enable()
         {
-            Enabled = true;
-            ForegroundEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, ForegroundEventHandler, 0, 0, WINEVENT_OUTOFCONTEXT);
+            _Enabled = true;
+            _ForegroundEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, _ForegroundEventHandler, 0, 0, WINEVENT_OUTOFCONTEXT);
             UpdateAll();
         }
 
         public void Disable()
         {
-            Enabled = false;
+            _Enabled = false;
 
-            foreach (BlockedOverlayView window in BlockedApplicationOverlays.Values)
+            foreach (BlockedOverlayView window in _BlockedApplicationOverlays.Values)
             {
                 window.Close();
             }
 
-            BlockedApplicationOverlays.Clear();
-            UnhookWinEvent(ForegroundEventHook);
+            _BlockedApplicationOverlays.Clear();
+            UnhookWinEvent(_ForegroundEventHook);
         }
 
         private void OnForegroundChanged(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
@@ -61,7 +61,7 @@ namespace Zarp.Core.App
                 return;
             }
 
-            if (BlockedApplicationOverlays.TryGetValue(hwnd, out BlockedOverlayView? overlay))
+            if (_BlockedApplicationOverlays.TryGetValue(hwnd, out BlockedOverlayView? overlay))
             {
                 overlay.Activate();
             }
@@ -73,45 +73,45 @@ namespace Zarp.Core.App
 
         internal void WindowClosed(IntPtr handle)
         {
-            BlockedApplicationOverlays.Remove(handle);
+            _BlockedApplicationOverlays.Remove(handle);
         }
 
         public void SetActiveEvent(Event newEvent)
         {
-            ActiveEvent = newEvent;
+            _ActiveEvent = newEvent;
             UpdateAll();
         }
 
         public void ClearActiveEvent()
         {
-            ActiveEvent = null;
+            _ActiveEvent = null;
             UpdateAll();
         }
 
         public void EnableReward(RewardPreset reward)
         {
-            EnabledRewards.TryAdd(reward.Name, reward);
+            _EnabledRewards.TryAdd(reward.Name, reward);
         }
 
         public void DisableReward(string name)
         {
-            EnabledRewards.Remove(name);
+            _EnabledRewards.Remove(name);
         }
 
         public bool IsRewardEnabled(string name)
         {
-            return EnabledRewards.ContainsKey(name);
+            return _EnabledRewards.ContainsKey(name);
         }
 
         public void AddAlwaysAllowed(IEnumerable<ApplicationInfo> applications)
         {
             foreach (ApplicationInfo application in applications)
             {
-                AlwaysBlocked.ApplicationRules.Remove(application.Id);
-                AlwaysAllowed.ApplicationRules.Add(application);
+                _AlwaysBlocked.ApplicationRules.Remove(application.Id);
+                _AlwaysAllowed.ApplicationRules.Add(application);
             }
 
-            if (Enabled)
+            if (_Enabled)
             {
                 UpdateAll();
             }
@@ -119,9 +119,9 @@ namespace Zarp.Core.App
 
         public void RemoveAlwaysAllowed(ApplicationInfo application)
         {
-            AlwaysAllowed.ApplicationRules.Remove(application.Id);
+            _AlwaysAllowed.ApplicationRules.Remove(application.Id);
 
-            if (Enabled)
+            if (_Enabled)
             {
                 UpdateAll();
             }
@@ -131,11 +131,11 @@ namespace Zarp.Core.App
         {
             foreach (ApplicationInfo application in applications)
             {
-                AlwaysAllowed.ApplicationRules.Remove(application.Id);
-                AlwaysBlocked.ApplicationRules.Add(application);
+                _AlwaysAllowed.ApplicationRules.Remove(application.Id);
+                _AlwaysBlocked.ApplicationRules.Add(application);
             }
 
-            if (Enabled)
+            if (_Enabled)
             {
                 UpdateAll();
             }
@@ -143,9 +143,9 @@ namespace Zarp.Core.App
 
         public void RemoveAlwaysBlocked(ApplicationInfo application)
         {
-            AlwaysBlocked.ApplicationRules.Remove(application.Id);
+            _AlwaysBlocked.ApplicationRules.Remove(application.Id);
 
-            if (Enabled)
+            if (_Enabled)
             {
                 UpdateAll();
             }
@@ -159,23 +159,23 @@ namespace Zarp.Core.App
             {
                 return false;
             }
-            else if (AlwaysAllowed.ApplicationRules.Contains(executablePath))
+            else if (_AlwaysAllowed.ApplicationRules.Contains(executablePath))
             {
                 return false;
             }
-            else if (AlwaysBlocked.ApplicationRules.Contains(executablePath))
+            else if (_AlwaysBlocked.ApplicationRules.Contains(executablePath))
             {
                 return true;
             }
-            else if (ActiveEvent == null)
+            else if (_ActiveEvent == null)
             {
                 return false;
             }
-            else if (ActiveEvent.Type == EventType.OfflineBreak)
+            else if (_ActiveEvent.Type == EventType.OfflineBreak)
             {
                 return true;
             }
-            else if (ActiveEvent.Rules != null && ActiveEvent.Rules.ApplicationRules.IsBlocked(executablePath))
+            else if (_ActiveEvent.Rules != null && _ActiveEvent.Rules.ApplicationRules.IsBlocked(executablePath))
             {
                 return true;
             }
@@ -205,15 +205,15 @@ namespace Zarp.Core.App
 
         private void TryBlockApplication(IntPtr handle)
         {
-            if (!BlockedApplicationOverlays.ContainsKey(handle))
+            if (!_BlockedApplicationOverlays.ContainsKey(handle))
             {
-                BlockedApplicationOverlays.Add(handle, new BlockedOverlayView(handle));
+                _BlockedApplicationOverlays.Add(handle, new BlockedOverlayView(handle));
             }
         }
 
         private void TryUnblockApplication(IntPtr handle)
         {
-            if (BlockedApplicationOverlays.Remove(handle, out BlockedOverlayView? overlay))
+            if (_BlockedApplicationOverlays.Remove(handle, out BlockedOverlayView? overlay))
             {
                 overlay.Close();
             }

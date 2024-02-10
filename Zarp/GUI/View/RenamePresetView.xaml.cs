@@ -7,11 +7,11 @@ namespace Zarp.GUI.View
     {
         public bool Confirmed = false;
         public string ChosenName => NameField.Text;
-        private IPresetCollection PresetCollection;
+        private IPresetCollection _PresetCollection;
 
         public RenamePresetView(IPresetCollection collection)
         {
-            PresetCollection = collection;
+            _PresetCollection = collection;
             InitializeComponent();
             NameField.Focus();
         }
@@ -29,7 +29,7 @@ namespace Zarp.GUI.View
                 return;
             }
 
-            if (PresetCollection.Contains(ChosenName))
+            if (_PresetCollection.Contains(ChosenName))
             {
                 MessageBox.Show("A preset with the same name already exists");
                 return;
