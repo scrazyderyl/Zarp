@@ -5,7 +5,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
 {
     internal class RulesViewModel : ObservableObject
     {
-        public RulePresetsViewModel PresetsVM { get; set; }
+        public RuleSetsViewModel PresetsVM { get; set; }
         public GlobalRulesViewModel GlobalRulesVM { get; set; }
         public TimeLimitsViewModel TimeLimitsVM { get; set; }
         public RewardsViewModel RewardsVM { get; set; }
@@ -16,7 +16,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
 
         public RulesViewModel()
         {
-            PresetsVM = new RulePresetsViewModel();
+            PresetsVM = new RuleSetsViewModel();
             GlobalRulesVM = new GlobalRulesViewModel();
             TimeLimitsVM = new TimeLimitsViewModel();
             RewardsVM = new RewardsViewModel();

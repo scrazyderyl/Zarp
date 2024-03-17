@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using Zarp.Core.Datatypes;
-using Zarp.GUI.Util;
 using Zarp.GUI.View;
 
 namespace Zarp.GUI.UserControls
@@ -29,29 +26,29 @@ namespace Zarp.GUI.UserControls
         {
             if (PresetCollection == null)
             {
-                PresetList = new ObservableCollection<string>();
+                PresetList = new ObservableCollection<Preset>();
             }
             else
             {
-                PresetList = new ObservableCollection<string>(PresetCollection);
+                PresetList = new ObservableCollection<Preset>(PresetCollection);
             }
 
             Selector.ItemsSource = PresetList;
         }
 
-        public static readonly DependencyProperty CreateFunctionProperty = DependencyProperty.Register(nameof(CreateFunction), typeof(Func<IPreset>), typeof(PresetSelector));
+        public static readonly DependencyProperty CreateFunctionProperty = DependencyProperty.Register(nameof(CreateFunction), typeof(Func<Preset>), typeof(PresetSelector));
 
-        public Func<IPreset?> CreateFunction
+        public Func<Preset?> CreateFunction
         {
-            get => (Func<IPreset>)GetValue(CreateFunctionProperty);
+            get => (Func<Preset>)GetValue(CreateFunctionProperty);
             set => SetValue(CreateFunctionProperty, value);
         }
 
-        public static readonly DependencyProperty SelectedPresetProperty = DependencyProperty.Register(nameof(SelectedPreset), typeof(IPreset), typeof(PresetSelector), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedPresetChanged));
+        public static readonly DependencyProperty SelectedPresetProperty = DependencyProperty.Register(nameof(SelectedPreset), typeof(Preset), typeof(PresetSelector), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnSelectedPresetChanged));
 
-        public IPreset? SelectedPreset
+        public Preset? SelectedPreset
         {
-            get => (IPreset?)GetValue(SelectedPresetProperty);
+            get => (Preset?)GetValue(SelectedPresetProperty);
             set => SetValue(SelectedPresetProperty, value);
         }
 
@@ -64,12 +61,12 @@ namespace Zarp.GUI.UserControls
         {
             if (_SelectedItemChangedExternally && PresetList != null && SelectedPreset != null)
             {
-                Selector.SelectedIndex = PresetList.IndexOf(SelectedPreset.Name);
+                Selector.SelectedIndex = PresetList.IndexOf(SelectedPreset);
             }
         }
 
         private bool _SelectedItemChangedExternally = true;
-        public ObservableCollection<string>? PresetList;
+        public ObservableCollection<Preset>? PresetList;
 
         public PresetSelector()
         {
@@ -87,8 +84,11 @@ namespace Zarp.GUI.UserControls
             }
             else
             {
+                Preset selected = (Preset)Selector.SelectedItem;
                 Options.IsEnabled = true;
-                SelectedPreset = PresetCollection![(string)Selector.SelectedItem];
+                SelectedPreset = selected;
+
+                Delete.IsEnabled = selected.IsDeletable;
             }
 
             _SelectedItemChangedExternally = true;
@@ -96,41 +96,15 @@ namespace Zarp.GUI.UserControls
 
         private void Create_Click(object sender, RoutedEventArgs e)
         {
-            IPreset? result = CreateFunction();
+            Preset? result = CreateFunction();
 
-            if (result != null)
+            if (result == null)
             {
-                PresetCollection!.Add(result);
-                PresetList?.Add(result.Name);
-                Selector.SelectedIndex = Selector.Items.Count - 1;
-            }
-        }
-
-        private void Import_Click(object sender, RoutedEventArgs e)
-        {
-            string[] fileNames = FileDialogs.OpenJSONMulti();
-            bool added = false;
-
-            foreach (string fileName in fileNames)
-            {
-                try
-                {
-                    string json = File.ReadAllText(fileName);
-                    IPreset? preset = PresetCollection!.Deserialize(json);
-
-                    if (preset != null && PresetCollection!.Add(preset))
-                    {
-                        added = true;
-                        PresetList?.Add(preset.Name);
-                    }
-                }
-                catch { }
+                return;
             }
 
-            if (added)
-            {
-                Selector.SelectedIndex = Selector.Items.Count - 1;
-            }
+            PresetList?.Add(result);
+            Selector.SelectedIndex = Selector.Items.Count - 1;
         }
 
         private void Rename_Click(object sender, RoutedEventArgs e)
@@ -143,10 +117,12 @@ namespace Zarp.GUI.UserControls
                 return;
             }
 
-            if (renameView.Confirmed && PresetCollection!.Rename((string)Selector.SelectedItem, renameView.ChosenName))
+            Preset selected = (Preset)Selector.SelectedItem!;
+
+            if (renameView.Confirmed && PresetCollection!.Rename(selected.Guid, renameView.ChosenName))
             {
                 PresetList?.RemoveAt(Selector.SelectedIndex);
-                PresetList?.Add(renameView.ChosenName);
+                PresetList?.Add(selected);
                 Selector.SelectedIndex = Selector.Items.Count - 1;
             }
         }
@@ -161,35 +137,16 @@ namespace Zarp.GUI.UserControls
                 return;
             }
 
-            PresetCollection!.Add(SelectedPreset!.Duplicate(renameView.ChosenName));
-            PresetList?.Add(renameView.ChosenName);
+            Preset newPreset = SelectedPreset!.Duplicate(renameView.ChosenName);
+
+            PresetCollection!.Add(newPreset);
+            PresetList?.Add(newPreset);
             Selector.SelectedIndex = Selector.Items.Count - 1;
-        }
-
-        private void Export_Click(object sender, RoutedEventArgs e)
-        {
-            string fileName = FileDialogs.SaveJSON();
-
-            if (fileName.Equals(string.Empty))
-            {
-                return;
-            }
-
-            try
-            {
-                string json = JsonSerializer.Serialize<object>(SelectedPreset!, new JsonSerializerOptions()
-                {
-                    IncludeFields = true
-                });
-
-                File.WriteAllText(fileName, json);
-            }
-            catch { }
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            PresetCollection!.Remove(SelectedPreset!.Name);
+            PresetCollection!.Remove(SelectedPreset!.Guid);
             int selectedIndex = Selector.SelectedIndex;
             PresetList?.RemoveAt(selectedIndex);
             Selector.SelectedIndex = Selector.Items.Count == selectedIndex ? Selector.Items.Count - 1 : selectedIndex;

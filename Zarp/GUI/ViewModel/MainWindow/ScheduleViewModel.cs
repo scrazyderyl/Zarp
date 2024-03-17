@@ -5,11 +5,11 @@ namespace Zarp.GUI.ViewModel.MainWindow
 {
     internal class ScheduleViewModel
     {
-        public ObservableCollection<FocusSessionPreset> FocusSessions { get; set; }
+        public ObservableCollection<FocusSession> FocusSessions { get; set; }
 
         public ScheduleViewModel()
         {
-            FocusSessions = new ObservableCollection<FocusSessionPreset>();
+            FocusSessions = new ObservableCollection<FocusSession>();
         }
     }
 }

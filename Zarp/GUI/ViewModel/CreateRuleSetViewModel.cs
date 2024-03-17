@@ -5,7 +5,7 @@ using Zarp.GUI.View;
 
 namespace Zarp.GUI.ViewModel
 {
-    internal class CreateRulePresetViewModel : ObservableObject
+    internal class CreateRuleSetViewModel : ObservableObject
     {
         public string? Name { get; set; }
         public bool IsWhitelist { get; set; }
@@ -14,7 +14,7 @@ namespace Zarp.GUI.ViewModel
         public RelayCommand ConfirmCommand { get; set; }
         public RelayCommand CancelCommand { get; set; }
 
-        public CreateRulePresetViewModel()
+        public CreateRuleSetViewModel()
         {
             IsWhitelist = true;
 
@@ -24,7 +24,7 @@ namespace Zarp.GUI.ViewModel
 
         void Confirm(object? parameter)
         {
-            CreateRulePresetView window = (CreateRulePresetView)parameter!;
+            CreateRuleSetView window = (CreateRuleSetView)parameter!;
 
             if (string.IsNullOrWhiteSpace(Name))
             {
@@ -32,7 +32,7 @@ namespace Zarp.GUI.ViewModel
             }
 
             string name = Name.Trim();
-            RulePreset newPreset = new RulePreset(name, IsWhitelist);
+            RuleSet newPreset = new RuleSet(name, IsWhitelist);
 
             if (!Core.App.Service.RulePresets.Add(newPreset))
             {
@@ -47,7 +47,7 @@ namespace Zarp.GUI.ViewModel
 
         void Cancel(object? parameter)
         {
-            CreateRulePresetView window = (CreateRulePresetView)parameter!;
+            CreateRuleSetView window = (CreateRuleSetView)parameter!;
             window.Close();
         }
     }

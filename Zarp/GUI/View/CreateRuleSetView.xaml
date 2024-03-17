@@ -1,4 +1,4 @@
-﻿<Window x:Class="Zarp.GUI.View.CreateRulePresetView"
+﻿<Window x:Class="Zarp.GUI.View.CreateRuleSetView"
         x:ClassModifier="internal"
         x:Name="Window"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -10,7 +10,7 @@
         mc:Ignorable="d"
         Title="New rule preset" SizeToContent="WidthAndHeight">
     <Window.DataContext>
-        <viewModel:CreateRulePresetViewModel/>
+        <viewModel:CreateRuleSetViewModel/>
     </Window.DataContext>
     <Grid Style="{StaticResource InputWindow}">
         <StackPanel>

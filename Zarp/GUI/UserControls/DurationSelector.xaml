@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="Zarp.GUI.UserControls.DurationSelector"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Zarp.GUI.UserControls"
+             xmlns:validation="clr-namespace:Zarp.GUI.ValidationRules"
+             mc:Ignorable="d" >
+    <Grid>
+        <StackPanel Orientation="Horizontal">
+            <TextBox x:Name="Hours" Width="23" FontSize="16" TextChanged="TextChanged"/>
+            <TextBlock Margin="6,0,0,0" FontSize="14" VerticalAlignment="Center" Style="{StaticResource ControlLabel}">hours</TextBlock>
+            <TextBox x:Name="Minutes" Width="23" FontSize="16" Margin="10,0,0,0" TextChanged="TextChanged"/>
+            <TextBlock Margin="6,0,0,0" VerticalAlignment="Center" Style="{StaticResource ControlLabel}">min</TextBlock>
+        </StackPanel>
+    </Grid>
+</UserControl>

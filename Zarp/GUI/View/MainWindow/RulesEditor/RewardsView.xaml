@@ -13,31 +13,23 @@
     </UserControl.DataContext>
     <Grid Style="{StaticResource Tab}">
         <StackPanel>
-            <userControls:PresetSelector PresetCollection="{Binding PresetCollection}" CreateFunction="{Binding CreateFunction}" SelectedPreset="{Binding SelectedRewardPreset, Converter={StaticResource RewardPresetConverter}}"></userControls:PresetSelector>
-            <CheckBox Content="Enabled" IsChecked="{Binding RewardEnabled}" Visibility="{Binding EditorVisibility}" Margin="0,8,0,0"/>
-            <StackPanel Margin="0,20,0,0" Visibility="{Binding EditorVisibility}">
-                <TextBlock Text="Criteria" Style="{StaticResource ControlLabel}" Margin="0,12,0,0"/>
+            <userControls:PresetSelector PresetCollection="{Binding PresetCollection}" CreateFunction="{Binding CreateFunction}" SelectedPreset="{Binding SelectedReward, Converter={StaticResource RewardConverter}}"></userControls:PresetSelector>
+            <StackPanel Visibility="{Binding SelectedReward, Converter={StaticResource NullVisibilityConverter}}">
+                <CheckBox Content="Enabled" IsChecked="{Binding RewardEnabled}" Margin="0,8,0,0"/>
+                <TextBlock Text="Criteria" Style="{StaticResource ControlLabel}" Margin="0,20,0,0"/>
                 <StackPanel Orientation="Horizontal">
                     <RadioButton GroupName="Criteria" Margin="4,0,0,0" Content="Focus Session Completion" VerticalAlignment="Center" IsChecked="{Binding FocusSessionOptionSelected}"/>
-                    <ComboBox HorizontalAlignment="Left" Width="200" ItemsSource="{Binding FocusSessionPresets}" SelectedIndex="{Binding SelectedFocusSessionIndex}" Visibility="{Binding FocusSessionSelectorVisibility}" Margin="12,0,0,0"/>
+                    <ComboBox HorizontalAlignment="Left" Width="200" ItemsSource="{Binding FocusSessionPresets}" SelectedIndex="{Binding SelectedFocusSessionIndex}" Visibility="{Binding FocusSessionOptionSelected, Converter={StaticResource BoolVisibilityConverter}}" Margin="12,0,0,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                     <RadioButton GroupName="Criteria" Content="Active Time" Margin="4,0,0,0" VerticalAlignment="Center" IsChecked="{Binding ActiveTimeOptionSelected}"/>
-                    <StackPanel Orientation="Horizontal" Visibility="{Binding ActiveTimeInputVisibility}">
-                        <TextBox Width="36" Margin="12,0,0,0" FontSize="16" MaxLength="3" Text="{Binding ActiveTime, UpdateSourceTrigger=PropertyChanged}"/>
-                        <ComboBox Margin="4,0,0,0" SelectedIndex="{Binding ActiveTimeUnitsIndex}">
-                            <ComboBoxItem Content="Minutes" IsSelected="True"/>
-                            <ComboBoxItem Content="Hours"/>
-                        </ComboBox>
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding ActiveTimeOptionSelected, Converter={StaticResource BoolVisibilityConverter}}">
+                        <userControls:DurationSelector Margin="12,0,0,0" Duration="{Binding ActiveTime}"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
                     <TextBlock Text="Time earned" VerticalAlignment="Center" Style="{StaticResource ControlLabel}"/>
-                    <TextBox Width="36" Margin="12,0,0,0" FontSize="16" MaxLength="3" Text="{Binding TimeEarned, UpdateSourceTrigger=PropertyChanged}"/>
-                    <ComboBox Margin="4,0,0,0" SelectedIndex="{Binding TimeEarnedUnitsIndex}">
-                        <ComboBoxItem Content="Minutes" IsSelected="True"/>
-                        <ComboBoxItem Content="Hours"/>
-                    </ComboBox>
+                    <userControls:DurationSelector Margin="12,0,0,0" Duration="{Binding TimeEarned}"/>
                 </StackPanel>
                 <ListBox Width="240" Height="220" HorizontalAlignment="Left" Margin="0,20,0,0" ItemsSource="{Binding Applications}" ItemTemplate="{StaticResource RemovableListItem}" SelectedIndex="{Binding SelectedApplicationIndex}"></ListBox>
                 <Button Content="Add apps" Margin="0,10,0,0" HorizontalAlignment="Left" Command="{Binding OpenApplicationSelectorCommand}"></Button>

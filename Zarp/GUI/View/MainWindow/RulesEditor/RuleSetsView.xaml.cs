@@ -2,9 +2,9 @@
 
 namespace Zarp.GUI.View.MainWindow.RulesEditor
 {
-    internal partial class RulePresetsView : UserControl
+    internal partial class RuleSetsView : UserControl
     {
-        public RulePresetsView()
+        public RuleSetsView()
         {
             InitializeComponent();
         }

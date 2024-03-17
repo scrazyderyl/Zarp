@@ -97,7 +97,7 @@ namespace Zarp.GUI.ViewModel
             }
 
             string name = Name.Trim();
-            FocusSessionPreset newPreset = new FocusSessionPreset(name, loops);
+            FocusSession newPreset = new FocusSession(name, loops);
 
             if (!Core.App.Service.FocusSessionPresets.Add(newPreset))
             {

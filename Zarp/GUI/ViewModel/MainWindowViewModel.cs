@@ -25,7 +25,7 @@ namespace Zarp.GUI.ViewModel
             HistoryVM = new HistoryViewModel();
             SettingsVM = new SettingsViewModel();
 
-            CurrentView = FocusSessionVM;
+            CurrentView = HomeVM;
 
             ChangeViewCommand = new RelayCommand(ChangeView);
         }

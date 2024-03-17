@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Zarp.GUI.View.MainWindow.RulesEditor.RulePresetsView"
+﻿<UserControl x:Class="Zarp.GUI.View.MainWindow.RulesEditor.RuleSetsView"
              x:ClassModifier="internal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,11 +9,11 @@
              xmlns:userControls="clr-namespace:Zarp.GUI.UserControls"
              mc:Ignorable="d">
     <UserControl.DataContext>
-        <viewModel:RulePresetsViewModel/>
+        <viewModel:RuleSetsViewModel/>
     </UserControl.DataContext>
     <Grid Style="{StaticResource Tab}">
         <StackPanel>
-            <userControls:PresetSelector PresetCollection="{Binding PresetCollection}" CreateFunction="{Binding CreateFunction}" SelectedPreset="{Binding SelectedPreset, Converter={StaticResource RulePresetConverter}}"/>
+            <userControls:PresetSelector PresetCollection="{Binding PresetCollection}" CreateFunction="{Binding CreateFunction}" SelectedPreset="{Binding SelectedRuleSet, Converter={StaticResource RuleSetConverter}}"/>
             <StackPanel Visibility="{Binding EditorVisibility}">
                 <TextBlock Margin="0,20,0,0" Style="{StaticResource ControlLabel}">
                     <Run Text="Policy: "></Run>

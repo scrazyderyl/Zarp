@@ -14,12 +14,10 @@
                     <MenuItem Header="▼">
                         <MenuItem Header="Rename" Click="Rename_Click"/>
                         <MenuItem Header="Duplicate" Click="Duplicate_Click"/>
-                        <MenuItem Header="Export" Click="Export_Click"/>
-                        <MenuItem Header="Delete" Click="Delete_Click"/>
+                        <MenuItem x:Name="Delete" Header="Delete" Click="Delete_Click"/>
                     </MenuItem>
                 </Menu>
                 <Button Content="Create" Margin="12,0,0,0" Click="Create_Click"/>
-                <Button Content="Import" Margin="12,0,0,0" Click="Import_Click"/>
             </StackPanel>
         </StackPanel>
     </Grid>

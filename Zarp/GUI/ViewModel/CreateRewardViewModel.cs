@@ -28,7 +28,7 @@ namespace Zarp.GUI.ViewModel
             }
 
             string name = Name.Trim();
-            RewardPreset newPreset = new RewardPreset(name);
+            Reward newPreset = new Reward(name, 30, RewardRequirement.FocusSessionCompletion, null, 60);
 
             if (!Core.App.Service.RewardPresets.Add(newPreset))
             {

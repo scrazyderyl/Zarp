@@ -13,10 +13,10 @@
     </UserControl.DataContext>
     <Grid Style="{StaticResource Page}">
         <StackPanel>
-            <userControls:PresetSelector PresetCollection="{Binding PresetCollection}" CreateFunction="{Binding CreateFunction}" SelectedPreset="{Binding SelectedFocusSessionPreset, Converter={StaticResource FocusSessionPresetConverter}}"></userControls:PresetSelector>
-            <StackPanel Orientation="Horizontal" Margin="0,30,0,0" Visibility="{Binding MainEditorVisibility}">
-                <userControls:SequenceEditor x:Name="EventsSequence" Margin="0,10,0,0" Width="200" ItemList="{Binding EventList}" SelectedItem="{Binding SelectedEvent}"/>
-                <Border Width="299.47" Margin="100,0,0,0" VerticalAlignment="Top" BorderThickness="2,2,2,2" BorderBrush="#FFDDDDDD" Visibility="{Binding EventEditorVisibility}">
+            <userControls:PresetSelector PresetCollection="{Binding PresetCollection}" CreateFunction="{Binding CreateFocusSessionFunction}" SelectedPreset="{Binding SelectedFocusSession, Converter={StaticResource FocusSessionConverter}}"/>
+            <StackPanel Orientation="Horizontal" Margin="0,30,0,0" Visibility="{Binding SelectedFocusSession, Converter={StaticResource NullVisibilityConverter}}">
+                <userControls:SequenceEditor x:Name="EventsSequence" Margin="0,10,0,0" Width="200" ItemList="{Binding EventList}" CreateFunction="{Binding CreateEventFunction}" SelectedItem="{Binding SelectedEvent}" ItemRemoved="EventsSequence_ItemRemoved"/>
+                <Border Width="299.47" Margin="100,0,0,0" VerticalAlignment="Top" BorderThickness="2,2,2,2" BorderBrush="#FFDDDDDD" Visibility="{Binding SelectedEvent, Converter={StaticResource NullVisibilityConverter}}">
                     <StackPanel Margin="20,20,20,20">
                         <StackPanel Orientation="Horizontal">
                             <RadioButton Content="Activity" Style="{StaticResource EventType}" IsChecked="{Binding IsEventActivity}"/>
@@ -28,13 +28,9 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                             <TextBlock Text="Duration" Style="{StaticResource ControlLabel}"/>
-                            <TextBox Width="36" Margin="12,0,0,0" MaxLength="3" Text="{Binding EventDuration, UpdateSourceTrigger=PropertyChanged}"/>
-                            <ComboBox Margin="4,0,0,0" SelectedIndex="{Binding EventDurationUnitsIndex}">
-                                <ComboBoxItem Content="Minutes"/>
-                                <ComboBoxItem Content="Hours"/>
-                            </ComboBox>
+                            <userControls:DurationSelector Margin="12,0,0,0" Duration="{Binding EventDuration}"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0" Visibility="{Binding ActivityParametersVisibility}">
+                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0" Visibility="{Binding IsEventActivity, Converter={StaticResource BoolVisibilityConverter}}">
                             <TextBlock Text="Preset" VerticalAlignment="Center" Style="{StaticResource ControlLabel}"/>
                             <ComboBox Width="200" Margin="12,0,0,0" ItemsSource="{Binding RulePresets}" SelectedIndex="{Binding SelectedRulePresetIndex}"/>
                         </StackPanel>

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Windows;
 using Zarp.Core.App;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.DataTypes;
@@ -11,20 +10,19 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
     internal class RewardsViewModel : ObservableObject
     {
         public static IPresetCollection PresetCollection => Service.RewardPresets;
-        public static Func<IPreset?> CreateFunction => Create;
+        public static Func<Preset?> CreateFunction => Create;
 
-        private RewardPreset? _SelectedRewardPreset;
-        public RewardPreset? SelectedRewardPreset
+        private Reward? _SelectedReward;
+        public Reward? SelectedReward
         {
-            get => _SelectedRewardPreset;
+            get => _SelectedReward;
             set
             {
-                _SelectedRewardPreset = value;
+                _SelectedReward = value;
                 OnRewardPresetSelectionChanged();
             }
         }
 
-        public Visibility EditorVisibility { get; set; }
         private bool _RewardEnabled;
         public bool RewardEnabled
         {
@@ -35,11 +33,11 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
                 if (value)
                 {
-                    Service.Blocker.EnableReward(_SelectedRewardPreset!);
+                    Service.EnableReward(_SelectedReward!);
                 }
                 else
                 {
-                    Service.Blocker.DisableReward(_SelectedRewardPreset!.Name);
+                    Service.DisableReward(_SelectedReward!);
                 }
             }
         }
@@ -53,19 +51,14 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
                 if (value)
                 {
-                    FocusSessionSelectorVisibility = Visibility.Visible;
-                    _SelectedRewardPreset!.RequirementType = RewardRequirement.FocusSessionCompletion;
-                }
-                else
-                {
-                    FocusSessionSelectorVisibility = Visibility.Hidden;
+                    _SelectedReward!.RequirementType = RewardRequirement.FocusSessionCompletion;
                 }
 
-                OnPropertyChanged(nameof(FocusSessionSelectorVisibility));
+                OnPropertyChanged(nameof(FocusSessionOptionSelected));
             }
         }
-        public Visibility FocusSessionSelectorVisibility { get; set; }
-        public ObservableCollection<string> FocusSessionPresets { get; set; }
+
+        public ObservableCollection<Preset> FocusSessionPresets { get; set; }
         private int _SelectedFocusSessionIndex;
         public int SelectedFocusSessionIndex
         {
@@ -76,11 +69,11 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
                 if (value == -1)
                 {
-                    _SelectedRewardPreset!.CompletionRequirement = null;
+                    _SelectedReward!.CompletionRequirement = null;
                 }
                 else
                 {
-                    _SelectedRewardPreset!.CompletionRequirement = Service.FocusSessionPresets[FocusSessionPresets[_SelectedFocusSessionIndex]];
+                    _SelectedReward!.CompletionRequirement = (FocusSession)FocusSessionPresets[_SelectedFocusSessionIndex];
                 }
             }
         }
@@ -94,101 +87,34 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
                 if (value)
                 {
-                    ActiveTimeInputVisibility = Visibility.Visible;
-                    _SelectedRewardPreset!.RequirementType = RewardRequirement.ActiveTime;
-                }
-                else
-                {
-                    ActiveTimeInputVisibility = Visibility.Hidden;
+                    _SelectedReward!.RequirementType = RewardRequirement.ActiveTime;
                 }
 
-                OnPropertyChanged(nameof(ActiveTimeInputVisibility));
-            }
-        }
-        public Visibility ActiveTimeInputVisibility { get; set; }
-        private string? _ActiveTime;
-        public string? ActiveTime
-        {
-            get { return _ActiveTime; }
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                {
-                    _ActiveTime = value;
-                    return;
-                }
-
-                try
-                {
-                    value = value.TrimStart('0');
-                    int activeTime = int.Parse(value);
-
-                    if (activeTime > 0)
-                    {
-                        _ActiveTime = value;
-                        _SelectedRewardPreset!.ActiveTimeRequirement = activeTime;
-                    }
-                }
-                catch { }
-            }
-        }
-        private int _ActiveTimeUnitsIndex;
-        public int ActiveTimeUnitsIndex
-        {
-            get { return _ActiveTimeUnitsIndex; }
-            set
-            {
-                _ActiveTimeUnitsIndex = value;
-
-                if (_SelectedRewardPreset == null)
-                {
-                    return;
-                }
-
-                _SelectedRewardPreset.ActiveTimeUnit = _ActiveTimeUnitsIndex == 0 ? TimeUnit.Minutes : TimeUnit.Hours;
+                OnPropertyChanged(nameof(ActiveTimeOptionSelected));
             }
         }
 
-        private string? _TimeEarned;
-        public string? TimeEarned
+        public int ActiveTime
         {
-            get { return _TimeEarned; }
+            get => _SelectedReward == null ? 0 : _SelectedReward.ActiveTimeRequirement;
             set
             {
-                if (string.IsNullOrEmpty(value))
+                if (_SelectedReward != null)
                 {
-                    _TimeEarned = value;
-                    return;
+                    _SelectedReward.ActiveTimeRequirement = value;
                 }
-
-                try
-                {
-                    value = value.TrimStart('0');
-                    int timeEarned = int.Parse(value);
-
-                    if (timeEarned > 0)
-                    {
-                        _TimeEarned = value;
-                        _SelectedRewardPreset!.EarnedTime = timeEarned;
-                    }
-                }
-                catch { }
             }
         }
-        private int _TimeEarnedUnitsIndex;
-        public int TimeEarnedUnitsIndex
+
+        public int TimeEarned
         {
-            get { return _TimeEarnedUnitsIndex; }
+            get => _SelectedReward == null ? 0 : _SelectedReward.EarnedTime;
             set
             {
-                _TimeEarnedUnitsIndex = value;
-
-                if (_SelectedRewardPreset == null)
+                if (_SelectedReward != null)
                 {
-                    return;
+                    _SelectedReward.EarnedTime = value;
                 }
-
-                _SelectedRewardPreset!.EarnedTimeUnit = _TimeEarnedUnitsIndex == 0 ? TimeUnit.Minutes : TimeUnit.Hours;
             }
         }
 
@@ -206,7 +132,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                     return;
                 }
 
-                _SelectedRewardPreset!.Rules.ApplicationRules.Remove(Applications[_SelectedApplicationIndex].Id);
+                _SelectedReward!.Rules.ApplicationRules.Remove(Applications[_SelectedApplicationIndex].Id);
                 Applications.RemoveAt(value);
                 _SelectedApplicationIndex = -1;
                 OnPropertyChanged(nameof(SelectedApplicationIndex));
@@ -216,70 +142,58 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
         public RewardsViewModel()
         {
-            EditorVisibility = Visibility.Hidden;
-            FocusSessionPresets = new ObservableCollection<string>(Service.FocusSessionPresets);
-            FocusSessionSelectorVisibility = Visibility.Hidden;
+            FocusSessionPresets = new ObservableCollection<Preset>(Service.FocusSessionPresets);
             _SelectedFocusSessionIndex = -1;
-            ActiveTimeInputVisibility = Visibility.Hidden;
 
             OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationSelector);
             Applications = new ObservableCollection<ApplicationInfo>();
             _SelectedApplicationIndex = -1;
         }
 
-        public static IPreset? Create()
+        public static Preset? Create()
         {
             Service.DialogReturnValue = null;
             new CreateRewardView().ShowDialog();
-            return (IPreset?)Service.DialogReturnValue;
+            return (Preset?)Service.DialogReturnValue;
         }
 
         private void OnRewardPresetSelectionChanged()
         {
-            if (SelectedRewardPreset == null)
+            if (SelectedReward == null)
             {
-                EditorVisibility = Visibility.Hidden;
-                OnPropertyChanged(nameof(EditorVisibility));
+                OnPropertyChanged(nameof(SelectedReward));
                 return;
             }
 
-            RewardEnabled = Service.Blocker.IsRewardEnabled(SelectedRewardPreset.Name);
+            RewardEnabled = Service.IsRewardEnabled(SelectedReward);
             OnPropertyChanged(nameof(RewardEnabled));
 
-            switch (SelectedRewardPreset.RequirementType)
+            switch (SelectedReward.RequirementType)
             {
                 case RewardRequirement.FocusSessionCompletion:
                     FocusSessionOptionSelected = true;
-                    _SelectedFocusSessionIndex = SelectedRewardPreset.CompletionRequirement == null ? -1 : FocusSessionPresets.IndexOf(SelectedRewardPreset.CompletionRequirement.Name);
-                    _ActiveTime = null;
-                    _ActiveTimeUnitsIndex = 0;
+                    _SelectedFocusSessionIndex = SelectedReward.CompletionRequirement == null ? -1 : FocusSessionPresets.IndexOf(SelectedReward.CompletionRequirement);
+                    ActiveTime = 0;
                     OnPropertyChanged(nameof(FocusSessionOptionSelected));
                     OnPropertyChanged(nameof(SelectedFocusSessionIndex));
                     OnPropertyChanged(nameof(ActiveTime));
-                    OnPropertyChanged(nameof(ActiveTimeUnitsIndex));
                     break;
                 case RewardRequirement.ActiveTime:
                     ActiveTimeOptionSelected = true;
                     _SelectedFocusSessionIndex = -1;
-                    _ActiveTime = SelectedRewardPreset.ActiveTimeRequirement.ToString();
-                    _ActiveTimeUnitsIndex = SelectedRewardPreset.ActiveTimeUnit == TimeUnit.Minutes ? 0 : 1;
+                    ActiveTime = SelectedReward.ActiveTimeRequirement;
                     OnPropertyChanged(nameof(SelectedFocusSessionIndex));
                     OnPropertyChanged(nameof(ActiveTimeOptionSelected));
                     OnPropertyChanged(nameof(ActiveTime));
-                    OnPropertyChanged(nameof(ActiveTimeUnitsIndex));
                     break;
             }
 
-            _TimeEarned = SelectedRewardPreset.EarnedTime.ToString();
-            _TimeEarnedUnitsIndex = SelectedRewardPreset.EarnedTimeUnit == TimeUnit.Minutes ? 0 : 1;
+            TimeEarned = SelectedReward.EarnedTime;
             OnPropertyChanged(nameof(TimeEarned));
-            OnPropertyChanged(nameof(TimeEarnedUnitsIndex));
 
-            Applications = new ObservableCollection<ApplicationInfo>(SelectedRewardPreset.Rules.ApplicationRules);
+            Applications = new ObservableCollection<ApplicationInfo>(SelectedReward.Rules.ApplicationRules);
             OnPropertyChanged(nameof(Applications));
-
-            EditorVisibility = Visibility.Visible;
-            OnPropertyChanged(nameof(EditorVisibility));
+            OnPropertyChanged(nameof(SelectedReward));
         }
 
         public void OpenApplicationSelector(object? parameter)
@@ -294,9 +208,9 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
             foreach (ApplicationInfo application in selector.Selected)
             {
-                SelectedRewardPreset!.Rules.ApplicationRules.Add(application);
+                SelectedReward!.Rules.ApplicationRules.Add(application);
             }
-            Applications = new ObservableCollection<ApplicationInfo>(SelectedRewardPreset!.Rules.ApplicationRules);
+            Applications = new ObservableCollection<ApplicationInfo>(SelectedReward!.Rules.ApplicationRules);
 
             OnPropertyChanged(nameof(Applications));
         }

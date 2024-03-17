@@ -76,7 +76,7 @@ namespace Zarp.GUI.View
 
         protected override void OnClosed(EventArgs e)
         {
-            Core.App.Service.Blocker.WindowClosed(_AttachedWindowHandle);
+            Core.App.Service.WindowClosed(_AttachedWindowHandle);
             base.OnClosed(e);
         }
 

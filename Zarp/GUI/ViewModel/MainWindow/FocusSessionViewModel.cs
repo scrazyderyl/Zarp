@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.ObjectModel;
-using System.Windows;
 using Zarp.Core.App;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.DataTypes;
@@ -12,25 +11,25 @@ namespace Zarp.GUI.ViewModel.MainWindow
     internal class FocusSessionViewModel : ObservableObject
     {
         public static IPresetCollection PresetCollection => Service.FocusSessionPresets;
-        public static Func<IPreset?> CreateFunction => Create;
+        public static Func<Preset?> CreateFocusSessionFunction => CreateFocusSession;
+        public static Func<object?> CreateEventFunction => CreateEvent;
 
-        private FocusSessionPreset? _SelectedFocusSessionPreset;
-        public FocusSessionPreset? SelectedFocusSessionPreset
+        private FocusSession? _SelectedFocusSession;
+        public FocusSession? SelectedFocusSession
         {
-            get => _SelectedFocusSessionPreset;
+            get => _SelectedFocusSession;
             set
             {
-                _SelectedFocusSessionPreset = value;
+                _SelectedFocusSession = value;
                 OnFocusSessionSelectionChanged();
                 OnEventSelectionChanged();
             }
         }
 
-        public Visibility MainEditorVisibility { get; set; }
-
         public IList? EventList { get; set; }
-        private Event? _SelectedEvent;
-        public Event? SelectedEvent
+
+        private FocusSessionEvent? _SelectedEvent;
+        public FocusSessionEvent? SelectedEvent
         {
             get => _SelectedEvent;
             set
@@ -40,25 +39,28 @@ namespace Zarp.GUI.ViewModel.MainWindow
             }
         }
 
-        public ObservableCollection<string> RulePresets { get; set; }
+        public ObservableCollection<Preset> RulePresets { get; set; }
+
         private bool _IsEventActivity;
         public bool IsEventActivity
         {
-            get { return _IsEventActivity; }
+            get => _IsEventActivity;
             set
             {
                 _IsEventActivity = value;
-                OnEventTypeChanged();
+                SelectedEvent!.Type = value ? EventType.Regular : EventType.OfflineBreak;
+                OnPropertyChanged(nameof(IsEventActivity));
             }
         }
+
         private bool _IsEventOfflineBreak;
         public bool IsEventOfflineBreak
         {
-            get { return _IsEventOfflineBreak; }
+            get => _IsEventOfflineBreak;
             set
             {
                 _IsEventOfflineBreak = value;
-                OnEventTypeChanged();
+                OnPropertyChanged(nameof(IsEventOfflineBreak));
             }
         }
 
@@ -69,46 +71,23 @@ namespace Zarp.GUI.ViewModel.MainWindow
             set
             {
                 _EventName = value;
-                _SelectedEvent!.Name = value!;
+                SelectedEvent!.Name = value!;
                 OnEventSelectionChanged();
             }
         }
-        private string? _EventDuration;
-        public string? EventDuration
+
+        public int EventDuration
         {
-            get { return _EventDuration; }
+            get => SelectedEvent == null ? 0 : SelectedEvent.Duration;
             set
             {
-                if (string.IsNullOrEmpty(value))
+                if (SelectedEvent != null)
                 {
-                    _EventDuration = value;
-                    return;
+                    SelectedEvent.Duration = value;
                 }
-
-                try
-                {
-                    value = value.TrimStart('0');
-                    int duration = int.Parse(value);
-
-                    if (duration > 0)
-                    {
-                        _EventDuration = value;
-                        _SelectedEvent!.Duration = duration;
-                    }
-                }
-                catch { }
             }
         }
-        private int _EventDurationUnitsIndex;
-        public int EventDurationUnitsIndex
-        {
-            get { return _EventDurationUnitsIndex; }
-            set
-            {
-                _EventDurationUnitsIndex = value;
-                _SelectedEvent!.DurationUnit = _EventDurationUnitsIndex == 0 ? TimeUnit.Minutes : TimeUnit.Hours;
-            }
-        }
+
         private int _SelectedRulePresetIndex;
         public int SelectedRulePresetIndex
         {
@@ -119,103 +98,82 @@ namespace Zarp.GUI.ViewModel.MainWindow
 
                 if (value == -1)
                 {
-                    _SelectedEvent!.Rules = null;
+                    _SelectedFocusSession!.SetEventRuleSet(SelectedEvent!, null);
                 }
                 else
                 {
-                    _SelectedEvent!.Rules = Service.RulePresets[RulePresets[_SelectedRulePresetIndex]];
+
+                    _SelectedFocusSession!.SetEventRuleSet(SelectedEvent!, (RuleSet)RulePresets[_SelectedRulePresetIndex]);
                 }
             }
         }
-        public Visibility EventEditorVisibility { get; set; }
-        public Visibility ActivityParametersVisibility { get; set; }
 
         public FocusSessionViewModel()
         {
-            MainEditorVisibility = Visibility.Hidden;
-
-            RulePresets = new ObservableCollection<string>(Service.RulePresets);
+            RulePresets = new ObservableCollection<Preset>(Service.RulePresets);
             _SelectedRulePresetIndex = -1;
-            EventEditorVisibility = Visibility.Hidden;
-            ActivityParametersVisibility = Visibility.Collapsed;
         }
 
-        public static IPreset? Create()
+        public static Preset? CreateFocusSession()
         {
             Service.DialogReturnValue = null;
             new CreateFocusSessionView().ShowDialog();
-            return (IPreset?)Service.DialogReturnValue;
+            return (Preset?)Service.DialogReturnValue;
         }
 
-        void OnFocusSessionSelectionChanged()
+        static int Count = 0;
+
+        private static object? CreateEvent()
         {
-            if (_SelectedFocusSessionPreset == null)
+            Count++;
+            return new FocusSessionEvent(Count.ToString(), 30, EventType.Regular, null);
+        }
+
+        private void OnFocusSessionSelectionChanged()
+        {
+            if (_SelectedFocusSession == null)
             {
                 EventList = null;
-                MainEditorVisibility = Visibility.Hidden;
             }
             else
             {
-                EventList = SelectedFocusSessionPreset!._Events;
-                MainEditorVisibility = Visibility.Visible;
+                EventList = SelectedFocusSession!._Events;
             }
 
             OnPropertyChanged(nameof(EventList));
-            OnPropertyChanged(nameof(MainEditorVisibility));
+            OnPropertyChanged(nameof(SelectedFocusSession));
         }
 
-        void OnEventSelectionChanged()
+        private void OnEventSelectionChanged()
         {
-            if (_SelectedEvent == null)
+            if (SelectedEvent == null)
             {
-                EventEditorVisibility = Visibility.Hidden;
-                OnPropertyChanged(nameof(EventEditorVisibility));
+                OnPropertyChanged(nameof(SelectedEvent));
                 return;
             }
 
-            _EventName = _SelectedEvent.Name;
-            EventDuration = _SelectedEvent.Duration.ToString();
-            EventDurationUnitsIndex = _SelectedEvent.DurationUnit == TimeUnit.Minutes ? 0 : 1;
+            _EventName = SelectedEvent.Name;
+            EventDuration = SelectedEvent.Duration;
             OnPropertyChanged(nameof(EventName));
             OnPropertyChanged(nameof(EventDuration));
-            OnPropertyChanged(nameof(EventDurationUnitsIndex));
 
-            switch (_SelectedEvent.Type)
+            if (SelectedEvent.Type == EventType.Regular)
             {
-                case EventType.Regular:
-                    IsEventActivity = true;
-                    ActivityParametersVisibility = Visibility.Visible;
-                    OnPropertyChanged(nameof(IsEventActivity));
-                    break;
-                case EventType.OfflineBreak:
-                    IsEventOfflineBreak = true;
-                    ActivityParametersVisibility = Visibility.Collapsed;
-                    OnPropertyChanged(nameof(IsEventOfflineBreak));
-                    break;
-            }
-
-            OnPropertyChanged(nameof(ActivityParametersVisibility));
-
-            SelectedRulePresetIndex = _SelectedEvent.Rules == null ? -1 : RulePresets.IndexOf(_SelectedEvent.Rules.Name);
-            EventEditorVisibility = Visibility.Visible;
-            OnPropertyChanged(nameof(SelectedRulePresetIndex));
-            OnPropertyChanged(nameof(EventEditorVisibility));
-        }
-
-        void OnEventTypeChanged()
-        {
-            if (IsEventActivity)
-            {
-                ActivityParametersVisibility = Visibility.Visible;
-                _SelectedEvent!.Type = EventType.Regular;
+                _IsEventActivity = true;
+                _IsEventOfflineBreak = false;
             }
             else
             {
-                ActivityParametersVisibility = Visibility.Collapsed;
-                _SelectedEvent!.Type = EventType.OfflineBreak;
+                _IsEventActivity = false;
+                _IsEventOfflineBreak = true;
             }
 
-            OnPropertyChanged(nameof(ActivityParametersVisibility));
+            OnPropertyChanged(nameof(IsEventActivity));
+            OnPropertyChanged(nameof(IsEventOfflineBreak));
+
+            SelectedRulePresetIndex = SelectedEvent.Rules == null ? -1 : RulePresets.IndexOf(SelectedEvent.Rules);
+            OnPropertyChanged(nameof(SelectedRulePresetIndex));
+            OnPropertyChanged(nameof(SelectedEvent));
         }
     }
 }

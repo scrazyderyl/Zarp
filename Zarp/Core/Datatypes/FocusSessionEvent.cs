@@ -1,30 +1,26 @@
 ﻿namespace Zarp.Core.Datatypes
 {
-
-    internal class Event
+    internal class FocusSessionEvent
     {
         public string Name;
         public int Duration;
-        public TimeUnit DurationUnit;
         public EventType Type;
-        public RulePreset? Rules;
+        public RuleSet? Rules;
 
-        public Event(string name, int duration, TimeUnit unit, EventType type, RulePreset? rules)
+        public FocusSessionEvent(string name, int duration, EventType type, RuleSet? rules)
         {
             Name = name;
             Duration = duration;
-            DurationUnit = unit;
             Type = type;
             Rules = rules;
         }
 
-        public Event(Event e)
+        public FocusSessionEvent(FocusSessionEvent other)
         {
-            Name = e.Name;
-            Duration = e.Duration;
-            DurationUnit = e.DurationUnit;
-            Type = e.Type;
-            Rules = e.Rules;
+            Name = other.Name;
+            Duration = other.Duration;
+            Type = other.Type;
+            Rules = other.Rules;
         }
 
         public override string ToString()

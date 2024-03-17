@@ -1,58 +1,78 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.Json;
 
 namespace Zarp.Core.Datatypes
 {
-    internal class PresetCollection<T> : IPresetCollection where T : IPreset
+    internal class PresetCollection<T> : IPresetCollection where T : Preset
     {
-        private Dictionary<string, T> _Presets;
+        private Dictionary<Guid, T> _Presets;
+        private HashSet<string> _UsedNames;
 
         public PresetCollection()
         {
-            _Presets = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
+            _Presets = new Dictionary<Guid, T>();
+            _UsedNames = new HashSet<string>();
         }
 
-        public T this[string name]
+        public T this[Guid guid]
         {
-            get => _Presets[name];
-            set => _Presets[name] = (T)value;
+            get => _Presets[guid];
+            set => _Presets[guid] = value;
         }
 
-        IPreset IPresetCollection.this[string name]
+        Preset IPresetCollection.this[Guid guid]
         {
-            get => this[name];
-            set => this[name] = (T)value;
+            get => this[guid];
+            set => this[guid] = (T)value;
         }
 
-        public bool Add(IPreset preset) => _Presets.TryAdd(preset.Name, (T)preset);
-        public bool Remove(string name) => _Presets.Remove(name);
-
-        public bool Rename(string oldName, string newName)
+        public bool Add(Preset preset)
         {
-            if (!_Presets.TryGetValue(oldName, out T? preset) || !_Presets.TryAdd(newName, preset!))
+            if (_UsedNames.Contains(preset._Name) || !_Presets.TryAdd(preset.Guid, (T)preset))
             {
                 return false;
             }
 
-            _Presets.Remove(oldName);
-            preset!.Name = newName;
+            _UsedNames.Add(preset._Name);
 
             return true;
         }
 
-        public bool Contains(string name) => _Presets.ContainsKey(name);
-
-        public IPreset? Deserialize(string json)
+        public bool Remove(Guid GUID)
         {
-            return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions()
+            if (!_Presets.Remove(GUID, out T? preset))
             {
-                IncludeFields = true
-            });
+                return false;
+            }
+
+            _UsedNames.Remove(preset!._Name);
+            return false;
         }
 
-        public IEnumerator<string> GetEnumerator() => _Presets.Keys.GetEnumerator();
+        public bool Rename(Guid guid, string newName)
+        {
+            if (!_Presets.TryGetValue(guid, out T? preset) || !_UsedNames.Add(newName))
+            {
+                return false;
+            }
+
+            _UsedNames.Remove(preset._Name);
+            preset!._Name = newName;
+            return true;
+        }
+
+        public bool Contains(string name) => _UsedNames.Contains(name);
+        public bool Contains(Guid guid) => _Presets.ContainsKey(guid);
+
+        public IEnumerator<Preset> GetEnumerator()
+        {
+            foreach (Preset preset in _Presets.Values)
+            {
+                yield return preset;
+            }
+        }
+
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

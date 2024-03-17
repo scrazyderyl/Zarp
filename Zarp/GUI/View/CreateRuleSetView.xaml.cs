@@ -2,9 +2,9 @@
 
 namespace Zarp.GUI.View
 {
-    internal partial class CreateRulePresetView : Window
+    internal partial class CreateRuleSetView : Window
     {
-        public CreateRulePresetView()
+        public CreateRuleSetView()
         {
             InitializeComponent();
             NameField.Focus();

@@ -29,9 +29,11 @@
                 <ResourceDictionary Source="GUI/Theme/BlockedOverlay/BlockedOverlayButton.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
-            <converters:RulePresetConverter x:Key="RulePresetConverter"/>
-            <converters:FocusSessionPresetConverter x:Key="FocusSessionPresetConverter"/>
-            <converters:RewardPresetConverter x:Key="RewardPresetConverter"/>
+            <converters:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
+            <converters:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
+            <converters:RuleSetConverter x:Key="RuleSetConverter"/>
+            <converters:FocusSessionConverter x:Key="FocusSessionConverter"/>
+            <converters:RewardConverter x:Key="RewardConverter"/>
 
             <DataTemplate DataType="{x:Type mainWindowViewModel:HomeViewModel}">
                 <mainWindowView:HomeView/>
@@ -52,8 +54,8 @@
                 <mainWindowView:SettingsView/>
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type rulesEditorViewModel:RulePresetsViewModel}">
-                <rulesEditorView:RulePresetsView/>
+            <DataTemplate DataType="{x:Type rulesEditorViewModel:RuleSetsViewModel}">
+                <rulesEditorView:RuleSetsView/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type rulesEditorViewModel:GlobalRulesViewModel}">
                 <rulesEditorView:GlobalRulesView/>
