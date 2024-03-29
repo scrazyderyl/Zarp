@@ -34,7 +34,7 @@ namespace Zarp.GUI.ViewModel
             string name = Name.Trim();
             RuleSet newPreset = new RuleSet(name, IsWhitelist);
 
-            if (!Core.App.Service.RulePresets.Add(newPreset))
+            if (!Core.App.Service.RuleSets.Add(newPreset))
             {
                 MessageBox.Show("A preset with the same name already exists.");
                 return;

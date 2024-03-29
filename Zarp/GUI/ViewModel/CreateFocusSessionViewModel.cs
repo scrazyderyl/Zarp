@@ -99,7 +99,7 @@ namespace Zarp.GUI.ViewModel
             string name = Name.Trim();
             FocusSession newPreset = new FocusSession(name, loops);
 
-            if (!Core.App.Service.FocusSessionPresets.Add(newPreset))
+            if (!Core.App.Service.FocusSessions.Add(newPreset))
             {
                 MessageBox.Show("A preset with the same name already exists.");
                 return;

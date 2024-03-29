@@ -32,7 +32,7 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,12,0,0" Visibility="{Binding IsEventActivity, Converter={StaticResource BoolVisibilityConverter}}">
                             <TextBlock Text="Preset" VerticalAlignment="Center" Style="{StaticResource ControlLabel}"/>
-                            <ComboBox Width="200" Margin="12,0,0,0" ItemsSource="{Binding RulePresets}" SelectedIndex="{Binding SelectedRulePresetIndex}"/>
+                            <ComboBox Width="200" Margin="12,0,0,0" ItemsSource="{Binding RuleSets}" SelectedIndex="{Binding SelectedRuleSetIndex}"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>

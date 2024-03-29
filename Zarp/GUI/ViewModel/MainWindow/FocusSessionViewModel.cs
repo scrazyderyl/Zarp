@@ -10,7 +10,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
 {
     internal class FocusSessionViewModel : ObservableObject
     {
-        public static IPresetCollection PresetCollection => Service.FocusSessionPresets;
+        public static IPresetCollection PresetCollection => Service.FocusSessions;
         public static Func<Preset?> CreateFocusSessionFunction => CreateFocusSession;
         public static Func<object?> CreateEventFunction => CreateEvent;
 
@@ -39,7 +39,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
             }
         }
 
-        public ObservableCollection<Preset> RulePresets { get; set; }
+        public ObservableCollection<Preset> RuleSets { get; set; }
 
         private bool _IsEventActivity;
         public bool IsEventActivity
@@ -88,13 +88,13 @@ namespace Zarp.GUI.ViewModel.MainWindow
             }
         }
 
-        private int _SelectedRulePresetIndex;
-        public int SelectedRulePresetIndex
+        private int _SelectedRuleSetIndex;
+        public int SelectedRuleSetIndex
         {
-            get { return _SelectedRulePresetIndex; }
+            get { return _SelectedRuleSetIndex; }
             set
             {
-                _SelectedRulePresetIndex = value;
+                _SelectedRuleSetIndex = value;
 
                 if (value == -1)
                 {
@@ -103,15 +103,15 @@ namespace Zarp.GUI.ViewModel.MainWindow
                 else
                 {
 
-                    _SelectedFocusSession!.SetEventRuleSet(SelectedEvent!, (RuleSet)RulePresets[_SelectedRulePresetIndex]);
+                    _SelectedFocusSession!.SetEventRuleSet(SelectedEvent!, (RuleSet)RuleSets[_SelectedRuleSetIndex]);
                 }
             }
         }
 
         public FocusSessionViewModel()
         {
-            RulePresets = new ObservableCollection<Preset>(Service.RulePresets);
-            _SelectedRulePresetIndex = -1;
+            RuleSets = new ObservableCollection<Preset>(Service.RuleSets);
+            _SelectedRuleSetIndex = -1;
         }
 
         public static Preset? CreateFocusSession()
@@ -171,8 +171,8 @@ namespace Zarp.GUI.ViewModel.MainWindow
             OnPropertyChanged(nameof(IsEventActivity));
             OnPropertyChanged(nameof(IsEventOfflineBreak));
 
-            SelectedRulePresetIndex = SelectedEvent.Rules == null ? -1 : RulePresets.IndexOf(SelectedEvent.Rules);
-            OnPropertyChanged(nameof(SelectedRulePresetIndex));
+            SelectedRuleSetIndex = SelectedEvent.Rules == null ? -1 : RuleSets.IndexOf(SelectedEvent.Rules);
+            OnPropertyChanged(nameof(SelectedRuleSetIndex));
             OnPropertyChanged(nameof(SelectedEvent));
         }
     }

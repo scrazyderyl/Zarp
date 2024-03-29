@@ -19,7 +19,7 @@
                 <TextBlock Text="Criteria" Style="{StaticResource ControlLabel}" Margin="0,20,0,0"/>
                 <StackPanel Orientation="Horizontal">
                     <RadioButton GroupName="Criteria" Margin="4,0,0,0" Content="Focus Session Completion" VerticalAlignment="Center" IsChecked="{Binding FocusSessionOptionSelected}"/>
-                    <ComboBox HorizontalAlignment="Left" Width="200" ItemsSource="{Binding FocusSessionPresets}" SelectedIndex="{Binding SelectedFocusSessionIndex}" Visibility="{Binding FocusSessionOptionSelected, Converter={StaticResource BoolVisibilityConverter}}" Margin="12,0,0,0"/>
+                    <ComboBox HorizontalAlignment="Left" Width="200" ItemsSource="{Binding FocusSessions}" SelectedIndex="{Binding SelectedFocusSessionIndex}" Visibility="{Binding FocusSessionOptionSelected, Converter={StaticResource BoolVisibilityConverter}}" Margin="12,0,0,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                     <RadioButton GroupName="Criteria" Content="Active Time" Margin="4,0,0,0" VerticalAlignment="Center" IsChecked="{Binding ActiveTimeOptionSelected}"/>

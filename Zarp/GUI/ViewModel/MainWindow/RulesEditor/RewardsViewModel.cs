@@ -9,7 +9,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 {
     internal class RewardsViewModel : ObservableObject
     {
-        public static IPresetCollection PresetCollection => Service.RewardPresets;
+        public static IPresetCollection PresetCollection => Service.Rewards;
         public static Func<Preset?> CreateFunction => Create;
 
         private Reward? _SelectedReward;
@@ -19,7 +19,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             set
             {
                 _SelectedReward = value;
-                OnRewardPresetSelectionChanged();
+                OnRewardSelectionChanged();
             }
         }
 
@@ -58,7 +58,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             }
         }
 
-        public ObservableCollection<Preset> FocusSessionPresets { get; set; }
+        public ObservableCollection<Preset> FocusSessions { get; set; }
         private int _SelectedFocusSessionIndex;
         public int SelectedFocusSessionIndex
         {
@@ -73,7 +73,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                 }
                 else
                 {
-                    _SelectedReward!.CompletionRequirement = (FocusSession)FocusSessionPresets[_SelectedFocusSessionIndex];
+                    _SelectedReward!.CompletionRequirement = (FocusSession)FocusSessions[_SelectedFocusSessionIndex];
                 }
             }
         }
@@ -142,7 +142,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
         public RewardsViewModel()
         {
-            FocusSessionPresets = new ObservableCollection<Preset>(Service.FocusSessionPresets);
+            FocusSessions = new ObservableCollection<Preset>(Service.FocusSessions);
             _SelectedFocusSessionIndex = -1;
 
             OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationSelector);
@@ -157,7 +157,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             return (Preset?)Service.DialogReturnValue;
         }
 
-        private void OnRewardPresetSelectionChanged()
+        private void OnRewardSelectionChanged()
         {
             if (SelectedReward == null)
             {
@@ -172,7 +172,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             {
                 case RewardRequirement.FocusSessionCompletion:
                     FocusSessionOptionSelected = true;
-                    _SelectedFocusSessionIndex = SelectedReward.CompletionRequirement == null ? -1 : FocusSessionPresets.IndexOf(SelectedReward.CompletionRequirement);
+                    _SelectedFocusSessionIndex = SelectedReward.CompletionRequirement == null ? -1 : FocusSessions.IndexOf(SelectedReward.CompletionRequirement);
                     ActiveTime = 0;
                     OnPropertyChanged(nameof(FocusSessionOptionSelected));
                     OnPropertyChanged(nameof(SelectedFocusSessionIndex));

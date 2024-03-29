@@ -30,7 +30,7 @@ namespace Zarp.GUI.ViewModel
             string name = Name.Trim();
             Reward newPreset = new Reward(name, 30, RewardRequirement.FocusSessionCompletion, null, 60);
 
-            if (!Core.App.Service.RewardPresets.Add(newPreset))
+            if (!Core.App.Service.Rewards.Add(newPreset))
             {
                 MessageBox.Show("A preset with the same name already exists.");
                 return;

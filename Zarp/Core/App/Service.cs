@@ -14,9 +14,9 @@ namespace Zarp.Core.App
 
         internal static string UserDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Zarp\";
 
-        internal static PresetCollection<FocusSession> FocusSessionPresets = new PresetCollection<FocusSession>();
-        internal static PresetCollection<RuleSet> RulePresets = new PresetCollection<RuleSet>();
-        internal static PresetCollection<Reward> RewardPresets = new PresetCollection<Reward>();
+        internal static PresetCollection<FocusSession> FocusSessions = new PresetCollection<FocusSession>();
+        internal static PresetCollection<RuleSet> RuleSets = new PresetCollection<RuleSet>();
+        internal static PresetCollection<Reward> Rewards = new PresetCollection<Reward>();
 
         internal static RuleSet _AlwaysAllowed;
         internal static RuleSet _AlwaysBlocked;
@@ -29,6 +29,16 @@ namespace Zarp.Core.App
 
         private static WinEventDelegate _ForegroundEventHandler;
         private static IntPtr _ForegroundEventHook;
+
+        public static FocusSession? ActiveFocusSession
+        {
+            get => _ActiveFocusSession;
+        }
+
+        public static FocusSessionEvent? ActiveEvent
+        {
+            get => _ActiveFocusSessionEvent;
+        }
 
         static Service()
         {
@@ -43,16 +53,6 @@ namespace Zarp.Core.App
             AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
             _ForegroundEventHandler = OnForegroundChanged;
             Enable();
-        }
-
-        public static FocusSession? ActiveFocusSession
-        {
-            get => _ActiveFocusSession;
-        }
-
-        public static FocusSessionEvent? ActiveEvent
-        {
-            get => _ActiveFocusSessionEvent;
         }
 
         private static void CurrentDomain_ProcessExit(object? sender, EventArgs e)

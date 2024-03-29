@@ -10,7 +10,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 {
     internal class RuleSetsViewModel : ObservableObject
     {
-        public static IPresetCollection PresetCollection => Service.RulePresets;
+        public static IPresetCollection PresetCollection => Service.RuleSets;
         public static Func<Preset?> CreateFunction => Create;
 
         private RuleSet? _SelectedRuleSet;
