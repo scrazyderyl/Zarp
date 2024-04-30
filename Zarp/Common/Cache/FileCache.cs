@@ -13,43 +13,51 @@ namespace Zarp.Common.Cache
             _Cache = new();
         }
 
-        public bool Get(string path, out T data)
+        public bool Get(string path, out T? data)
         {
-            FileInfo file = new(path);
-
-            if (_Cache.TryGetValue(file.FullName, out CachedFile entry))
+            try
             {
-                // Entry found
-                if (entry.Updated)
+                FileInfo file = new(path);
+
+                if (_Cache.TryGetValue(file.FullName, out CachedFile entry))
                 {
-                    // Entry up to date
-                    data = entry.Data;
-                }
-                else if (TryFetch(file.FullName, out data))
-                {
-                    // Update outdated entry
-                    entry.Data = data;
-                    entry.LastUpdate = entry.Info.LastWriteTime;
+                    // Entry found
+                    if (entry.Updated)
+                    {
+                        // Entry up to date
+                        data = entry.Data;
+                    }
+                    else if (TryFetch(file.FullName, out data))
+                    {
+                        // Update outdated entry
+                        entry.Data = data;
+                        entry.LastUpdate = entry.Info.LastWriteTime;
+                    }
+                    else
+                    {
+                        // Failed to fetch
+                        return false;
+                    }
                 }
                 else
                 {
-                    // Failed to fetch
-                    return false;
+                    // No entry found
+                    if (TryFetch(file.FullName, out data))
+                    {
+                        // Create new entry
+                        _Cache.Add(file.FullName, new CachedFile(file, data));
+                    }
+                    else
+                    {
+                        // Failed to fetch
+                        return false;
+                    }
                 }
             }
-            else
+            catch
             {
-                // No entry found
-                if (TryFetch(file.FullName, out data))
-                {
-                    // Create new entry
-                    _Cache.Add(file.FullName, new CachedFile(file, data));
-                }
-                else
-                {
-                    // Failed to fetch
-                    return false;
-                }
+                data = default;
+                return false;
             }
 
             return true;

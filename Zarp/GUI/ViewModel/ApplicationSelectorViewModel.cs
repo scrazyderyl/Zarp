@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Windows.Media.Imaging;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.DataTypes;
 using Zarp.GUI.Model;
@@ -11,14 +8,51 @@ using Zarp.GUI.Util;
 
 namespace Zarp.GUI.ViewModel
 {
-
     internal class ApplicationSelectorViewModel : ObservableObject
     {
-        private static string[] WindowsPaths = new string[]
+        public HashSet<string> SystemApplications = new HashSet<string>(new string[]
         {
-            Environment.GetFolderPath(Environment.SpecialFolder.Windows),
-            Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles)
-        };
+            "control",
+            "appverif",
+            "charmap",
+            "powershell",
+            "dfrgui",
+            "cleanmgr",
+            "Control",
+            "cmd",
+            "iexplore",
+            "iscsicpl",
+            "magnify",
+            "mip",
+            "MdSched",
+            "msedge",
+            "narrator",
+            "notepad",
+            "odbcad32",
+            "SETLANG",
+            "osk",
+            "mspaint",
+            "PCHealthCheck",
+            "hh",
+            "quickassist",
+            "RecoveryDrive",
+            "regedit",
+            "mstsc",
+            "perfmon",
+            "SnippingTool",
+            "sapisvr",
+            "psr",
+            "msconfig",
+            "msinfo32",
+            "taskmgr",
+            "msoev",
+            "appcertui",
+            "WFS",
+            "wmplayer",
+            "PowerShell_ISE",
+            "explorer",
+            "wordpad"
+        });
 
         public RelayCommand SelectExecutableCommand { get; set; }
 
@@ -56,21 +90,22 @@ namespace Zarp.GUI.ViewModel
             get => _OtherApplicationsSelectedIndex;
             set
             {
-                _OtherApplicationsUnique.Remove(OtherApplications[value].Data.ExecutablePath);
+                _OtherApplicationsUnique.Remove(OtherApplications[value].Data);
                 OtherApplications.RemoveAt(value);
                 _OtherApplicationsSelectedIndex = -1;
             }
         }
-        private HashSet<string> _OtherApplicationsUnique;
+
+        private HashSet<ApplicationInfo> _OtherApplicationsUnique;
 
         public ApplicationSelectorViewModel()
         {
-            _HideSystemApplications = true;
+            _HideSystemApplications = false;
             InstalledApplications = new ObservableCollection<ItemWithIcon<ApplicationInfo>>(GetFilteredApplications());
 
             OpenApplications = new ObservableCollection<ItemWithIcon<ApplicationInfo>>(ApplicationSelectorModel.OpenApplications);
 
-            _OtherApplicationsUnique = new HashSet<string>();
+            _OtherApplicationsUnique = new HashSet<ApplicationInfo>();
             _OtherApplicationsSelectedIndex = -1;
             OtherApplications = new ObservableCollection<ItemWithIcon<ApplicationInfo>>();
 
@@ -89,20 +124,7 @@ namespace Zarp.GUI.ViewModel
 
             if (_HideSystemApplications)
             {
-                ApplicationList = ApplicationList.Where(application =>
-                {
-                    string lowerPath = application.Data.ExecutablePath;
-
-                    foreach (string excludedPath in WindowsPaths)
-                    {
-                        if (lowerPath.Contains(excludedPath))
-                        {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                });
+                ApplicationList = ApplicationList.Where(application => !SystemApplications.Contains(application.Data.FileName));
             }
 
             if (_InstalledApplicationsQuery != null)
@@ -122,20 +144,17 @@ namespace Zarp.GUI.ViewModel
 
         private void SelectExecutable(object? obj)
         {
-            string[] fileNames = FileDialogs.OpenExeMulti();
+            string[] paths = FileDialogs.OpenExeMulti();
 
-            foreach (string fileName in fileNames)
+            foreach (string path in paths)
             {
-                if (!_OtherApplicationsUnique.Add(fileName))
+                ApplicationInfo info = new ApplicationInfo(path);
+
+                if (_OtherApplicationsUnique.Add(info))
                 {
-                    continue;
+                    OtherApplications.Add(new ItemWithIcon<ApplicationInfo>(info, info.GetIconAsBitmapSource()));
                 }
 
-                string name = Path.GetFileName(fileName);
-                name = name.Substring(0, name.Length - 4);
-                ApplicationInfo application = new ApplicationInfo(fileName, name);
-                BitmapSource? icon = ApplicationSelectorModel.GetExecutableIcon(fileName);
-                OtherApplications.Add(new ItemWithIcon<ApplicationInfo>(application, icon));
             }
         }
     }

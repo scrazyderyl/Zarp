@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Media.Imaging;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.DataTypes;
 using static Zarp.Common.Util.PInvoke;
+using static Zarp.Common.Util.Window;
 
 namespace Zarp.GUI.Model
 {
@@ -12,17 +12,15 @@ namespace Zarp.GUI.Model
     {
         private static string WindowsPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 
-        private static string[] IgnoredAppPaths = new string[] {
+        private static HashSet<string> IgnoredApps = new HashSet<string>(new string[] {
             Environment.ProcessPath!,
             WindowsPath + @"\explorer.exe",
             WindowsPath + @"\ImmersiveControlPanel\SystemSettings.exe",
             WindowsPath + @"\System32\ApplicationFrameHost.exe",
             WindowsPath + @"\SystemApps\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\TextInputHost.exe"
-        };
-        private static HashSet<string> IgnoredApps = new HashSet<string>(IgnoredAppPaths);
+        });
 
-        private static ApplicationList? ApplicationList;
-        private static ApplicationIconCache IconCache = new ApplicationIconCache();
+        private static InstalledApplicationList? ApplicationList;
         private static List<ItemWithIcon<ApplicationInfo>>? Applications;
 
         public static IEnumerable<ItemWithIcon<ApplicationInfo>> OpenApplications
@@ -31,7 +29,7 @@ namespace Zarp.GUI.Model
             {
                 if (ApplicationList == null)
                 {
-                    ApplicationList = new ApplicationList();
+                    ApplicationList = new InstalledApplicationList();
                     UpdateInstalledApplications();
                 }
 
@@ -61,8 +59,8 @@ namespace Zarp.GUI.Model
                         return true;
                     }
 
-                    IconCache.Get(executablePath, out BitmapSource? icon);
-                    windows.Add(new ItemWithIcon<ApplicationInfo>(new ApplicationInfo(executablePath, title), icon));
+                    ApplicationInfo info = new ApplicationInfo(title, executablePath);
+                    windows.Add(new ItemWithIcon<ApplicationInfo>(info, info.GetIconAsBitmapSource()));
 
                     return true;
                 }, IntPtr.Zero);
@@ -77,7 +75,7 @@ namespace Zarp.GUI.Model
             {
                 if (ApplicationList == null)
                 {
-                    ApplicationList = new ApplicationList();
+                    ApplicationList = new InstalledApplicationList();
                     UpdateInstalledApplications();
                 }
                 else if (!ApplicationList.Updated)
@@ -95,16 +93,8 @@ namespace Zarp.GUI.Model
 
             foreach (ApplicationInfo application in ApplicationList.OrderBy(application => application.Name))
             {
-                IconCache.Get(application.ExecutablePath, out BitmapSource? icon);
-                Applications.Add(new ItemWithIcon<ApplicationInfo>(application, icon));
+                Applications.Add(new ItemWithIcon<ApplicationInfo>(application, application.GetIconAsBitmapSource()));
             }
-        }
-
-        public static BitmapSource? GetExecutableIcon(string path)
-        {
-            IconCache.Get(path, out BitmapSource? data);
-
-            return data;
         }
     }
 }

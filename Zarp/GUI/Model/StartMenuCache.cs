@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using Zarp.Common.Cache;
 using Zarp.Common.Util;
 using Zarp.Core.Datatypes;
@@ -13,46 +15,40 @@ namespace Zarp.GUI.Model
         {
             try
             {
-                string shortcutName = Path.GetFileName(path);
-
-                // Ignore uninstallers
-                if (shortcutName.Contains("Uninstall"))
-                {
-                    data = default;
-                    return false;
-                }
-
-                string? executablePath = Shortcut.GetPath(Path.GetFullPath(path));
+                string shortcutName = Path.GetFileNameWithoutExtension(path);
+                string? executablePath = Shortcut.GetPath(path);
+                string? arguments = Shortcut.GetArguments(path);
 
                 // Ignore internet links
-                if (executablePath == null || executablePath.Equals(string.Empty))
+                if (string.IsNullOrEmpty(executablePath))
                 {
-                    data = default;
-                    return false;
-                }
-
-                // Broken shortcut
-                if (!File.Exists(executablePath))
-                {
-                    data = default;
+                    data = ApplicationInfo.Empty;
                     return false;
                 }
 
                 string extension = Path.GetExtension(executablePath).ToLowerInvariant();
 
-                // Ignore all files except .exe and .msc
-                if (!(extension.Equals(".exe") || extension.Equals(".msc")))
+                // Ignore all files except executables
+                if (extension != ".exe")
                 {
-                    data = default;
+                    data = ApplicationInfo.Empty;
                     return false;
                 }
 
-                string name = shortcutName.Substring(0, shortcutName.Length - 4);
-                data = new ApplicationInfo(executablePath, name);
+                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(executablePath);
+                string fileName = Path.GetFileNameWithoutExtension(executablePath);
+
+                data = new ApplicationInfo(shortcutName, fileName, fileVersionInfo.CompanyName);
+
+                if (!ApplicationInfo.Icons.ContainsKey(data))
+                {
+                    Icon? FileIcon = Icon.ExtractAssociatedIcon(executablePath);
+                    ApplicationInfo.Icons.Add(data, FileIcon);
+                }
             }
             catch
             {
-                data = default;
+                data = ApplicationInfo.Empty;
                 return false;
             }
 

@@ -132,7 +132,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                     return;
                 }
 
-                _SelectedReward!.Rules.ApplicationRules.Remove(Applications[_SelectedApplicationIndex].Id);
+                _SelectedReward!.Rules._ApplicationRules.Remove(Applications[_SelectedApplicationIndex]);
                 Applications.RemoveAt(value);
                 _SelectedApplicationIndex = -1;
                 OnPropertyChanged(nameof(SelectedApplicationIndex));
@@ -191,7 +191,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             TimeEarned = SelectedReward.EarnedTime;
             OnPropertyChanged(nameof(TimeEarned));
 
-            Applications = new ObservableCollection<ApplicationInfo>(SelectedReward.Rules.ApplicationRules);
+            Applications = new ObservableCollection<ApplicationInfo>(SelectedReward.Rules._ApplicationRules);
             OnPropertyChanged(nameof(Applications));
             OnPropertyChanged(nameof(SelectedReward));
         }
@@ -208,9 +208,9 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
             foreach (ApplicationInfo application in selector.Selected)
             {
-                SelectedReward!.Rules.ApplicationRules.Add(application);
+                SelectedReward!.Rules._ApplicationRules.Add(application);
             }
-            Applications = new ObservableCollection<ApplicationInfo>(SelectedReward!.Rules.ApplicationRules);
+            Applications = new ObservableCollection<ApplicationInfo>(SelectedReward!.Rules._ApplicationRules);
 
             OnPropertyChanged(nameof(Applications));
         }

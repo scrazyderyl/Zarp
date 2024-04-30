@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Interop;
 using static Zarp.Common.Util.PInvoke;
+using static Zarp.Common.Util.Window;
 
 namespace Zarp.GUI.View
 {

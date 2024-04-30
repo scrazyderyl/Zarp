@@ -6,13 +6,13 @@ using Zarp.Core.Datatypes;
 
 namespace Zarp.GUI.Model
 {
-    internal class ApplicationList : IListCache<ApplicationInfo>
+    internal class InstalledApplicationList : IListCache<ApplicationInfo>
     {
         private static string CommonStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu) + @"\Programs";
         private static string UserStartMenuPath = Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + @"\Programs";
 
         private IListCache<ApplicationInfo>[] _ApplicationLists;
-        private Dictionary<string, ApplicationInfo> _Applications;
+        private HashSet<ApplicationInfo> _Applications;
 
         public int Count => _ApplicationLists.Length;
         public bool Updated
@@ -31,19 +31,19 @@ namespace Zarp.GUI.Model
             }
         }
 
-        public ApplicationList()
+        public InstalledApplicationList()
         {
             _ApplicationLists = new IListCache<ApplicationInfo>[] {
                 new StartMenuCache(CommonStartMenuPath),
                 new StartMenuCache(UserStartMenuPath)
             };
-            _Applications = new Dictionary<string, ApplicationInfo>();
+            _Applications = new HashSet<ApplicationInfo>();
 
             foreach (IListCache<ApplicationInfo> list in _ApplicationLists)
             {
                 foreach (ApplicationInfo application in list)
                 {
-                    _Applications.TryAdd(application.ExecutablePath, application);
+                    _Applications.Add(application);
                 }
             }
         }
@@ -52,18 +52,18 @@ namespace Zarp.GUI.Model
         {
             if (!Updated)
             {
-                _Applications = new Dictionary<string, ApplicationInfo>();
+                _Applications = new HashSet<ApplicationInfo>();
 
                 foreach (IListCache<ApplicationInfo> list in _ApplicationLists)
                 {
                     foreach (ApplicationInfo application in list)
                     {
-                        _Applications.TryAdd(application.ExecutablePath, application);
+                        _Applications.Add(application);
                     }
                 }
             }
 
-            return _Applications.Values.GetEnumerator();
+            return _Applications.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

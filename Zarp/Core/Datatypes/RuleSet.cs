@@ -6,15 +6,17 @@ namespace Zarp.Core.Datatypes
 {
     internal class RuleSet : Preset, IDependency
     {
-        internal BasicRuleCollection<ApplicationInfo> ApplicationRules;
+        internal HashSet<ApplicationInfo> _ApplicationRules;
+        internal bool _IsApplicationWhitelist;
+
         internal Dictionary<Guid, FocusSession> _Dependents;
 
         public RuleSet() : this(string.Empty, false) { }
 
         public RuleSet(string name, bool isApplicationWhistlist) : base(name)
         {
-            _Name = name;
-            ApplicationRules = new BasicRuleCollection<ApplicationInfo>(isApplicationWhistlist);
+            _IsApplicationWhitelist = isApplicationWhistlist;
+            _ApplicationRules = new HashSet<ApplicationInfo>();
             _Dependents = new Dictionary<Guid, FocusSession>();
         }
 
@@ -22,10 +24,12 @@ namespace Zarp.Core.Datatypes
 
         public RuleSet(RuleSet other, string name) : base(name)
         {
-            _Name = name;
-            ApplicationRules = new BasicRuleCollection<ApplicationInfo>(other.ApplicationRules);
+            _IsApplicationWhitelist |= other._IsApplicationWhitelist;
+            _ApplicationRules = new HashSet<ApplicationInfo>();
             _Dependents = new Dictionary<Guid, FocusSession>();
         }
+
+        public bool IsApplicationBlocked(ApplicationInfo info) => _ApplicationRules.Contains(info) ^ _IsApplicationWhitelist;
 
         public override bool IsModifiable => _Dependents.Count == 0;
 

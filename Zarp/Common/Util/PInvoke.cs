@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -21,6 +20,7 @@ namespace Zarp.Common.Util
         public const uint WINEVENT_OUTOFCONTEXT = 0x0000;
 
         public const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
+        public const uint EVENT_OBJECT_CREATE = 0x8000;
         public const uint EVENT_OBJECT_DESTROY = 0x8001;
         public const uint EVENT_OBJECT_SHOW = 0x8002;
         public const uint EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
@@ -38,19 +38,6 @@ namespace Zarp.Common.Util
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
 
-        public static string? GetWindowTitle(IntPtr hWnd)
-        {
-            StringBuilder text = new StringBuilder(256);
-            GetWindowText(hWnd, text, 256);
-
-            if (Marshal.GetLastWin32Error() == 0)
-            {
-                return text.ToString();
-            }
-
-            return null;
-        }
-
         [DllImport("user32.dll")]
         public static extern long GetWindowLong(IntPtr hWnd, int nIndex);
 
@@ -66,26 +53,6 @@ namespace Zarp.Common.Util
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
-        public static Rectangle? GetWindowRect(IntPtr hWnd)
-        {
-            if (!GetWindowRect(hWnd, out RECT windowRect))
-            {
-                return null;
-            }
-
-            int left = windowRect.Left + 8;
-            int top = windowRect.Top;
-            int width = windowRect.Right - windowRect.Left - 16;
-            int height = windowRect.Bottom - windowRect.Top - 8;
-
-            if (width < 0 || height < 0)
-            {
-                return null;
-            }
-
-            return new Rectangle(left, top, width, height);
-        }
-
         [DllImport("user32.dll")]
         public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
@@ -99,30 +66,6 @@ namespace Zarp.Common.Util
         public static int PROCESS_VM_READ = 0x0010;
         public static int MAX_PATH = 260;
 
-        public static string? GetWindowExecutablePath(IntPtr hWnd)
-        {
-            if (GetWindowThreadProcessId(hWnd, out uint processId) == 0)
-            {
-                return null;
-            }
-
-            IntPtr hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, processId);
-
-            if (hProcess == IntPtr.Zero)
-            {
-                return null;
-            }
-
-            StringBuilder filename = new StringBuilder(MAX_PATH);
-
-            if (GetModuleFileNameEx(hProcess, IntPtr.Zero, filename, MAX_PATH) == 0)
-            {
-                return null;
-            }
-
-            return filename.ToString();
-        }
-
         [DllImport("user32.dll")]
         public static extern IntPtr GetParent(IntPtr hWnd);
 
@@ -131,26 +74,11 @@ namespace Zarp.Common.Util
         [DllImport("user32.dll")]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
-        public static void CloseWindow(IntPtr hWnd)
-        {
-            SendMessage(hWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-        }
-
-        [DllImport("user32.dll")]
-        public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
-
         public const int SW_RESTORE = 9;
         public const int MINIMIZE = 6;
 
-        public static bool MinimizeWindow(IntPtr hWnd)
-        {
-            return ShowWindowAsync(hWnd, MINIMIZE);
-        }
-
-        public static bool RestoreWindow(IntPtr hWnd)
-        {
-            return ShowWindowAsync(hWnd, SW_RESTORE);
-        }
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 
         public const int SWP_NOSIZE = 0x0001;
         public const int SWP_NOMOVE = 0x0002;
