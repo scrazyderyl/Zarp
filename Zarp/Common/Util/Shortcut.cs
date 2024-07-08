@@ -7,6 +7,8 @@ namespace Zarp.Common.Util
 {
     internal class Shortcut
     {
+        private const int INFOTIPSIZE = 1024;
+
         private const uint S_OK = 0x00000000;
         private const uint S_FALSE = 0x00000001;
 
@@ -112,11 +114,15 @@ namespace Zarp.Common.Util
             StringBuilder resolvedFilename = new StringBuilder(MAX_PATH);
             ShellLink link = new ShellLink();
             ((IPersistFile)link).Load(filename, (int)STGM_FLAGS.STGM_READ);
-            uint result = ((IShellLinkW)link).GetPath(resolvedFilename, resolvedFilename.Capacity, out _, 0);
+            uint result = ((IShellLinkW)link).GetPath(resolvedFilename, MAX_PATH, out _, 0);
 
-            if (result == S_OK || result == S_FALSE)
+            if (result == S_OK)
             {
                 return resolvedFilename.ToString();
+            }
+            else if (result == S_FALSE)
+            {
+                return string.Empty;
             }
 
             return null;
@@ -124,10 +130,10 @@ namespace Zarp.Common.Util
 
         public static string? GetArguments(string filename)
         {
-            StringBuilder arguments = new StringBuilder(MAX_PATH);
+            StringBuilder arguments = new StringBuilder(INFOTIPSIZE);
             ShellLink link = new ShellLink();
             ((IPersistFile)link).Load(filename, (int)STGM_FLAGS.STGM_READ);
-            uint result = ((IShellLinkW)link).GetArguments(arguments, arguments.Capacity);
+            uint result = ((IShellLinkW)link).GetArguments(arguments, INFOTIPSIZE);
 
             if (result == S_OK)
             {

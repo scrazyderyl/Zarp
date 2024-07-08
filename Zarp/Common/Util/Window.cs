@@ -1,8 +1,11 @@
 ﻿using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
-using static Zarp.Common.Util.PInvoke;
+using Zarp.Common.PInvoke;
+using static Zarp.Common.PInvoke.DwmApi;
+using static Zarp.Common.PInvoke.Kernel32;
+using static Zarp.Common.PInvoke.Psapi;
+using static Zarp.Common.PInvoke.User32;
+using static Zarp.Common.PInvoke.Winerror;
 
 namespace Zarp.Common.Util
 {
@@ -10,35 +13,28 @@ namespace Zarp.Common.Util
     {
         public static string? GetWindowTitle(IntPtr hWnd)
         {
-            StringBuilder text = new StringBuilder(256);
-            GetWindowText(hWnd, text, 256);
+            char[] text = new char[256];
+            int length = GetWindowText(hWnd, text, 256);
 
             if (Marshal.GetLastWin32Error() == 0)
             {
-                return text.ToString();
+                return new string(text, 0, length);
             }
 
             return null;
         }
 
-        public static Rectangle? GetWindowRect(IntPtr hWnd)
+        public static string? GetWindowClassName(IntPtr hWnd)
         {
-            if (!PInvoke.GetWindowRect(hWnd, out RECT windowRect))
+            char[] text = new char[256];
+            int length = GetClassName(hWnd, text, 256);
+
+            if (length != 0)
             {
-                return null;
+                return new string(text, 0, length);
             }
 
-            int left = windowRect.Left + 8;
-            int top = windowRect.Top;
-            int width = windowRect.Right - windowRect.Left - 16;
-            int height = windowRect.Bottom - windowRect.Top - 8;
-
-            if (width < 0 || height < 0)
-            {
-                return null;
-            }
-
-            return new Rectangle(left, top, width, height);
+            return null;
         }
 
         public static string? GetWindowExecutablePath(IntPtr hWnd)
@@ -55,26 +51,69 @@ namespace Zarp.Common.Util
                 return null;
             }
 
-            // MAX_PATH if LongPathsEnabled is set to false
-            StringBuilder filename = new StringBuilder(MAX_PATH);
+            char[] filename = new char[MAX_PATH];
+            int length = GetModuleFileNameEx(hProcess, IntPtr.Zero, filename, MAX_PATH);
+            CloseHandle(hProcess);
 
-            if (GetModuleFileNameEx(hProcess, IntPtr.Zero, filename, MAX_PATH) == 0)
+            if (length == 0)
             {
                 return null;
             }
 
-            return filename.ToString();
+            return new string(filename, 0, length);
         }
 
-        public static bool MinimizeWindow(IntPtr hWnd)
+        public static RECT GetWindowRect(IntPtr hWnd)
         {
-            return ShowWindowAsync(hWnd, MINIMIZE);
+            if (DwmGetWindowAttribute(hWnd, (uint)DWMWINDOWATTRIBUTE.DWMWA_EXTENDED_FRAME_BOUNDS, out RECT rect, (uint)Marshal.SizeOf(typeof(RECT))) != S_OK)
+            {
+                throw new Exception();
+            }
+
+            return rect;
         }
 
-        public static bool RestoreWindow(IntPtr hWnd)
+        public static RECT GetWindowRectWithShadow(IntPtr hWnd)
         {
-            return ShowWindowAsync(hWnd, SW_RESTORE);
+            if (!User32.GetWindowRect(hWnd, out RECT rect))
+            {
+                throw new Exception();
+            }
+
+            return rect;
         }
+
+        public static bool SetWindowLocation(IntPtr hWnd, RECT location)
+        {
+            try
+            {
+                RECT withoutShadow = GetWindowRect(hWnd);
+                RECT withShadow = GetWindowRectWithShadow(hWnd);
+
+                int leftShadow = withoutShadow.Left - withShadow.Left;
+                int rightShadow = withShadow.Right - withoutShadow.Right;
+                int bottomShadow = withShadow.Bottom - withoutShadow.Bottom;
+
+                int x = location.Left - leftShadow;
+                int y = location.Top;
+                int width = location.Right - location.Left + leftShadow + rightShadow;
+                int height = location.Bottom - location.Top + bottomShadow;
+
+                return MoveWindow(hWnd, x, y, width, height, true);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool IsWindowOwned(IntPtr hWnd) => GetWindow(hWnd, GW_OWNER) != IntPtr.Zero;
+
+        public static bool MinimizeWindow(IntPtr hWnd) => ShowWindowAsync(hWnd, SW_MINIMIZE);
+
+        public static bool MaximizeWindow(IntPtr hWnd) => ShowWindowAsync(hWnd, SW_MAXIMIZE);
+
+        public static bool RestoreWindow(IntPtr hWnd) => ShowWindowAsync(hWnd, SW_RESTORE);
 
         public static void CloseWindow(IntPtr hWnd)
         {
