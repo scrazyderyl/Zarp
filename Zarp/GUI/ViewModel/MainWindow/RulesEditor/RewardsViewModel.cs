@@ -9,7 +9,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 {
     internal class RewardsViewModel : ObservableObject
     {
-        public static IPresetCollection PresetCollection => Service.Rewards;
+        public static IPresetCollection PresetCollection => PresetManager.Rewards;
         public static Func<Preset?> CreateFunction => Create;
 
         private Reward? _SelectedReward;
@@ -33,11 +33,11 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
                 if (value)
                 {
-                    Service.EnableReward(_SelectedReward!);
+                    Session.EnableReward(_SelectedReward!);
                 }
                 else
                 {
-                    Service.DisableReward(_SelectedReward!);
+                    Session.DisableReward(_SelectedReward!);
                 }
             }
         }
@@ -142,7 +142,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
         public RewardsViewModel()
         {
-            FocusSessions = new ObservableCollection<Preset>(Service.FocusSessions);
+            FocusSessions = new ObservableCollection<Preset>(PresetManager.FocusSessions);
             _SelectedFocusSessionIndex = -1;
 
             OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationSelector);
@@ -152,9 +152,9 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
         public static Preset? Create()
         {
-            Service.DialogReturnValue = null;
+            Session.DialogReturnValue = null;
             new CreateRewardView().ShowDialog();
-            return (Preset?)Service.DialogReturnValue;
+            return (Preset?)Session.DialogReturnValue;
         }
 
         private void OnRewardSelectionChanged()
@@ -165,7 +165,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
                 return;
             }
 
-            RewardEnabled = Service.IsRewardEnabled(SelectedReward);
+            RewardEnabled = Session.IsRewardEnabled(SelectedReward);
             OnPropertyChanged(nameof(RewardEnabled));
 
             switch (SelectedReward.RequirementType)

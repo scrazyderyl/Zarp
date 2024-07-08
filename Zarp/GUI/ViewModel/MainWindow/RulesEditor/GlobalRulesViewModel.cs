@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using Zarp.Core.App;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.DataTypes;
 using Zarp.GUI.View;
@@ -16,7 +17,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             get { return _SelectedAllowedApplicationIndex; }
             set
             {
-                Core.App.Service.RemoveAlwaysAllowed(AllowedApplications[value]);
+                Session.RemoveAlwaysAllowed(AllowedApplications[value]);
                 AllowedApplications.RemoveAt(value);
             }
         }
@@ -27,7 +28,7 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
             get { return _SelectedBlockedApplicationIndex; }
             set
             {
-                Core.App.Service.RemoveAlwaysBlocked(BlockedApplications[value]);
+                Session.RemoveAlwaysBlocked(BlockedApplications[value]);
                 BlockedApplications.RemoveAt(value);
             }
         }
@@ -36,8 +37,8 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
         {
             OpenApplicationSelectorCommand = new RelayCommand(OpenApplicationsSelector);
 
-            AllowedApplications = new ObservableCollection<ApplicationInfo>(Core.App.Service.AlwaysAllowed._ApplicationRules);
-            BlockedApplications = new ObservableCollection<ApplicationInfo>(Core.App.Service.AlwaysBlocked._ApplicationRules);
+            AllowedApplications = new ObservableCollection<ApplicationInfo>(Session.AlwaysAllowedApplications._ApplicationRules);
+            BlockedApplications = new ObservableCollection<ApplicationInfo>(Session.AlwaysBlockedApplications._ApplicationRules);
             _SelectedAllowedApplicationIndex = -1;
             _SelectedBlockedApplicationIndex = -1;
         }
@@ -55,15 +56,15 @@ namespace Zarp.GUI.ViewModel.MainWindow.RulesEditor
 
             if (list == AllowedApplications)
             {
-                Core.App.Service.AddAlwaysAllowed(selector.Selected);
+                Session.AddAlwaysAllowed(selector.Selected);
             }
             else
             {
-                Core.App.Service.AddAlwaysBlocked(selector.Selected);
+                Session.AddAlwaysBlocked(selector.Selected);
             }
 
-            AllowedApplications = new ObservableCollection<ApplicationInfo>(Core.App.Service.AlwaysAllowed._ApplicationRules);
-            BlockedApplications = new ObservableCollection<ApplicationInfo>(Core.App.Service.AlwaysBlocked._ApplicationRules);
+            AllowedApplications = new ObservableCollection<ApplicationInfo>(Session.AlwaysAllowedApplications._ApplicationRules);
+            BlockedApplications = new ObservableCollection<ApplicationInfo>(Session.AlwaysBlockedApplications._ApplicationRules);
 
             OnPropertyChanged(nameof(AllowedApplications));
             OnPropertyChanged(nameof(BlockedApplications));

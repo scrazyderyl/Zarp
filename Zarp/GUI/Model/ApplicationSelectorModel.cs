@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.DataTypes;
-using static Zarp.Common.Util.PInvoke;
+using static Zarp.Common.PInvoke.User32;
 using static Zarp.Common.Util.Window;
 
 namespace Zarp.GUI.Model
@@ -37,16 +37,8 @@ namespace Zarp.GUI.Model
 
                 EnumWindows((hWnd, lParam) =>
                 {
-                    // Ignore invisible windows
-                    if (!IsWindowVisible(hWnd))
-                    {
-                        return true;
-                    }
-
-                    string? title = GetWindowTitle(hWnd);
-
-                    // Ignore titleless windows
-                    if (string.IsNullOrEmpty(title))
+                    // Ignore invisible and owned windows
+                    if (!IsWindowVisible(hWnd) || IsWindowOwned(hWnd))
                     {
                         return true;
                     }
@@ -58,6 +50,8 @@ namespace Zarp.GUI.Model
                     {
                         return true;
                     }
+
+                    string? title = GetWindowTitle(hWnd) ?? string.Empty;
 
                     ApplicationInfo info = new ApplicationInfo(title, executablePath);
                     windows.Add(new ItemWithIcon<ApplicationInfo>(info, info.GetIconAsBitmapSource()));

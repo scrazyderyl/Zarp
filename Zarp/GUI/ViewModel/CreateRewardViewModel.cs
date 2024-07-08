@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Zarp.Core.App;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.DataTypes;
 using Zarp.GUI.View;
@@ -30,13 +31,12 @@ namespace Zarp.GUI.ViewModel
             string name = Name.Trim();
             Reward newPreset = new Reward(name, 30, RewardRequirement.FocusSessionCompletion, null, 60);
 
-            if (!Core.App.Service.Rewards.Add(newPreset))
+            if (!PresetManager.Rewards.Add(newPreset))
             {
                 MessageBox.Show("A preset with the same name already exists.");
                 return;
             }
-
-            Core.App.Service.DialogReturnValue = newPreset;
+            Session.DialogReturnValue = newPreset;
 
             window.Close();
         }

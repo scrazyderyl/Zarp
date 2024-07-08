@@ -153,7 +153,7 @@ namespace Zarp.GUI.UserControls
             _SuppressSelectionChangedEvent = true;
 
             int index = Selector.SelectedIndex;
-            Items![index] = Empty;
+            Items![index] = string.Empty;
             Items![index] = ItemList![index]!;
             Selector.SelectedIndex = index;
 

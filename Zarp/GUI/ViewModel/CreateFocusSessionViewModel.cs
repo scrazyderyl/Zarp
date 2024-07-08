@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Zarp.Core.App;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.DataTypes;
 using Zarp.GUI.View;
@@ -99,13 +100,12 @@ namespace Zarp.GUI.ViewModel
             string name = Name.Trim();
             FocusSession newPreset = new FocusSession(name, loops);
 
-            if (!Core.App.Service.FocusSessions.Add(newPreset))
+            if (!PresetManager.FocusSessions.Add(newPreset))
             {
                 MessageBox.Show("A preset with the same name already exists.");
                 return;
             }
-
-            Core.App.Service.DialogReturnValue = newPreset;
+            Session.DialogReturnValue = newPreset;
 
             window.Close();
         }

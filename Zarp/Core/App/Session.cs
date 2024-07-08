@@ -4,50 +4,34 @@ using System.Windows;
 using System.Windows.Interop;
 using Zarp.Core.Datatypes;
 using Zarp.GUI.View;
-using static Zarp.Common.Util.PInvoke;
+using static Zarp.Common.PInvoke.User32;
 using static Zarp.Common.Util.Window;
 
 namespace Zarp.Core.App
 {
-    internal class Service
+    internal class Session
     {
         internal static object? DialogReturnValue;
 
-        internal static string UserDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Zarp\";
-
-        internal static PresetCollection<FocusSession> FocusSessions = new PresetCollection<FocusSession>();
-        internal static PresetCollection<RuleSet> RuleSets = new PresetCollection<RuleSet>();
-        internal static PresetCollection<Reward> Rewards = new PresetCollection<Reward>();
-
-        internal static RuleSet AlwaysAllowed;
-        internal static RuleSet AlwaysBlocked;
-
-        private static Dictionary<IntPtr, BlockedOverlayView> BlockedApplicationOverlays;
-        private static Dictionary<Guid, Reward> EnabledRewards;
+        internal static RuleSet AlwaysAllowedApplications;
+        internal static RuleSet AlwaysBlockedApplications;
         internal static FocusSession? ActiveFocusSession;
-        private static FocusSessionEvent? ActiveFocusSessionEvent;
+        internal static Dictionary<Guid, Reward> EnabledRewards;
+        internal static FocusSessionEvent? ActiveFocusSessionEvent;
+        private static Dictionary<IntPtr, BlockedOverlayView> BlockedApplicationOverlays;
         private static bool Enabled;
 
-        private static WinEventDelegate ForegroundEventHandler;
-        private static IntPtr ForegroundEventHook;
-
-        public static FocusSessionEvent? ActiveEvent
+        static Session()
         {
-            get => ActiveFocusSessionEvent;
-        }
-
-        static Service()
-        {
-            AlwaysAllowed = new RuleSet();
-            AlwaysBlocked = new RuleSet();
-
-            BlockedApplicationOverlays = new Dictionary<IntPtr, BlockedOverlayView>();
+            AlwaysAllowedApplications = new RuleSet();
+            AlwaysBlockedApplications = new RuleSet();
             EnabledRewards = new Dictionary<Guid, Reward>();
             ActiveFocusSessionEvent = null;
+
+            BlockedApplicationOverlays = new Dictionary<IntPtr, BlockedOverlayView>();
             Enabled = false;
 
             AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
-            ForegroundEventHandler = OnForegroundChanged;
             Enable();
         }
 
@@ -59,7 +43,6 @@ namespace Zarp.Core.App
         public static void Enable()
         {
             Enabled = true;
-            ForegroundEventHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, IntPtr.Zero, ForegroundEventHandler, 0, 0, WINEVENT_OUTOFCONTEXT);
             UpdateAll();
         }
 
@@ -73,41 +56,6 @@ namespace Zarp.Core.App
             }
 
             BlockedApplicationOverlays.Clear();
-            UnhookWinEvent(ForegroundEventHook);
-        }
-
-        private static void OnForegroundChanged(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, int idObject, int idChild, uint isEventThread, uint dwmsEventTime)
-        {
-            if (idObject != OBJID_WINDOW)
-            {
-                return;
-            }
-
-            if (BlockedApplicationOverlays.TryGetValue(hwnd, out BlockedOverlayView? overlay))
-            {
-                overlay.Activate();
-            }
-            else if (IsApplicationBlocked(hwnd))
-            {
-                TryBlockApplication(hwnd);
-            }
-        }
-
-        internal static void WindowClosed(IntPtr handle)
-        {
-            BlockedApplicationOverlays.Remove(handle);
-        }
-
-        public static void SetActiveEvent(FocusSessionEvent newEvent)
-        {
-            ActiveFocusSessionEvent = newEvent;
-            UpdateAll();
-        }
-
-        public static void ClearActiveEvent()
-        {
-            ActiveFocusSessionEvent = null;
-            UpdateAll();
         }
 
         public static void EnableReward(Reward reward)
@@ -129,8 +77,8 @@ namespace Zarp.Core.App
         {
             foreach (ApplicationInfo application in applications)
             {
-                AlwaysBlocked._ApplicationRules.Remove(application);
-                AlwaysAllowed._ApplicationRules.Add(application);
+                AlwaysBlockedApplications._ApplicationRules.Remove(application);
+                AlwaysAllowedApplications._ApplicationRules.Add(application);
             }
 
             if (Enabled)
@@ -141,7 +89,7 @@ namespace Zarp.Core.App
 
         public static void RemoveAlwaysAllowed(ApplicationInfo application)
         {
-            AlwaysAllowed._ApplicationRules.Remove(application);
+            AlwaysAllowedApplications._ApplicationRules.Remove(application);
 
             if (Enabled)
             {
@@ -153,8 +101,8 @@ namespace Zarp.Core.App
         {
             foreach (ApplicationInfo application in applications)
             {
-                AlwaysAllowed._ApplicationRules.Remove(application);
-                AlwaysBlocked._ApplicationRules.Add(application);
+                AlwaysAllowedApplications._ApplicationRules.Remove(application);
+                AlwaysBlockedApplications._ApplicationRules.Add(application);
             }
 
             if (Enabled)
@@ -165,7 +113,7 @@ namespace Zarp.Core.App
 
         public static void RemoveAlwaysBlocked(ApplicationInfo application)
         {
-            AlwaysBlocked._ApplicationRules.Remove(application);
+            AlwaysBlockedApplications._ApplicationRules.Remove(application);
 
             if (Enabled)
             {
@@ -182,13 +130,24 @@ namespace Zarp.Core.App
                 return false;
             }
 
-            ApplicationInfo info = new ApplicationInfo(executablePath);
-
-            if (AlwaysAllowed._ApplicationRules.Contains(info))
+            try
+            {
+                ApplicationInfo info = new ApplicationInfo(executablePath);
+                return IsApplicationBlocked(info);
+            }
+            catch
             {
                 return false;
             }
-            else if (AlwaysBlocked._ApplicationRules.Contains(info))
+        }
+
+        public static bool IsApplicationBlocked(ApplicationInfo info)
+        {
+            if (AlwaysAllowedApplications._ApplicationRules.Contains(info))
+            {
+                return false;
+            }
+            else if (AlwaysBlockedApplications._ApplicationRules.Contains(info))
             {
                 return true;
             }

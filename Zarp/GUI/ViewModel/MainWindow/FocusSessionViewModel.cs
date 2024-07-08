@@ -10,7 +10,7 @@ namespace Zarp.GUI.ViewModel.MainWindow
 {
     internal class FocusSessionViewModel : ObservableObject
     {
-        public static IPresetCollection PresetCollection => Service.FocusSessions;
+        public static IPresetCollection PresetCollection => PresetManager.FocusSessions;
         public static Func<Preset?> CreateFocusSessionFunction => CreateFocusSession;
         public static Func<object?> CreateEventFunction => CreateEvent;
 
@@ -110,15 +110,15 @@ namespace Zarp.GUI.ViewModel.MainWindow
 
         public FocusSessionViewModel()
         {
-            RuleSets = new ObservableCollection<Preset>(Service.RuleSets);
+            RuleSets = new ObservableCollection<Preset>(PresetManager.RuleSets);
             _SelectedRuleSetIndex = -1;
         }
 
         public static Preset? CreateFocusSession()
         {
-            Service.DialogReturnValue = null;
+            Session.DialogReturnValue = null;
             new CreateFocusSessionView().ShowDialog();
-            return (Preset?)Service.DialogReturnValue;
+            return (Preset?)Session.DialogReturnValue;
         }
 
         static int Count = 0;

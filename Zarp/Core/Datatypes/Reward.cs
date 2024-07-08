@@ -29,9 +29,9 @@ namespace Zarp.Core.Datatypes
             Rules = new RuleSet(other.Rules);
         }
 
-        public override bool IsModifiable => !Service.IsRewardEnabled(this);
+        public override bool IsModifiable => !Session.IsRewardEnabled(this);
 
-        public override bool IsDeletable => !Service.IsRewardEnabled(this);
+        public override bool IsDeletable => !Session.IsRewardEnabled(this);
 
         public override string Type => "Reward";
 

@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.Drawing;
-using System.IO;
+﻿using System.IO;
 using Zarp.Common.Cache;
 using Zarp.Common.Util;
 using Zarp.Core.Datatypes;
@@ -16,8 +14,15 @@ namespace Zarp.GUI.Model
             try
             {
                 string shortcutName = Path.GetFileNameWithoutExtension(path);
+
+                // Ignore uninstallers
+                if (shortcutName.Contains("Uninstall"))
+                {
+                    data = ApplicationInfo.Empty;
+                    return false;
+                }
+
                 string? executablePath = Shortcut.GetPath(path);
-                string? arguments = Shortcut.GetArguments(path);
 
                 // Ignore internet links
                 if (string.IsNullOrEmpty(executablePath))
@@ -35,16 +40,10 @@ namespace Zarp.GUI.Model
                     return false;
                 }
 
-                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(executablePath);
                 string fileName = Path.GetFileNameWithoutExtension(executablePath);
+                string arguments = Shortcut.GetArguments(path) ?? string.Empty;
 
-                data = new ApplicationInfo(shortcutName, fileName, fileVersionInfo.CompanyName);
-
-                if (!ApplicationInfo.Icons.ContainsKey(data))
-                {
-                    Icon? FileIcon = Icon.ExtractAssociatedIcon(executablePath);
-                    ApplicationInfo.Icons.Add(data, FileIcon);
-                }
+                data = new ApplicationStartInfo(shortcutName, executablePath, arguments);
             }
             catch
             {

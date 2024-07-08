@@ -55,11 +55,6 @@ namespace Zarp.Core.Datatypes
         {
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(path);
 
-            if (fileVersionInfo.ProductName == null)
-            {
-                throw new Exception();
-            }
-
             Name = name;
             FileName = Path.GetFileNameWithoutExtension(path);
             CompanyName = fileVersionInfo.CompanyName;

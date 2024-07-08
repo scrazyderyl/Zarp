@@ -103,9 +103,9 @@ namespace Zarp.Core.Datatypes
             return null;
         }
 
-        public override bool IsModifiable => Service.ActiveFocusSession != this;
+        public override bool IsModifiable => Session.ActiveFocusSession != this;
 
-        public override bool IsDeletable => Service.ActiveFocusSession != this && _Dependents.Count == 0;
+        public override bool IsDeletable => Session.ActiveFocusSession != this && _Dependents.Count == 0;
 
         public override Preset Duplicate(string name) => new FocusSession(name, this);
 

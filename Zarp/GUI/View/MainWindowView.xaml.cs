@@ -7,8 +7,6 @@ namespace Zarp.GUI.View
         public MainWindowView()
         {
             InitializeComponent();
-            //ApplicationStartInfo app = new ApplicationStartInfo(@"C:\Windows\system32\notepad.exe");
-            //app.Start();
         }
     }
 }
